@@ -95,16 +95,16 @@ st.markdown("""
     <div class="bg-text">GOATS RACING TEAM</div>
     """, unsafe_allow_html=True)
 
-PASSWORD_GENERALE = "GOATS2026!"
-try:
-    PASSWORD_MASTER = st.secrets["PASSWORD_MASTER"]
-except:
-    PASSWORD_MASTER = "GRB-ADMIN-2026" # Fallback per sviluppo locale
+import streamlit as st
+
+# --- CONFIGURAZIONE PAGINA ---
+st.set_page_config(layout="wide")
+PASSWORD_MASTER = "1234" # Cambiala con la tua password vera
 
 if "autenticato" not in st.session_state:
     st.session_state.autenticato = False
 
-# --- SCHERMATA DI LOGIN ---
+# --- LOGICA DI LOGIN ---
 if not st.session_state.autenticato:
     st.markdown("<div class='logo-container'><div class='shield'><span class='grt-text'>GRT RACE BRAIN</span></div></div>", unsafe_allow_html=True)
     
@@ -120,9 +120,7 @@ if not st.session_state.autenticato:
 else:
     # --- DASHBOARD (Viene mostrata solo dopo il login) ---
     st.title("CENTRO DI CONTROLLO LIVE")
-    # Qui andrà tutto il tuo codice della dashboard
     st.write("Sistema operativo. In attesa di dati.")
-
 # ==========================================
 # INIZIALIZZAZIONE STATI GLOBALI PERMANENTI
 # ==========================================
