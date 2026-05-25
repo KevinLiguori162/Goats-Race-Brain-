@@ -9,83 +9,7 @@ st.set_page_config(layout="wide", page_title="GOATS RACE BRAIN v2.0", page_icon=
 # ==========================================
 # STILE GRAFICO PREMIUM E ANIMAZIONI AVANZATE
 # ==========================================
-st.markdown("""
-    <style>
-    /* --- STILE GLOBALE --- */
-    .stApp { 
-        background-color: #0b0c10; 
-        color: #ffffff; 
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-    }
-
-    /* --- SFONDO SFUMATO (La scritta gigante) --- */
-    .bg-text {
-        position: fixed; top: 10%; left: 0; width: 100%;
-        z-index: -999 !important; /* Forza il livello dietro a tutto */
-        font-size: 8vw; font-weight: 900;
-        color: rgba(255, 255, 255, 0.03) !important; /* Assicurati che sia quasi trasparente */
-        text-transform: uppercase;
-        pointer-events: none; text-align: center;
-        display: block !important;
-    }
-    
-    .stTextInput>div>div>input { 
-        background-color: #1f2833 !important; color: white !important; 
-        border: 2px solid #45f3ff00 !important; border-bottom: 2px solid #d32f2f !important; 
-        border-radius: 6px !important; text-align: center; 
-    }
-    
-    /* Pulsanti Standard Rosso Corsa GRT */
-    div.stButton > button:first-child { 
-        background-color: #d32f2f !important; color: white !important; 
-        border-radius: 8px !important; border: 1px solid #ff1744 !important; 
-        font-weight: bold !important; width: 100% !important; 
-        box-shadow: 0px 4px 15px rgba(211, 47, 47, 0.4); 
-    }
-    div.stButton > button:first-child:hover { background-color: #b71c1c !important; transform: translateY(-1px); }
-    
-    /* Pulsanti di Sicurezza Cambio Kart (Sistema Arma e Spara) */
-    div.cambio-kart-pronto > div > button {
-        background-color: #2e7d32 !important; color: white !important; border: 2px solid #4caf50 !important;
-        font-size: 18px !important; font-weight: bold !important; height: 55px !important; border-radius: 12px !important;
-        box-shadow: 0px 4px 20px rgba(46, 125, 50, 0.4) !important;
-    }
-    div.cambio-kart-pronto > div > button:hover { background-color: #1b5e20 !important; }
-    
-    div.cambio-kart-conferma > div > button {
-        background-color: #e65100 !important; color: white !important; border: 2px solid #ff9800 !important;
-        font-size: 15px !important; font-weight: bold !important; height: 55px !important; border-radius: 12px !important;
-        box-shadow: 0px 4px 20px rgba(230, 81, 0, 0.6) !important;
-    }
-    div.cambio-kart-conferma > div > button:hover { background-color: #b53d00 !important; }
-    
-    /* Box ed Elementi del Radar */
-    .radar-box { background-color: #12171e; border: 1px solid #1f2833; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
-    .radar-pit-live { background-color: #1a1012; border: 2px solid #d32f2f; border-radius: 10px; padding: 20px; text-align: center; }
-    .radar-pit-safe { background-color: #101c14; border: 2px solid #2e7d32; border-radius: 10px; padding: 20px; text-align: center; }
-    .macro-cronometro { font-size: 48px; font-weight: 900; color: #ff1744; font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
-    .macro-cronometro-safe { font-size: 48px; font-weight: 900; color: #00e676; font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
-    
-    /* Timer Lineari Custom Container */
-    .timer-container { background-color: #12171e; border: 1px solid #1f2833; border-radius: 10px; padding: 15px; text-align: center; }
-    .timer-digital { font-size: 32px; font-weight: bold; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin-bottom: 2px; }
-    
-    /* Piloti e LED di stato */
-    .driver-row { display: flex; align-items: center; justify-content: space-between; background-color: #1f2833; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #4f5d73; }
-    .driver-row-active { display: flex; align-items: center; justify-content: space-between; background-color: #1a231b; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #2e7d32; box-shadow: 0px 0px 10px rgba(46,125,50,0.2); }
-    .led-green { height: 12px; width: 12px; background-color: #00e676; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #00e676; }
-    .led-red { height: 12px; width: 12px; background-color: #ff1744; border-radius: 50%; display: inline-block; }
-    
-    /* Mappa circuito finta */
-    .map-container { background-color: #12171e; border: 1px dashed #4f5d73; border-radius: 10px; padding: 40px; text-align: center; margin-top: 20px; color: #a3a3a3; }
-    
-    /* Animazioni Warning sfumati */
-    @keyframes pulse-orange { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-    @keyframes pulse-red { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
-    .warning-orange { animation: pulse-orange 2s infinite ease-in-out; border: 2px solid #ff9800; border-radius: 8px; padding: 10px; background-color: rgba(255, 152, 0, 0.1); text-align: center; color: #ff9800; font-weight: bold; }
-    .warning-red { animation: pulse-red 1s infinite ease-in-out; border: 2px solid #f44336; border-radius: 8px; padding: 10px; background-color: rgba(244, 67, 54, 0.2); text-align: center; color: #f44336; font-weight: bold; font-size: 15px; }
-    
-    .footer-credits { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #0b0c10; color: #4f5d73; text-align: center; padding: 10px; font-size: 11px; border-top: 1px solid #1f2833; z-index: 999; }
+# ... (il tuo CSS resta uguale fino alla fine del tag style) ...
     .logo-container { text-align: center; margin: 15px auto; }
     .shield { display: inline-block; background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%); border: 2px solid #d32f2f; border-radius: 10px 10px 40px 40px; padding: 10px 25px; }
     .grt-text { font-size: 32px; font-weight: 900; color: #ffffff; font-style: italic; text-shadow: 2px 2px 0px #d32f2f; }
@@ -95,16 +19,13 @@ st.markdown("""
     <div class="bg-text">GOATS RACING TEAM</div>
     """, unsafe_allow_html=True)
 
-import streamlit as st
-
-# --- CONFIGURAZIONE PAGINA ---
-st.set_page_config(layout="wide")
-PASSWORD_MASTER = "1234" # Cambiala con la tua password vera
+# --- CONFIGURAZIONE PAGINA E LOGIN (UNICO BLOCCO) ---
+PASSWORD_MASTER = "1234"
 
 if "autenticato" not in st.session_state:
     st.session_state.autenticato = False
 
-# --- LOGICA DI LOGIN ---
+# SE NON AUTENTICATO, MOSTRA LOGIN
 if not st.session_state.autenticato:
     st.markdown("<div class='logo-container'><div class='shield'><span class='grt-text'>GRT RACE BRAIN</span></div></div>", unsafe_allow_html=True)
     
@@ -117,106 +38,14 @@ if not st.session_state.autenticato:
                 st.rerun()
             else:
                 st.error("❌ CODICE ERRATO")
-else:
-    # --- DASHBOARD (Viene mostrata solo dopo il login) ---
-    st.title("CENTRO DI CONTROLLO LIVE")
-    st.write("Sistema operativo. In attesa di dati.")
+    st.stop() # FERMA IL CODICE QUI SE NON È AUTENTICATO
+
+# DA QUI IN POI, IL CODICE VIENE ESEGUITO SOLO SE AUTENTICATO
 # ==========================================
 # INIZIALIZZAZIONE STATI GLOBALI PERMANENTI
 # ==========================================
 if "tabella_gara_stint" not in st.session_state:
-    st.session_state.tabella_gara_stint = []
-    for idx in range(1, 16):
-        st.session_state.tabella_gara_stint.append({
-            "Stint": f"Stint {idx}", 
-            "Pilota": "Nessuno", 
-            "Durata Pista (Min)": 0, 
-            "Durata Pit (Sec)": 0, 
-            "Note / Anomalie": ""
-        })
-
-if "piloti" not in st.session_state:
-    st.session_state.piloti = {
-        "Kevin Liguori": {"stato": "Riposo"},
-        "Bruno Colombo": {"stato": "Riposo"},
-        "Daniele Rossi": {"stato": "Riposo"}
-    }
-
-if "autenticato" not in st.session_state: st.session_state.autenticato = False
-if "master_autenticato" not in st.session_state: st.session_state.master_autenticato = False
-if "conferma_cambio_kart" not in st.session_state: st.session_state.conferma_cambio_kart = False
-
-# Stati dei Timer (Unix Epoch per massima precisione)
-if "timestamp_start_gara" not in st.session_state: st.session_state.timestamp_start_gara = time.time()
-if "timestamp_start_kart" not in st.session_state: st.session_state.timestamp_start_kart = time.time()
-if "timestamp_start_stint_live" not in st.session_state: st.session_state.timestamp_start_stint_live = time.time()
-
-# Variabili per la simulazione del Pit Stop nel Radar
-if "radar_is_pit_lane" not in st.session_state: st.session_state.radar_is_pit_lane = False
-if "timestamp_start_pit" not in st.session_state: st.session_state.timestamp_start_pit = 0
-if "nostre_penalita_sec" not in st.session_state: st.session_state.nostre_penalita_sec = 0
-
-# Parametri Gara di Default
-if "config_durata_gara" not in st.session_state: st.session_state.config_durata_gara = 600 # 10 ore
-if "config_tempo_pit_min" not in st.session_state: st.session_state.config_tempo_pit_min = 60 
-if "config_tempo_pit_max" not in st.session_state: st.session_state.config_tempo_pit_max = 330 
-if "config_nomi_piloti" not in st.session_state: st.session_state.config_nomi_piloti = "Kevin Liguori, Bruno Colombo, Daniele Rossi"
-
-# Inizializzazione Struttura Piloti Avanzata
-if "piloti_v2" not in st.session_state:
-    nomi = [n.strip() for n in st.session_state.config_nomi_piloti.split(",")]
-    st.session_state.piloti_v2 = {}
-    for i, nome in enumerate(nomi):
-        st.session_state.piloti_v2[nome] = {
-            "tempo_totale_sec": 0 if i > 0 else 5400, # 1.5 ore pre-caricate di test per il primo pilota
-            "in_pista": True if i == 0 else False
-        }
-
-# Database "La Bibbia" delle performance dei Kart
-if "archivio_performance" not in st.session_state:
-    st.session_state.archivio_performance = {
-        "14": {"telaio": "TB-KART OBIETTIVO", "qualita": "🚀 RAZZO"},
-        "22": {"telaio": "TB-KART STANDARD", "qualita": "✅ Ottimo"},
-        "5": {"telaio": "TB-KART RIGIDO", "qualita": "⚠️ Chiodo"}
-    }
-
-# Tabellone Live Timing Sincronizzato di Apex
-if "database_rivali_v2" not in st.session_state:
-    st.session_state.database_rivali_v2 = [
-        {"pos": 1, "team": "GOATS Racing Team", "cat": "EK1", "ultimo_giro": "1:03.950", "kart": "22"},
-        {"pos": 2, "team": "Winner Team 1", "cat": "EK1", "ultimo_giro": "1:04.110", "kart": "14"},
-        {"pos": 3, "team": "Kartel Sport", "cat": "EK2", "ultimo_giro": "1:04.550", "kart": "5"},
-        {"pos": 4, "team": "PFV Racing", "cat": "EK1", "ultimo_giro": "1:04.220", "kart": "12"},
-        {"pos": 5, "team": "Zena Karting", "cat": "EK3", "ultimo_giro": "1:05.100", "kart": "Unknown"}
-    ]
-
-# Caricamento database Regolamento
-if "regolamento_strutturato" not in st.session_state:
-    st.session_state.regolamento_strutturato = [
-        {"capitolo": "INFO VELOCI - Parametri di Gara", "testo": "• Mezzi: TB KART R-ONE SPORT HP 390 C.C. (18 CV).\n• Peso minimo: 85 KG.\n• Finestra Pit Stop: Da 60 a 330 secondi.\n• Utilizzo Kart: Massimo 4 ore consecutive per singolo telaio (Penalità 5 giri)."},
-        {"capitolo": "ART 17 - Tabella Dettagliata delle Penalità", "testo": "• Eccedenza limite utilizzo singolo telaio (> 4 ore): 5 giri di penalità.\n• Violazione tempo singolo Pit Minimo (<60s): 10 secondi + tutto il tempo mancante.\n• Salto della pesatura obbligatoria a fine turno: 2 giri di penalità."}
-    ]
-
-if "archivio_gare_report" not in st.session_state:
-    st.session_state.archivio_gare_report = {"Gara 1 - Official Opening": "RELAZIONE GARA 1:\n- Setup standard, kart #14 ottimo."}
-
-# --- SCHERMATA LOG-IN ---
-if not st.session_state.autenticato:
-    col_a, col_b, col_c = st.columns([1, 1.4, 1])
-    with col_b:
-        st.markdown('<div class="logo-container"><div class="shield"><div class="grt-text">GOATS GRB</div></div></div>', unsafe_allow_html=True)
-        st.markdown("<h2 style='text-align: center; color: white;'>ACCESSO CENTRALINA BOX</h2>", unsafe_allow_html=True)
-        pssw = st.text_input("PASSWORD MURETTO:", type="password")
-        if st.button("SBLOCCA SYSTEM 🔓"):
-            if pssw == PASSWORD_GENERALE:
-                st.session_state.autenticato = True
-                st.rerun()
-            else: st.error("Chiave errata!")
-    st.stop()
-
-# ==========================================
-# PRIMA: CREI LA BARRA LATERALE E DEFINISCI 'PAGINA'
-# ==========================================
+    # ... (il resto del tuo codice continua qui)
 st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
 st.sidebar.title("GRT Control Panel")
 
