@@ -1,47 +1,29 @@
 import streamlit as st
-import pandas as pd
-import random
 import time
 
-# Configurazione della pagina ottimizzata per muretto box (Monitor wide o Tablet)
-st.set_page_config(layout="wide", page_title="GOATS RACE BRAIN v2.0", page_icon="🏎️")
+# --- CONFIGURAZIONE PAGINA ---
+st.set_page_config(layout="wide")
 
-# ==========================================
-# STILE GRAFICO PREMIUM E ANIMAZIONI AVANZATE
-# ==========================================
-# ... (il tuo CSS resta uguale fino alla fine del tag style) ...
-   # --- STILE GRAFICO PREMIUM ---
-st.markdown("""
-<style>
-.stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-.bg-text { position: fixed; top: 10%; left: 0; width: 100%; z-index: -999; font-size: 8vw; font-weight: 900; color: rgba(255, 255, 255, 0.03); text-transform: uppercase; pointer-events: none; text-align: center; }
-.logo-container { text-align: center; margin: 15px auto; }
-.shield { display: inline-block; background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%); border: 2px solid #d32f2f; border-radius: 10px 10px 40px 40px; padding: 10px 25px; }
-.grt-text { font-size: 32px; font-weight: 900; color: #ffffff; font-style: italic; text-shadow: 2px 2px 0px #d32f2f; }
-</style>
-<div class="bg-text">GOATS RACING TEAM</div>
-""", unsafe_allow_html=True)
-
-# --- CONFIGURAZIONE PAGINA E LOGIN (UNICO BLOCCO) ---
-PASSWORD_MASTER = "Goats2026!"
-
+# --- INIZIALIZZAZIONE STATI (Sempre prima di usarli) ---
 if "autenticato" not in st.session_state:
     st.session_state.autenticato = False
 
-# SE NON AUTENTICATO, MOSTRA LOGIN
+# --- LOGICA DI LOGIN (UNICA E PROTETTA) ---
 if not st.session_state.autenticato:
-    st.markdown("<div class='logo-container'><div class='shield'><span class='grt-text'>GRT RACE BRAIN</span></div></div>", unsafe_allow_html=True)
-    
-    col_a, col_b, col_c = st.columns([1, 2, 1])
-    with col_b:
-        password_input = st.text_input("Inserisci Codice Accesso Muretto:", type="password")
-        if st.button("SBLOCCA SYSTEM 🔒"):
-            if password_input == PASSWORD_MASTER:
-                st.session_state.autenticato = True
-                st.rerun()
-            else:
-                st.error("❌ CODICE ERRATO")
-    st.stop() # FERMA IL CODICE QUI SE NON È AUTENTICATO
+    st.title("ACCESSO CENTRALINA BOX")
+    password = st.text_input("PASSWORD MURETTO:", type="password")
+    if st.button("SBLOCCA SYSTEM 🔒"):
+        if password == "1234":  # La tua password
+            st.session_state.autenticato = True
+            st.rerun()
+        else:
+            st.error("CODICE ERRATO")
+    st.stop()  # <--- QUESTO È IL COMANDO FONDAMENTALE: blocca tutto il resto
+
+# --- DASHBOARD (Viene mostrata solo se il codice supera lo stop) ---
+st.title("CENTRO DI CONTROLLO LIVE")
+# Qui sotto incollerai poi il resto del tuo codice (radar, grafici, ecc.)
+ # FERMA IL CODICE QUI SE NON È AUTENTICATO
 
 # DA QUI IN POI, IL CODICE VIENE ESEGUITO SOLO SE AUTENTICATO
 # ==========================================
