@@ -49,8 +49,8 @@ if not st.session_state.autenticato:
 # ==========================================
 if "tabella_gara_stint" not in st.session_state:
     # ... (il resto del tuo codice continua qui)
-st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
-st.sidebar.title("GRT Control Panel")
+  st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
+  st.sidebar.title("GRT Control Panel")
 
 lista_pagine = [
     "🏎️ Dashboard Gara", 
