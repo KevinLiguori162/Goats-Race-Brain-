@@ -10,14 +10,17 @@ st.set_page_config(layout="wide", page_title="GOATS RACE BRAIN v2.0", page_icon=
 # STILE GRAFICO PREMIUM E ANIMAZIONI AVANZATE
 # ==========================================
 # ... (il tuo CSS resta uguale fino alla fine del tag style) ...
-    .logo-container { text-align: center; margin: 15px auto; }
-    .shield { display: inline-block; background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%); border: 2px solid #d32f2f; border-radius: 10px 10px 40px 40px; padding: 10px 25px; }
-    .grt-text { font-size: 32px; font-weight: 900; color: #ffffff; font-style: italic; text-shadow: 2px 2px 0px #d32f2f; }
-    .highlight-box { background-color: #1f2833; border-left: 5px solid #d32f2f; padding: 15px; border-radius: 4px; }
-    </style>
-
-    <div class="bg-text">GOATS RACING TEAM</div>
-    """, unsafe_allow_html=True)
+   # --- STILE GRAFICO PREMIUM ---
+st.markdown("""
+<style>
+.stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.bg-text { position: fixed; top: 10%; left: 0; width: 100%; z-index: -999; font-size: 8vw; font-weight: 900; color: rgba(255, 255, 255, 0.03); text-transform: uppercase; pointer-events: none; text-align: center; }
+.logo-container { text-align: center; margin: 15px auto; }
+.shield { display: inline-block; background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%); border: 2px solid #d32f2f; border-radius: 10px 10px 40px 40px; padding: 10px 25px; }
+.grt-text { font-size: 32px; font-weight: 900; color: #ffffff; font-style: italic; text-shadow: 2px 2px 0px #d32f2f; }
+</style>
+<div class="bg-text">GOATS RACING TEAM</div>
+""", unsafe_allow_html=True)
 
 # --- CONFIGURAZIONE PAGINA E LOGIN (UNICO BLOCCO) ---
 PASSWORD_MASTER = "1234"
