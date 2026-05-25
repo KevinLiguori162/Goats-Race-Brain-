@@ -23,7 +23,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- CONFIGURAZIONE PAGINA E LOGIN (UNICO BLOCCO) ---
-PASSWORD_MASTER = "1234"
+PASSWORD_MASTER = "Goats2026!"
 
 if "autenticato" not in st.session_state:
     st.session_state.autenticato = False
