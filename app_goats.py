@@ -359,37 +359,52 @@ for nome_p, dati_p in st.session_state.piloti_v2.items():
     # Riga singola molto sottile
        # 1. Intestazione
 # 1. Intestazione (allineata al margine del blocco precedente)
-st.markdown("<h4 style='color:#ff1744; margin-bottom:10px; font-size:16px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
-
-# 2. Ciclo dei piloti
-for nome_p, dati_p in st.session_state.piloti_v2.items():
-    colore_stato = "#00e676" if dati_p["in_pista"] else "#4a4a4a"
-    stato_testo = "IN PISTA" if dati_p["in_pista"] else "BOX"
-    
-    st.markdown(f"""
-    <div style="display:flex; justify-content:space-between; align-items:center; 
-                background:#1a1a1a; padding:5px 10px; border-radius:4px; margin-bottom:4px;
-                border-left: 3px solid {colore_stato};">
-        <span style="font-size:13px; font-weight:bold; color:white;">{nome_p}</span>
-        <span style="font-size:11px; color:{colore_stato};">{stato_testo}</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-# 3. Gestione Cambi (FUORI dal ciclo for)
-with st.expander("🔄 Gestione Cambi Pilota"):
-    p_subentrante = st.selectbox("Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()), key="unique_pilota_selectbox_dash")
-    
-    if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
-        for vecchio_p, v_dati in st.session_state.piloti_v2.items():
-            if v_dati["in_pista"]:
-                tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
-                st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
-                st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-        
-        st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
-        st.session_state.timestamp_start_stint_live = time.time()
-        st.success(f"{p_subentrante} in pista!")
-        st.rerun()
+st.markdown("<h4 style='color:#ff1744; margin-bottom:15px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
+            
+            for nome_p, dati_p in st.session_state.piloti_v2.items():
+                if dati_p["in_pista"]:
+                    tempo_stint_live_sec = int(time.time() - st.session_state.timestamp_start_stint_live)
+                    min_live = tempo_stint_live_sec // 60
+                    sec_live = tempo_stint_live_sec % 60
+                    
+                    tempo_tot_totale_min = int((dati_p["tempo_totale_sec"] + tempo_stint_live_sec) // 60)
+                    
+                    st.markdown(f"""
+                    <div class="driver-row-active">
+                        <div>
+                            <b style="color:white; font-size:14px;">🏎️ {nome_p}</b><br>
+                            <span style="color:#00e676; font-size:11px;">Stint Live: {min_live:02d}:{sec_live:02d}</span><br>
+                            <span style="color:#a3a3a3; font-size:11px;">Totale: {tempo_tot_totale_min} min</span>
+                        </div>
+                        <span class="led-green"></span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    min_tot = int(dati_p["tempo_totale_sec"] // 60)
+                    st.markdown(f"""
+                    <div class="driver-row">
+                        <div>
+                            <b style="color:#a3a3a3; font-size:14px;">👤 {nome_p}</b><br>
+                            <span style="color:#6c7a89; font-size:11px;">Al Box (A riposo)</span><br>
+                            <span style="color:#6c7a89; font-size:11px;">Totale: {min_tot} min</span>
+                        </div>
+                        <span class="led-red"></span>
+                    </div>
+                    """, unsafe_allow_html=True)
+            
+            st.write("<br>", unsafe_allow_html=True)
+            p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
+            if st.button("🔄 CONFERMA CAMBIO PILOTA BOX"):
+                for vecchio_p, v_dati in st.session_state.piloti_v2.items():
+                    if v_dati["in_pista"]:
+                        tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
+                        st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
+                        st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
+                
+                st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
+                st.session_state.timestamp_start_stint_live = time.time()
+                st.success(f"{p_subentrante} in pista!")
+                st.rerun()
         
             
             # Bottone di conferma (Anche qui serve una chiave univoca)
