@@ -277,19 +277,19 @@ if pagina == "🏎️ Dashboard Gara":
         with col_sinistra:
            st.markdown("<h4 style='color:#ff1744;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
 
-for nome_p, dati_p in st.session_state.piloti_v2.items():
-    if dati_p["in_pista"]:
-        st.markdown(f"**🏎️ {nome_p}** - *In Pista* (Stato: Attivo)", unsafe_allow_html=True)
-    else:
-        st.markdown(f"👤 {nome_p} - *Al Box* (A riposo)", unsafe_allow_html=True)
+            for nome_p, dati_p in st.session_state.piloti_v2.items():
+            if dati_p["in_pista"]:
+            st.markdown(f"**🏎️ {nome_p}** - *In Pista* (Stato: Attivo)", unsafe_allow_html=True)
+            else:
+            st.markdown(f"👤 {nome_p} - *Al Box* (A riposo)", unsafe_allow_html=True)
 
 # Selezione e Cambio Pilota
-p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
-if st.button("🔄 CONFERMA CAMBIO PILOTA"):
+            p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
+            if st.button("🔄 CONFERMA CAMBIO PILOTA"):
     # Logica per cambiare stato
-    for p in st.session_state.piloti_v2:
-        st.session_state.piloti_v2[p]["in_pista"] = (p == p_subentrante)
-    st.rerun()
+            for p in st.session_state.piloti_v2:
+            st.session_state.piloti_v2[p]["in_pista"] = (p == p_subentrante)
+            st.rerun()
             
             for nome_p, dati_p in st.session_state.piloti_v2.items():
                 if dati_p["in_pista"]:
