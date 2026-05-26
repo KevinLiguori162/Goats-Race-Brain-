@@ -309,9 +309,9 @@ if pagina == "🏎️ Dashboard Gara":
 
 # Selezione e Cambio Pilota
             p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
-            if st.button("🔄 CONFERMA CAMBIO PILOTA"):
+            
     # Logica per cambiare stato
-           if st.button("🔄 CONFERMA CAMBIO PILOTA"):
+            if st.button("🔄 CONFERMA CAMBIO PILOTA"):
                 # Tutto quello che segue deve essere spostato di un TAB (4 spazi) più a destra
                 for p in st.session_state.piloti_v2:
                     st.session_state.piloti_v2[p]["in_pista"] = (p == p_subentrante)
