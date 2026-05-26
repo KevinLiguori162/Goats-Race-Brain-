@@ -395,7 +395,7 @@ with st.expander("🔄 Gestione Cambi Pilota"):
         st.success(f"{p_subentrante} in pista!")
         st.rerun()
             
-            st.write("<br>", unsafe_allow_html=True)
+            
            # Selezione Pilota (La chiave è fondamentale nel frammento)
             p_subentrante = st.selectbox(
                 "Seleziona Pilota che ENTRA:", 
