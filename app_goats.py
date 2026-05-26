@@ -7,18 +7,74 @@ st.set_page_config(layout="wide")
 # --- CSS PERSONALIZZATO (DA INCOLLARE SUBITO SOTTO SET_PAGE_CONFIG) ---
 st.markdown("""
     <style>
-    .timer-container { padding: 15px; border-radius: 5px; background-color: #1a1a1a; margin-bottom: 10px; }
-    .timer-digital { font-size: 32px; font-weight: bold; color: white; }
-    .driver-row-active { display: flex; justify-content: space-between; padding: 10px; background: #262626; border-left: 4px solid #00e676; margin-bottom: 5px; }
-    .driver-row { display: flex; justify-content: space-between; padding: 10px; background: #1a1a1a; border-left: 4px solid #6c7a89; margin-bottom: 5px; }
-    .led-green { width: 12px; height: 12px; background: #00e676; border-radius: 50%; box-shadow: 0 0 8px #00e676; }
-    .led-red { width: 12px; height: 12px; background: #ff1744; border-radius: 50%; }
-    .radar-box { padding: 15px; background: #1a1a1a; border-radius: 5px; border-left: 4px solid #ff9800; }
-    .macro-cronometro { font-size: 40px; font-weight: bold; color: #ff9800; }
-    .warning-red { background: #d32f2f; color: white; padding: 10px; font-weight: bold; border-radius: 4px; }
+    .stApp { 
+        background-color: #0b0c10; 
+        color: #ffffff; 
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+    }
+    .stTextInput>div>div>input { 
+        background-color: #1f2833 !important; color: white !important; 
+        border: 2px solid #45f3ff00 !important; border-bottom: 2px solid #d32f2f !important; 
+        border-radius: 6px !important; text-align: center; 
+    }
+    
+    /* Pulsanti Standard Rosso Corsa GRT */
+    div.stButton > button:first-child { 
+        background-color: #d32f2f !important; color: white !important; 
+        border-radius: 8px !important; border: 1px solid #ff1744 !important; 
+        font-weight: bold !important; width: 100% !important; 
+        box-shadow: 0px 4px 15px rgba(211, 47, 47, 0.4); 
+    }
+    div.stButton > button:first-child:hover { background-color: #b71c1c !important; transform: translateY(-1px); }
+    
+    /* Pulsanti di Sicurezza Cambio Kart (Sistema Arma e Spara) */
+    div.cambio-kart-pronto > div > button {
+        background-color: #2e7d32 !important; color: white !important; border: 2px solid #4caf50 !important;
+        font-size: 18px !important; font-weight: bold !important; height: 55px !important; border-radius: 12px !important;
+        box-shadow: 0px 4px 20px rgba(46, 125, 50, 0.4) !important;
+    }
+    div.cambio-kart-pronto > div > button:hover { background-color: #1b5e20 !important; }
+    
+    div.cambio-kart-conferma > div > button {
+        background-color: #e65100 !important; color: white !important; border: 2px solid #ff9800 !important;
+        font-size: 15px !important; font-weight: bold !important; height: 55px !important; border-radius: 12px !important;
+        box-shadow: 0px 4px 20px rgba(230, 81, 0, 0.6) !important;
+    }
+    div.cambio-kart-conferma > div > button:hover { background-color: #b53d00 !important; }
+    
+    /* Box ed Elementi del Radar */
+    .radar-box { background-color: #12171e; border: 1px solid #1f2833; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+    .radar-pit-live { background-color: #1a1012; border: 2px solid #d32f2f; border-radius: 10px; padding: 20px; text-align: center; }
+    .radar-pit-safe { background-color: #101c14; border: 2px solid #2e7d32; border-radius: 10px; padding: 20px; text-align: center; }
+    .macro-cronometro { font-size: 48px; font-weight: 900; color: #ff1744; font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
+    .macro-cronometro-safe { font-size: 48px; font-weight: 900; color: #00e676; font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
+    
+    /* Timer Lineari Custom Container */
+    .timer-container { background-color: #12171e; border: 1px solid #1f2833; border-radius: 10px; padding: 15px; text-align: center; }
+    .timer-digital { font-size: 32px; font-weight: bold; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin-bottom: 2px; }
+    
+    /* Piloti e LED di stato */
+    .driver-row { display: flex; align-items: center; justify-content: space-between; background-color: #1f2833; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #4f5d73; }
+    .driver-row-active { display: flex; align-items: center; justify-content: space-between; background-color: #1a231b; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #2e7d32; box-shadow: 0px 0px 10px rgba(46,125,50,0.2); }
+    .led-green { height: 12px; width: 12px; background-color: #00e676; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #00e676; }
+    .led-red { height: 12px; width: 12px; background-color: #ff1744; border-radius: 50%; display: inline-block; }
+    
+    /* Mappa circuito finta */
+    .map-container { background-color: #12171e; border: 1px dashed #4f5d73; border-radius: 10px; padding: 40px; text-align: center; margin-top: 20px; color: #a3a3a3; }
+    
+    /* Animazioni Warning sfumati */
+    @keyframes pulse-orange { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+    @keyframes pulse-red { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+    .warning-orange { animation: pulse-orange 2s infinite ease-in-out; border: 2px solid #ff9800; border-radius: 8px; padding: 10px; background-color: rgba(255, 152, 0, 0.1); text-align: center; color: #ff9800; font-weight: bold; }
+    .warning-red { animation: pulse-red 1s infinite ease-in-out; border: 2px solid #f44336; border-radius: 8px; padding: 10px; background-color: rgba(244, 67, 54, 0.2); text-align: center; color: #f44336; font-weight: bold; font-size: 15px; }
+    
+    .footer-credits { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #0b0c10; color: #4f5d73; text-align: center; padding: 10px; font-size: 11px; border-top: 1px solid #1f2833; z-index: 999; }
+    .logo-container { text-align: center; margin: 15px auto; }
+    .shield { display: inline-block; background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%); border: 2px solid #d32f2f; border-radius: 10px 10px 40px 40px; padding: 10px 25px; }
+    .grt-text { font-size: 32px; font-weight: 900; color: #ffffff; font-style: italic; text-shadow: 2px 2px 0px #d32f2f; }
+    .highlight-box { background-color: #1f2833; border-left: 5px solid #d32f2f; padding: 15px; border-radius: 4px; }
     </style>
     """, unsafe_allow_html=True)
-
 # ==========================================
 # 1. INIZIALIZZAZIONE STATI (IL MOTORE - DEVE ESSERE IN CIMA)
 # ==========================================
