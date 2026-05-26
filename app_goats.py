@@ -91,7 +91,15 @@ if "archivio_performance" not in st.session_state:
     st.session_state.archivio_performance = {"22": {"qualita": "Top"}, "14": {"qualita": "Medio"}}
 
 if "piloti_v2" not in st.session_state:
-    st.session_state.piloti_v2 = {"Kevin": {"in_pista": True, "tempo_totale_sec": 0}}
+    st.session_state.piloti_v2 = {
+        "Kevin": {"in_pista": True, "tempo_totale_sec": 0},
+        "Bruno": {"in_pista": False, "tempo_totale_sec": 0},
+        "Daniele": {"in_pista": False, "tempo_totale_sec": 0}
+    }
+
+if "conferma_cambio_kart" not in st.session_state:
+    st.session_state.conferma_cambio_kart = False
+
 
 if "config_durata_gara" not in st.session_state:
     st.session_state.config_durata_gara = 480 # 8 ore
@@ -107,6 +115,7 @@ if "piloti" not in st.session_state:
         "Bruno Colombo": {"stato": "Riposo"},
         "Daniele Rossi": {"stato": "Riposo"}
     }
+    
 if "conferma_cambio_kart" not in st.session_state:
     st.session_state.conferma_cambio_kart = False
 
