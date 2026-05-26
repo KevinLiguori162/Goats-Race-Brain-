@@ -397,18 +397,19 @@ with st.expander("🔄 Gestione Cambi Pilota"):
         
             
             # Bottone di conferma (Anche qui serve una chiave univoca)
-            if st.button("🔄 CONFERMA CAMBIO PILOTA BOX", key="btn_conferma_cambio_pilota"):
-                for vecchio_p, v_dati in st.session_state.piloti_v2.items():
-                    if v_dati["in_pista"]:
-                        tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
-                        st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
-                        st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-                
-                # Attivazione nuovo pilota
-                st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
-                st.session_state.timestamp_start_stint_live = time.time()
-                st.success(f"{p_subentrante} in pista!")
-                st.rerun()
+            if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
+        # 1. Ciclo per disattivare il vecchio pilota (DEVE ESSERE RIENTRATO)
+        for vecchio_p, v_dati in st.session_state.piloti_v2.items():
+            if v_dati["in_pista"]:
+                tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
+                st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
+                st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
+        
+        # 2. Attivazione nuovo pilota (ANCHE QUESTE DEVONO ESSERE RIENTRATE RISPETTO ALL'IF)
+        st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
+        st.session_state.timestamp_start_stint_live = time.time()
+        st.success(f"{p_subentrante} in pista!")
+        st.rerun()
 
         # 2. COLONNA CENTRALE: LIVE TIMING SINTETICO APEX
         with col_centrale:
