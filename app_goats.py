@@ -351,10 +351,10 @@ if pagina == "🏎️ Dashboard Gara":
             
             st.write("<br>", unsafe_allow_html=True)
            p_subentrante = st.selectbox(
-            "Seleziona Pilota che ENTRA:", 
-            list(st.session_state.piloti_v2.keys()), 
-            key="unique_pilota_selectbox_dash"
-            )
+                "Seleziona Pilota che ENTRA:", 
+                list(st.session_state.piloti_v2.keys()), 
+                key="unique_pilota_selectbox_dash"
+           )
             if st.button("🔄 CONFERMA CAMBIO PILOTA BOX"):
                 for vecchio_p, v_dati in st.session_state.piloti_v2.items():
                     if v_dati["in_pista"]:
