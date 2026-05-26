@@ -394,14 +394,7 @@ with st.expander("🔄 Gestione Cambi Pilota"):
         st.session_state.timestamp_start_stint_live = time.time()
         st.success(f"{p_subentrante} in pista!")
         st.rerun()
-            
-            
-           # Selezione Pilota (La chiave è fondamentale nel frammento)
-            p_subentrante = st.selectbox(
-                "Seleziona Pilota che ENTRA:", 
-                list(st.session_state.piloti_v2.keys()), 
-                key="unique_pilota_selectbox_dash"
-            )
+        
             
             # Bottone di conferma (Anche qui serve una chiave univoca)
             if st.button("🔄 CONFERMA CAMBIO PILOTA BOX", key="btn_conferma_cambio_pilota"):
