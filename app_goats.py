@@ -1,38 +1,68 @@
 import streamlit as st
+import pandas as pd
 import time
 
-# --- CONFIGURAZIONE PAGINA ---
 st.set_page_config(layout="wide")
 
-# --- INIZIALIZZAZIONE STATI (Sempre prima di usarli) ---
+# ==========================================
+# 1. INIZIALIZZAZIONE STATI (IL MOTORE - DEVE ESSERE IN CIMA)
+# ==========================================
 if "autenticato" not in st.session_state:
     st.session_state.autenticato = False
 
-# --- LOGICA DI LOGIN (UNICA E PROTETTA) ---
+if "database_rivali_v2" not in st.session_state:
+    st.session_state.database_rivali_v2 = [
+        {"pos": 1, "team": "GOATS Racing Team", "cat": "EK1", "ultimo_giro": "1:03.950", "kart": "22", "status": "In Pista"},
+        {"pos": 2, "team": "Winner Team 1", "cat": "EK1", "ultimo_giro": "1:04.110", "kart": "14", "status": "In Pista"}
+    ]
+
+if "archivio_performance" not in st.session_state:
+    st.session_state.archivio_performance = {"22": {"qualita": "Top"}, "14": {"qualita": "Medio"}}
+
+if "piloti_v2" not in st.session_state:
+    st.session_state.piloti_v2 = {"Kevin": {"in_pista": True, "tempo_totale_sec": 0}}
+
+if "config_durata_gara" not in st.session_state:
+    st.session_state.config_durata_gara = 480 # 8 ore
+
+if "timestamp_start_gara" not in st.session_state:
+    st.session_state.timestamp_start_gara = time.time()
+    st.session_state.timestamp_start_kart = time.time()
+    st.session_state.timestamp_start_stint_live = time.time()
+
+if "conferma_cambio_kart" not in st.session_state:
+    st.session_state.conferma_cambio_kart = False
+
+if "radar_is_pit_lane" not in st.session_state:
+    st.session_state.radar_is_pit_lane = False
+    st.session_state.timestamp_start_pit = time.time()
+    st.session_state.config_tempo_pit_min = 60
+    st.session_state.config_tempo_pit_max = 90
+    st.session_state.nostre_penalita_sec = 0
+
+# ==========================================
+# 2. LOGICA DI LOGIN
+# ==========================================
 if not st.session_state.autenticato:
     st.title("ACCESSO CENTRALINA BOX")
-    password = st.text_input("PASSWORD MURETTO:", type="password")
-    if st.button("SBLOCCA SYSTEM 🔒"):
-        if password == "1234":  # La tua password
+    password = st.text_input("PASSWORD:", type="password")
+    if st.button("SBLOCCA 🔒"):
+        if password == "1234":
             st.session_state.autenticato = True
             st.rerun()
-        else:
-            st.error("CODICE ERRATO")
-    st.stop()  # <--- QUESTO È IL COMANDO FONDAMENTALE: blocca tutto il resto
+    st.stop()
 
-# --- DASHBOARD (Viene mostrata solo se il codice supera lo stop) ---
-st.title("CENTRO DI CONTROLLO LIVE")
-# Qui sotto incollerai poi il resto del tuo codice (radar, grafici, ecc.)
- # FERMA IL CODICE QUI SE NON È AUTENTICATO
+# ==========================================
+# 3. DASHBOARD E NAVIGAZIONE (Solo se loggato)
+# ==========================================
+st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
+st.sidebar.title("GRT Control Panel")
+lista_pagine = ["🏎️ Dashboard Gara", "📊 Strategia", "📡 Live Timing", "🛠️ Kart's Performance"]
+pagina = st.sidebar.radio("Seleziona Area:", lista_pagine)
 
-# DA QUI IN POI, IL CODICE VIENE ESEGUITO SOLO SE AUTENTICATO
-# ==========================================
-# INIZIALIZZAZIONE STATI GLOBALI PERMANENTI
-# ==========================================
-if "tabella_gara_stint" not in st.session_state:
-    # ... (il resto del tuo codice continua qui)
-  st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
-  st.sidebar.title("GRT Control Panel")
+if st.sidebar.button("🔒 Blocca"):
+    st.session_state.autenticato = False
+    st.rerun()
 
 lista_pagine = [
     "🏎️ Dashboard Gara", 
