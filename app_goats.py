@@ -308,15 +308,25 @@ if pagina == "🏎️ Dashboard Gara":
                 """, unsafe_allow_html=True)
 
 # Selezione e Cambio Pilota
-            p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
+            # Aggiungi un key univoco a questo widget
+        p_subentrante = st.selectbox(
+            "Seleziona Pilota che ENTRA:", 
+            list(st.session_state.piloti_v2.keys()), 
+            key="selectbox_piloti_dashboard"
+        )
+        
+        # Aggiungi un key univoco anche al bottone
+        if st.button("🔄 CONFERMA CAMBIO PILOTA BOX", key="btn_conferma_cambio"):
+            for vecchio_p, v_dati in st.session_state.piloti_v2.items():
+                if v_dati["in_pista"]:
+                    tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
+                    st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
+                    st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
             
-    # Logica per cambiare stato
-            if st.button("🔄 CONFERMA CAMBIO PILOTA"):
-                # Tutto quello che segue deve essere spostato di un TAB (4 spazi) più a destra
-                for p in st.session_state.piloti_v2:
-                    st.session_state.piloti_v2[p]["in_pista"] = (p == p_subentrante)
-                st.success(f"{p_subentrante} in pista!")
-                st.rerun()
+            st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
+            st.session_state.timestamp_start_stint_live = time.time()
+            st.success(f"{p_subentrante} in pista!")
+            st.rerun()
             
             for nome_p, dati_p in st.session_state.piloti_v2.items():
                 if dati_p["in_pista"]:
