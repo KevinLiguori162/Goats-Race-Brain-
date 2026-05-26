@@ -349,15 +349,20 @@ if pagina == "🏎️ Dashboard Gara":
                 else:
                     min_tot = int(dati_p["tempo_totale_sec"] // 60)
                     # --- VERSIONE COMPATTA EQUIPAGGIO ---
-st.# Gestione Cambi Pilota
 with st.expander("🔄 Gestione Cambi Pilota"):
-    p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()), key="unique_pilota_selectbox_dash")
+    p_subentrante = st.selectbox(
+        "Seleziona Pilota che ENTRA:", 
+        list(st.session_state.piloti_v2.keys()), 
+        key="unique_pilota_selectbox_dash"
+    )
+    
     if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
         for vecchio_p, v_dati in st.session_state.piloti_v2.items():
             if v_dati["in_pista"]:
                 tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
                 st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
                 st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
+        
         st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
         st.session_state.timestamp_start_stint_live = time.time()
         st.success(f"{p_subentrante} in pista!")
