@@ -348,16 +348,23 @@ if pagina == "🏎️ Dashboard Gara":
                     """, unsafe_allow_html=True)
                 else:
                     min_tot = int(dati_p["tempo_totale_sec"] // 60)
-                    st.markdown(f"""
-                    <div class="driver-row">
-                        <div>
-                            <b style="color:#a3a3a3; font-size:14px;">👤 {nome_p}</b><br>
-                            <span style="color:#6c7a89; font-size:11px;">Al Box (A riposo)</span><br>
-                            <span style="color:#6c7a89; font-size:11px;">Totale: {min_tot} min</span>
-                        </div>
-                        <span class="led-red"></span>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    # --- VERSIONE COMPATTA EQUIPAGGIO ---
+st.markdown("<h4 style='color:#ff1744; margin-bottom:10px; font-size:16px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
+
+for nome_p, dati_p in st.session_state.piloti_v2.items():
+    # Definiamo uno stile compatto
+    colore_stato = "#00e676" if dati_p["in_pista"] else "#4a4a4a"
+    stato_testo = "IN PISTA" if dati_p["in_pista"] else "BOX"
+    
+    # Riga singola molto sottile
+    st.markdown(f"""
+    <div style="display:flex; justify-content:space-between; align-items:center; 
+                background:#1a1a1a; padding:5px 10px; border-radius:4px; margin-bottom:4px;
+                border-left: 3px solid {colore_stato};">
+        <span style="font-size:13px; font-weight:bold; color:white;">{nome_p}</span>
+        <span style="font-size:11px; color:{colore_stato};">{stato_testo}</span>
+    </div>
+    """, unsafe_allow_html=True)
             
             st.write("<br>", unsafe_allow_html=True)
            # Selezione Pilota (La chiave è fondamentale nel frammento)
