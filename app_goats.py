@@ -92,9 +92,9 @@ if "archivio_performance" not in st.session_state:
 
 if "piloti_v2" not in st.session_state:
     st.session_state.piloti_v2 = {
-        "Kevin": {"in_pista": True, "tempo_totale_sec": 0},
-        "Bruno": {"in_pista": False, "tempo_totale_sec": 0},
-        "Daniele": {"in_pista": False, "tempo_totale_sec": 0}
+        "Kevin Liguori": {"in_pista": True, "tempo_totale_sec": 0},
+        "Bruno Colombo": {"in_pista": False, "tempo_totale_sec": 0},
+        "Daniele Rossi": {"in_pista": False, "tempo_totale_sec": 0}
     }
 
 if "conferma_cambio_kart" not in st.session_state:
@@ -350,7 +350,11 @@ if pagina == "🏎️ Dashboard Gara":
                     """, unsafe_allow_html=True)
             
             st.write("<br>", unsafe_allow_html=True)
-            p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
+           p_subentrante = st.selectbox(
+            "Seleziona Pilota che ENTRA:", 
+            list(st.session_state.piloti_v2.keys()), 
+            key="unique_pilota_selectbox_dash"
+            )
             if st.button("🔄 CONFERMA CAMBIO PILOTA BOX"):
                 for vecchio_p, v_dati in st.session_state.piloti_v2.items():
                     if v_dati["in_pista"]:
