@@ -4,6 +4,21 @@ import time
 
 st.set_page_config(layout="wide")
 
+# --- CSS PERSONALIZZATO (DA INCOLLARE SUBITO SOTTO SET_PAGE_CONFIG) ---
+st.markdown("""
+    <style>
+    .timer-container { padding: 15px; border-radius: 5px; background-color: #1a1a1a; margin-bottom: 10px; }
+    .timer-digital { font-size: 32px; font-weight: bold; color: white; }
+    .driver-row-active { display: flex; justify-content: space-between; padding: 10px; background: #262626; border-left: 4px solid #00e676; margin-bottom: 5px; }
+    .driver-row { display: flex; justify-content: space-between; padding: 10px; background: #1a1a1a; border-left: 4px solid #6c7a89; margin-bottom: 5px; }
+    .led-green { width: 12px; height: 12px; background: #00e676; border-radius: 50%; box-shadow: 0 0 8px #00e676; }
+    .led-red { width: 12px; height: 12px; background: #ff1744; border-radius: 50%; }
+    .radar-box { padding: 15px; background: #1a1a1a; border-radius: 5px; border-left: 4px solid #ff9800; }
+    .macro-cronometro { font-size: 40px; font-weight: bold; color: #ff9800; }
+    .warning-red { background: #d32f2f; color: white; padding: 10px; font-weight: bold; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
+
 # ==========================================
 # 1. INIZIALIZZAZIONE STATI (IL MOTORE - DEVE ESSERE IN CIMA)
 # ==========================================
