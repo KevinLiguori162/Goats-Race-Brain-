@@ -275,12 +275,37 @@ if pagina == "🏎️ Dashboard Gara":
 
         # 1. COLONNA SINISTRA: EQUIPAGGIO E LED DINAMICI
         with col_sinistra:
-           st.markdown("<h4 style='color:#ff1744;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
-            for nome_p, dati_p in st.session_state.piloti_v2.items():
+          st.markdown("<h4 style='color:#ff1744; margin-bottom:15px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
+        
+        for nome_p, dati_p in st.session_state.piloti_v2.items():
             if dati_p["in_pista"]:
-            st.markdown(f"**🏎️ {nome_p}** - *In Pista* (Stato: Attivo)", unsafe_allow_html=True)
+                tempo_stint_live_sec = int(time.time() - st.session_state.timestamp_start_stint_live)
+                min_live = tempo_stint_live_sec // 60
+                sec_live = tempo_stint_live_sec % 60
+                tempo_tot_totale_min = int((dati_p["tempo_totale_sec"] + tempo_stint_live_sec) // 60)
+                
+                st.markdown(f"""
+                <div class="driver-row-active">
+                    <div>
+                        <b style="color:white; font-size:14px;">🏎️ {nome_p}</b><br>
+                        <span style="color:#00e676; font-size:11px;">Stint Live: {min_live:02d}:{sec_live:02d}</span><br>
+                        <span style="color:#a3a3a3; font-size:11px;">Totale: {tempo_tot_totale_min} min</span>
+                    </div>
+                    <span class="led-green"></span>
+                </div>
+                """, unsafe_allow_html=True)
             else:
-            st.markdown(f"👤 {nome_p} - *Al Box* (A riposo)", unsafe_allow_html=True)
+                min_tot = int(dati_p["tempo_totale_sec"] // 60)
+                st.markdown(f"""
+                <div class="driver-row">
+                    <div>
+                        <b style="color:#a3a3a3; font-size:14px;">👤 {nome_p}</b><br>
+                        <span style="color:#6c7a89; font-size:11px;">Al Box (A riposo)</span><br>
+                        <span style="color:#6c7a89; font-size:11px;">Totale: {min_tot} min</span>
+                    </div>
+                    <span class="led-red"></span>
+                </div>
+                """, unsafe_allow_html=True)
 
 # Selezione e Cambio Pilota
             p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()))
