@@ -462,19 +462,11 @@ with st.expander("🔄 Gestione Cambi Pilota"):
                 st.markdown("<span style='font-size:12px; font-weight:bold; color:#ff9800;'>🕵️ Spy Radar Competitori:</span>", unsafe_allow_html=True)
     
     # Iniziamo il div radar
-    radar_html = '<div class="radar-box">'
-    
-    # Se il database è vuoto, diciamo che è in attesa
-    if not st.session_state.database_rivali_v2:
-        radar_html += "⚫ <i>In attesa dati...</i>"
-    else:
-        # Qui cicliamo su quello che arriva dal database dinamico
-        for rivale in st.session_state.database_rivali_v2:
-        # Recuperiamo i dati in modo sicuro
-            nome_team = rivale.get('TEAM', 'N/A')
-        stato = rivale.get('STATUS', '---')
-        radar_html += f"⚫ <b>{nome_team}</b>: {stato}<br>"
-    render_active_dashboard()
+   radar_html += "</div>"
+    st.markdown(radar_html, unsafe_allow_html=True)
+
+# RICHIAMA LA FUNZIONE UNA SOLA VOLTA FUORI DALLA DEFINIZIONE
+render_active_dashboard()
 
 
 # ==========================================
