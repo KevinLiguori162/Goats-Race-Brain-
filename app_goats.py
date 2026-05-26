@@ -349,70 +349,15 @@ if pagina == "🏎️ Dashboard Gara":
                 else:
                     min_tot = int(dati_p["tempo_totale_sec"] // 60)
                     # --- VERSIONE COMPATTA EQUIPAGGIO ---
-st.markdown("<h4 style='color:#ff1744; margin-bottom:15px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
-
-# 1. CICLO PER VISUALIZZARE I PILOTI
-for nome_p, dati_p in st.session_state.piloti_v2.items():
-    if dati_p["in_pista"]:
-        tempo_stint_live_sec = int(time.time() - st.session_state.timestamp_start_stint_live)
-        min_live = tempo_stint_live_sec // 60
-        sec_live = tempo_stint_live_sec % 60
-        tempo_tot_totale_min = int((dati_p["tempo_totale_sec"] + tempo_stint_live_sec) // 60)
-        
-        st.markdown(f"""
-        <div class="driver-row-active">
-            <div>
-                <b style="color:white; font-size:14px;">🏎️ {nome_p}</b><br>
-                <span style="color:#00e676; font-size:11px;">Stint Live: {min_live:02d}:{sec_live:02d}</span><br>
-                <span style="color:#a3a3a3; font-size:11px;">Totale: {tempo_tot_totale_min} min</span>
-            </div>
-            <span class="led-green"></span>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        min_tot = int(dati_p["tempo_totale_sec"] // 60)
-        st.markdown(f"""
-        <div class="driver-row">
-            <div>
-                <b style="color:#a3a3a3; font-size:14px;">👤 {nome_p}</b><br>
-                <span style="color:#6c7a89; font-size:11px;">Al Box (A riposo)</span><br>
-                <span style="color:#6c7a89; font-size:11px;">Totale: {min_tot} min</span>
-            </div>
-            <span class="led-red"></span>
-        </div>
-        """, unsafe_allow_html=True)
-
-# 2. GESTIONE CAMBI (FUORI DAL FOR - IMPORTANTE!)
-st.write("---") # Linea di separazione
-p_subentrante = st.selectbox(
-    "Seleziona Pilota che ENTRA:", 
-    list(st.session_state.piloti_v2.keys()), 
-    key="unique_pilota_selectbox_dash"
-)
-
-if st.button("🔄 CONFERMA CAMBIO PILOTA BOX", key="btn_conferma_cambio_pilota"):
-    # Logica di aggiornamento
-    for vecchio_p, v_dati in st.session_state.piloti_v2.items():
-        if v_dati["in_pista"]:
-            tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
-            st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
-            st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-    
-    st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
-    st.session_state.timestamp_start_stint_live = time.time()
-    st.success(f"{p_subentrante} in pista!")
-    st.rerun()
-            
-            # Bottone di conferma (Anche qui serve una chiave univoca)
-            if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
-        # 1. Ciclo per disattivare il vecchio pilota (DEVE ESSERE RIENTRATO)
+st.# Gestione Cambi Pilota
+with st.expander("🔄 Gestione Cambi Pilota"):
+    p_subentrante = st.selectbox("Seleziona Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()), key="unique_pilota_selectbox_dash")
+    if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
         for vecchio_p, v_dati in st.session_state.piloti_v2.items():
             if v_dati["in_pista"]:
                 tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
                 st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
                 st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-        
-        # 2. Attivazione nuovo pilota (ANCHE QUESTE DEVONO ESSERE RIENTRATE RISPETTO ALL'IF)
         st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
         st.session_state.timestamp_start_stint_live = time.time()
         st.success(f"{p_subentrante} in pista!")
