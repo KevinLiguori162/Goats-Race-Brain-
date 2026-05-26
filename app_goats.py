@@ -57,8 +57,6 @@ if not st.session_state.autenticato:
 # ==========================================
 st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
 st.sidebar.title("GRT Control Panel")
-lista_pagine = ["🏎️ Dashboard Gara", "📊 Strategia", "📡 Live Timing", "🛠️ Kart's Performance"]
-pagina = st.sidebar.radio("Seleziona Area:", lista_pagine)
 
 if st.sidebar.button("🔒 Blocca"):
     st.session_state.autenticato = False
