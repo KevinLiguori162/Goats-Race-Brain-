@@ -276,8 +276,7 @@ if pagina == "🏎️ Dashboard Gara":
         # 1. COLONNA SINISTRA: EQUIPAGGIO E LED DINAMICI
         with col_sinistra:
            st.markdown("<h4 style='color:#ff1744;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
-
-            for nome_p, dati_p in st.session_state.piloti_v2.items():
+     for nome_p, dati_p in st.session_state.piloti_v2.items():
             if dati_p["in_pista"]:
             st.markdown(f"**🏎️ {nome_p}** - *In Pista* (Stato: Attivo)", unsafe_allow_html=True)
             else:
