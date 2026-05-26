@@ -358,9 +358,10 @@ for nome_p, dati_p in st.session_state.piloti_v2.items():
     
     # Riga singola molto sottile
        # 1. Intestazione
+# 1. Intestazione (allineata al margine del blocco precedente)
 st.markdown("<h4 style='color:#ff1744; margin-bottom:10px; font-size:16px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
 
-# 2. Ciclo dei piloti (Visualizza solo la lista)
+# 2. Ciclo dei piloti
 for nome_p, dati_p in st.session_state.piloti_v2.items():
     colore_stato = "#00e676" if dati_p["in_pista"] else "#4a4a4a"
     stato_testo = "IN PISTA" if dati_p["in_pista"] else "BOX"
@@ -374,7 +375,7 @@ for nome_p, dati_p in st.session_state.piloti_v2.items():
     </div>
     """, unsafe_allow_html=True)
 
-# 3. Gestione Cambi (FUORI dal ciclo for, apparirà una sola volta in fondo)
+# 3. Gestione Cambi (FUORI dal ciclo for)
 with st.expander("🔄 Gestione Cambi Pilota"):
     p_subentrante = st.selectbox(
         "Seleziona Pilota che ENTRA:", 
