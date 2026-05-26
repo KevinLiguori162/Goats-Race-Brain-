@@ -100,7 +100,13 @@ if "timestamp_start_gara" not in st.session_state:
     st.session_state.timestamp_start_gara = time.time()
     st.session_state.timestamp_start_kart = time.time()
     st.session_state.timestamp_start_stint_live = time.time()
-
+    
+if "piloti" not in st.session_state:
+    st.session_state.piloti = {
+        "Kevin Liguori": {"stato": "Riposo"},
+        "Bruno Colombo": {"stato": "Riposo"},
+        "Daniele Rossi": {"stato": "Riposo"}
+    }
 if "conferma_cambio_kart" not in st.session_state:
     st.session_state.conferma_cambio_kart = False
 
