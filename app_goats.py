@@ -357,6 +357,14 @@ for nome_p, dati_p in st.session_state.piloti_v2.items():
     stato_testo = "IN PISTA" if dati_p["in_pista"] else "BOX"
     
     # Riga singola molto sottile
+       # 1. Intestazione
+st.markdown("<h4 style='color:#ff1744; margin-bottom:10px; font-size:16px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
+
+# 2. Ciclo dei piloti (Visualizza solo la lista)
+for nome_p, dati_p in st.session_state.piloti_v2.items():
+    colore_stato = "#00e676" if dati_p["in_pista"] else "#4a4a4a"
+    stato_testo = "IN PISTA" if dati_p["in_pista"] else "BOX"
+    
     st.markdown(f"""
     <div style="display:flex; justify-content:space-between; align-items:center; 
                 background:#1a1a1a; padding:5px 10px; border-radius:4px; margin-bottom:4px;
@@ -365,6 +373,26 @@ for nome_p, dati_p in st.session_state.piloti_v2.items():
         <span style="font-size:11px; color:{colore_stato};">{stato_testo}</span>
     </div>
     """, unsafe_allow_html=True)
+
+# 3. Gestione Cambi (FUORI dal ciclo for, apparirà una sola volta in fondo)
+with st.expander("🔄 Gestione Cambi Pilota"):
+    p_subentrante = st.selectbox(
+        "Seleziona Pilota che ENTRA:", 
+        list(st.session_state.piloti_v2.keys()), 
+        key="unique_pilota_selectbox_dash"
+    )
+    
+    if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
+        for vecchio_p, v_dati in st.session_state.piloti_v2.items():
+            if v_dati["in_pista"]:
+                tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
+                st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
+                st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
+        
+        st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
+        st.session_state.timestamp_start_stint_live = time.time()
+        st.success(f"{p_subentrante} in pista!")
+        st.rerun()
             
             st.write("<br>", unsafe_allow_html=True)
            # Selezione Pilota (La chiave è fondamentale nel frammento)
