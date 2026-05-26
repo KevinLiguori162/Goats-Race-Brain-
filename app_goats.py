@@ -377,11 +377,7 @@ for nome_p, dati_p in st.session_state.piloti_v2.items():
 
 # 3. Gestione Cambi (FUORI dal ciclo for)
 with st.expander("🔄 Gestione Cambi Pilota"):
-    p_subentrante = st.selectbox(
-        "Seleziona Pilota che ENTRA:", 
-        list(st.session_state.piloti_v2.keys()), 
-        key="unique_pilota_selectbox_dash"
-    )
+    p_subentrante = st.selectbox("Pilota che ENTRA:", list(st.session_state.piloti_v2.keys()), key="unique_pilota_selectbox_dash")
     
     if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
         for vecchio_p, v_dati in st.session_state.piloti_v2.items():
