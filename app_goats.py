@@ -193,7 +193,6 @@ def formatta_tempo(secondi_totali):
 # ==========================================
 if pagina == "🏎️ Dashboard Gara":
     
-    @st.fragment(run_every=1.0)
   @st.fragment(run_every=1.0)
 def render_active_dashboard():
     # --- CALCOLI (Logica mantenuta) ---
