@@ -195,6 +195,46 @@ if pagina == "🏎️ Dashboard Gara":
     
     @st.fragment(run_every=1.0)
     def render_active_dashboard():
+    
+        col_sinistra, col_centrale, col_destra = st.columns([1, 1.4, 1.1])
+        
+        # 1. COLONNA SINISTRA: STATO PILOTI E TEMPO GUIDATO
+        with col_sinistra:
+            st.markdown("<h4 style='color:#ff1744;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
+            for nome_p, dati_p in st.session_state.piloti_v2.items():
+                if dati_p["in_pista"]:
+                    t_live = int(time.time() - st.session_state.timestamp_start_stint_live)
+                    t_tot = int((dati_p["tempo_totale_sec"] + t_live) // 60)
+                    st.markdown(f"**🏎️ {nome_p}** (Stint: {t_live//60:02d}m, Tot: {t_tot}m) - 🟢 In pista", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"**👤 {nome_p}** (Tot: {int(dati_p['tempo_totale_sec']//60)}m) - 🔴 A riposo", unsafe_allow_html=True)
+
+        # 2. COLONNA CENTRALE: LIVE TIMING + GIUDIZIO KART
+        with col_centrale:
+            st.markdown("<h4 style='color:#ffffff;'>📡 LIVE APEX TIMING</h4>", unsafe_allow_html=True)
+            tabella = []
+            for r in st.session_state.database_rivali_v2:
+                info_kart = st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓"})
+                tabella.append({
+                    "POS": r['pos'], "TEAM": r['team'], 
+                    "GIRO": r['ultimo_giro'], "KART": info_kart["qualita"]
+                })
+            st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
+
+        # 3. COLONNA DESTRA: RADAR E SIMULAZIONE PIT
+        with col_destra:
+            st.markdown("<h4 style='color:#ff9800;'>🔮 RADAR AUTOMAZIONI</h4>", unsafe_allow_html=True)
+            c1, c2 = st.columns(2)
+            with c1: 
+                if st.button("🚨 SIMULA PIT", key="s1"): st.session_state.radar_is_pit_lane = True; st.rerun()
+            with c2: 
+                if st.button("🟢 USCITA", key="s2"): st.session_state.radar_is_pit_lane = False; st.rerun()
+            
+            if st.session_state.radar_is_pit_lane:
+                t_pit = int(time.time() - st.session_state.timestamp_start_pit)
+                st.markdown(f"<div class='radar-box'>⚠️ PIT IN CORSO: {t_pit}s</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div class='radar-box'>In Pista (OK)</div>", unsafe_allow_html=True)
         # --- CALCOLO DEI TIMER ---
         tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
         tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
