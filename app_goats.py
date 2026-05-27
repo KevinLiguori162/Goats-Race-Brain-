@@ -287,41 +287,7 @@ if pagina == "🏎️ Dashboard Gara":
 
         st.write("---")
         
-        # --- COLONNE PRINCIPALI ---
-        col_sinistra, col_centrale, col_destra = st.columns([1, 1.4, 1.1])
-        
-        with col_sinistra:
-            st.markdown("<h4 style='color:#ff1744; margin-bottom:15px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
-            for nome_p, dati_p in st.session_state.piloti_v2.items():
-                if dati_p["in_pista"]:
-                    tempo_stint_live_sec = int(time.time() - st.session_state.timestamp_start_stint_live)
-                    st.markdown(f"""<div class="driver-row-active"><div><b style="color:white;">🏎️ {nome_p}</b><br><span style="color:#00e676;">Stint: {tempo_stint_live_sec//60:02d}:{tempo_stint_live_sec%60:02d}</span></div><span class="led-green"></span></div>""", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"""<div class="driver-row"><div><b style="color:#a3a3a3;">👤 {nome_p}</b></div><span class="led-red"></span></div>""", unsafe_allow_html=True)
-            
-            p_subentrante = st.selectbox("Seleziona Pilota:", list(st.session_state.piloti_v2.keys()))
-            if st.button("🔄 CONFERMA CAMBIO PILOTA"):
-                for vecchio_p, v_dati in st.session_state.piloti_v2.items():
-                    if v_dati["in_pista"]:
-                        st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += int(time.time() - st.session_state.timestamp_start_stint_live)
-                        st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-                st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
-                st.session_state.timestamp_start_stint_live = time.time()
-                st.rerun()
 
-        with col_centrale:
-            st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>📡 LIVE APEX TIMING</h4>", unsafe_allow_html=True)
-            tabella = [{"POS": f"#{r['pos']}", "TEAM": r["team"], "ULTIMO": r["ultimo_giro"]} for r in st.session_state.database_rivali_v2]
-            st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
-
-        with col_destra:
-            st.markdown("<h4 style='color:#ff9800; margin-bottom:15px;'>🔮 RADAR AUTOMAZIONI</h4>", unsafe_allow_html=True)
-            if st.button("🚨 SIMULA PIT"): st.session_state.radar_is_pit_lane = True; st.rerun()
-            if st.button("🟢 USCITA"): st.session_state.radar_is_pit_lane = False; st.rerun()
-            
-            st.markdown(f"""<div class="radar-box" style="border-left: 4px solid #ff1744;">
-            <span style="font-size:11px; color:#a3a3a3;">PENALITÀ GRT</span><br>
-            <b style="font-size:22px; color:white;">{st.session_state.nostre_penalita_sec} s</b></div>""", unsafe_allow_html=True)
 
     # RICHIAMA LA FUNZIONE UNA VOLTA (Allineata a sinistra, fuori dalla funzione)
     render_active_dashboard()
