@@ -193,9 +193,9 @@ def formatta_tempo(secondi_totali):
 # ==========================================
 if pagina == "🏎️ Dashboard Gara":
     
-  @st.fragment(run_every=1.0)
+@st.fragment(run_every=1.0)
 def render_active_dashboard():
-    # --- CALCOLI (Logica mantenuta) ---
+    # --- CALCOLI ---
     tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
     tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
     gara_rimanente_sec = max(0, tempo_gara_totale_sec - tempo_trascorso_gara)
@@ -205,84 +205,38 @@ def render_active_dashboard():
     tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
     kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
     percentuale_kart = max(0.0, min(1.0, kart_rimanente_sec / limite_kart_sec))
-    
-    minuti_rimanenti_kart = kart_rimanente_sec / 60
-    if minuti_rimanenti_kart <= 15: stato_alert = "critical"
-    elif minuti_rimanenti_kart <= 30: stato_alert = "warning_blink"
-    elif minuti_rimanenti_kart <= 45: stato_alert = "warning"
-    else: stato_alert = "safe"
 
-    # --- RIGA 1: CONTROLLI (Layout da PDF) ---
+    # --- RIGA 1: CONTROLLI ---
     r1_c1, r1_c2, r1_c3 = st.columns([1, 1, 1.4])
     
     with r1_c1:
-        st.markdown(f'<div class="timer-container" style="border-top: 4px solid #d32f2f;">'
-                    f'<span style="color:#a3a3a3; font-size:11px;">TEMPO GARA</span>'
-                    f'<div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>', unsafe_allow_html=True)
+        st.markdown(f"**GARA:** {formatta_tempo(gara_rimanente_sec)}")
         st.progress(percentuale_gara)
-        
     with r1_c2:
-        st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ff9800;">'
-                    f'<span style="color:#a3a3a3; font-size:11px;">AUTONOMIA KART</span>'
-                    f'<div class="timer-digital">{formatta_tempo(kart_rimanente_sec)}</div></div>', unsafe_allow_html=True)
+        st.markdown(f"**KART:** {formatta_tempo(kart_rimanente_sec)}")
         st.progress(percentuale_kart)
-        
     with r1_c3:
-        st.markdown("### 🔮 Radar Automazioni")
-        if not st.session_state.conferma_cambio_kart:
-            if st.button("🟩 CAMBIO KART EFFETTUATO", key="dash_btn_pronto"):
-                st.session_state.conferma_cambio_kart = True
-                st.rerun()
-        else:
-            if st.button("⚠️ CONFERMA CAMBIO?", key="dash_btn_conferma"):
-                st.session_state.timestamp_start_kart = time.time()
-                st.session_state.conferma_cambio_kart = False
-                st.rerun()
-            if st.button("❌ Annulla", key="dash_btn_annulla"):
-                st.session_state.conferma_cambio_kart = False
-                st.rerun()
+        if st.button("🟩 CAMBIO KART", key="btn_k"): st.session_state.conferma_cambio_kart = True
+        if st.session_state.conferma_cambio_kart:
+            if st.button("⚠️ CONFERMA?", key="btn_k_conf"): st.session_state.timestamp_start_kart = time.time(); st.session_state.conferma_cambio_kart = False; st.rerun()
 
     st.write("---")
 
-    # --- RIGA 2: OPERATIVO (Layout da PDF) ---
+    # --- RIGA 2: OPERATIVO ---
     r2_c1, r2_c2, r2_c3 = st.columns([0.8, 2, 1.2])
-    
-    # Sx: Stato Piloti
     with r2_c1:
         st.markdown("#### 👤 Piloti")
         for nome_p, dati_p in st.session_state.piloti_v2.items():
-            if dati_p["in_pista"]:
-                st.markdown(f"🟢 **{nome_p}** (Stint: {int(time.time()-st.session_state.timestamp_start_stint_live)//60}m)")
-            else:
-                st.markdown(f"🔴 {nome_p} (Tot: {int(dati_p['tempo_totale_sec']//60)}m)")
-        
-        p_subentrante = st.selectbox("Cambio Pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
-        if st.button("🔄 Conferma Cambio", key="btn_switch"):
-            # (Inserisci qui la logica di update piloti)
-            st.rerun()
-
-    # Centro: Live Timing
+            st.write(f"{'🟢' if dati_p['in_pista'] else '🔴'} {nome_p}")
     with r2_c2:
-        st.markdown("#### 📡 Live Timing")
-        tabella = []
-        for r in st.session_state.database_rivali_v2:
-            info = st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓"})
-            tabella.append({"POS": r['pos'], "TEAM": r['team'], "ULTIMO": r['ultimo_giro'], "KART": info["qualita"]})
-        st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
-
-    # Dx: Radar Interattivo
+        st.markdown("#### 📡 Timing")
+        tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro']} for r in st.session_state.database_rivali_v2]
+        st.dataframe(pd.DataFrame(tabella), use_container_width=True)
     with r2_c3:
-        st.markdown("#### 🚨 Radar Interattivo")
-        if st.button("🚨 SIMULA PIT", key="s_pit"): st.session_state.radar_is_pit_lane = True; st.rerun()
-        if st.button("🟢 USCITA PIT", key="e_pit"): st.session_state.radar_is_pit_lane = False; st.rerun()
-        
-        if st.session_state.radar_is_pit_lane:
-            t_pit = int(time.time() - st.session_state.timestamp_start_pit)
-            st.warning(f"PIT IN CORSO: {t_pit}s")
-        
-        st.markdown(f"**Penalità GRT:** {st.session_state.nostre_penalita_sec}s")
-
-render_active_dashboard()
+        st.markdown("#### 🚨 Radar")
+        if st.button("🚨 PIT", key="s1"): st.session_state.radar_is_pit_lane = True; st.rerun()
+        if st.button("🟢 USCITA", key="s2"): st.session_state.radar_is_pit_lane = False; st.rerun()
+        if st.session_state.radar_is_pit_lane: st.warning("PIT IN CORSO")
 
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
