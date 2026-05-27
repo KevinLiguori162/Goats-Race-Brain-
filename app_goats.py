@@ -177,13 +177,8 @@ def formatta_tempo(secondi):
 # ==========================================
 # DOPO: INIZIANO I CONTROLLI DELLE PAGINE (Riga 200+)
 # ==========================================
-if pagina == "🏎️ Dashboard Gara":  # <--- Questa riga ora troverà 'pagina' pronta e definita!
-    st.title("🏎️ GOATS RACE BRAIN - Active Dashboard")
-    st.write("Supervisore al Muretto: **Piro (Andrea Pirola)**")
-    st.write("---")
-    
 # ==========================================
-# FUNZIONE STRATEGICA: FORMATTAZIONE TEMPO IN STRINGA DIGITALE
+# FUNZIONE STRATEGICA: FORMATTAZIONE TEMPO
 # ==========================================
 def formatta_tempo(secondi_totali):
     if secondi_totali <= 0:
@@ -194,280 +189,102 @@ def formatta_tempo(secondi_totali):
     return f"{ore:02d}:{minuti:02d}:{secondi:02d}"
 
 # ==========================================
-# ZONA 1: ACTIVE DASHBOARD (VERSIONE TIMELINE LINEARE - ZERO GRAFICI ESTERNI)
+# ZONA 1: ACTIVE DASHBOARD
 # ==========================================
 if pagina == "🏎️ Dashboard Gara":
     
     @st.fragment(run_every=1.0)
     def render_active_dashboard():
+        # --- CALCOLO DEI TIMER ---
+        tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
+        tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
+        gara_rimanente_sec = max(0, tempo_gara_totale_sec - tempo_trascorso_gara)
+        percentuale_gara = max(0.0, min(1.0, gara_rimanente_sec / tempo_gara_totale_sec))
         
-            # --- CALCOLO DEI TIMER ---
-            tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
-            tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
-            gara_rimanente_sec = max(0, tempo_gara_totale_sec - tempo_trascorso_gara)
-            percentuale_gara = max(0.0, min(1.0, gara_rimanente_sec / tempo_gara_totale_sec))
+        limite_kart_sec = 4 * 3600
+        tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
+        kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
+        percentuale_kart = max(0.0, min(1.0, kart_rimanente_sec / limite_kart_sec))
+        
+        minuti_rimanenti_kart = kart_rimanente_sec / 60
+        if minuti_rimanenti_kart <= 15: stato_alert = "critical"
+        elif minuti_rimanenti_kart <= 30: stato_alert = "warning_blink"
+        elif minuti_rimanenti_kart <= 45: stato_alert = "warning"
+        else: stato_alert = "safe"
+
+        # --- SEZIONE SUPERIORE ---
+        col_c1, col_c2, col_btn_box = st.columns([1, 1, 1.4])
+        
+        with col_c1:
+            st.markdown(f"""<div class="timer-container" style="border-top: 4px solid #d32f2f;">
+            <span style="color:#a3a3a3; font-size:11px; font-weight:bold; letter-spacing:1px;">TEMPO RIME GARA</span>
+            <div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>""", unsafe_allow_html=True)
+            st.progress(percentuale_gara)
             
-            limite_kart_sec = 4 * 3600
-            tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
-            kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
-            percentuale_kart = max(0.0, min(1.0, kart_rimanente_sec / limite_kart_sec))
+        with col_c2:
+            st.markdown(f"""<div class="timer-container" style="border-top: 4px solid #ff9800;">
+            <span style="color:#a3a3a3; font-size:11px; font-weight:bold; letter-spacing:1px;">AUTONOMIA TELAIO KART</span>
+            <div class="timer-digital">{formatta_tempo(kart_rimanente_sec)}</div></div>""", unsafe_allow_html=True)
+            st.progress(percentuale_kart)
             
-            # Logica avvisi Scadenza Kart
-            minuti_rimanenti_kart = kart_rimanente_sec / 60
-            if minuti_rimanenti_kart <= 15: stato_alert = "critical"
-            elif minuti_rimanenti_kart <= 30: stato_alert = "warning_blink"
-            elif minuti_rimanenti_kart <= 45: stato_alert = "warning"
-            else: stato_alert = "safe"
-    
-            # --- SEZIONE SUPERIORE: TIMELINES ED ERASE DI PLOTLY ---
-            col_c1, col_c2, col_btn_box = st.columns([1, 1, 1.4])
+        with col_btn_box:
+            if stato_alert == "warning": st.markdown("<div style='color:#ffeb3b; text-align:center; font-weight:bold; font-size:12px; margin-top:5px;'>⚠️ Sotto i 45 min! Pianificare Cambio Kart</div>", unsafe_allow_html=True)
+            elif stato_alert == "warning_blink": st.markdown("<div class='warning-orange' style='font-size:12px; padding:6px; margin-top:5px;'>⏳ ATTENZIONE: -30 MIN AL LIMITE TELAIO!</div>", unsafe_allow_html=True)
+            elif stato_alert == "critical": st.markdown("<div class='warning-red' style='font-size:12px; padding:6px; margin-top:5px;'>🚨 DISASTRO TELAIO: CAMBIARE ENTRO 15 MIN!</div>", unsafe_allow_html=True)
             
-            with col_c1:
-                st.markdown(f"""
-                <div class="timer-container" style="border-top: 4px solid #d32f2f;">
-                    <span style="color:#a3a3a3; font-size:11px; font-weight:bold; letter-spacing:1px;">TEMPO RIME GARA</span>
-                    <div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div>
-                </div>
-                """, unsafe_allow_html=True)
-                st.progress(percentuale_gara)
-                
-            with col_c2:
-                st.markdown(f"""
-                <div class="timer-container" style="border-top: 4px solid #ff9800;">
-                    <span style="color:#a3a3a3; font-size:11px; font-weight:bold; letter-spacing:1px;">AUTONOMIA TELAIO KART</span>
-                    <div class="timer-digital">{formatta_tempo(kart_rimanente_sec)}</div>
-                </div>
-                """, unsafe_allow_html=True)
-                st.progress(percentuale_kart)
-                
-            with col_btn_box:
-                if stato_alert == "warning":
-                    st.markdown("<div style='color:#ffeb3b; text-align:center; font-weight:bold; font-size:12px; margin-top:5px;'>⚠️ Sotto i 45 min! Pianificare Cambio Kart</div>", unsafe_allow_html=True)
-                elif stato_alert == "warning_blink":
-                    st.markdown("<div class='warning-orange' style='font-size:12px; padding:6px; margin-top:5px;'>⏳ ATTENZIONE: -30 MIN AL LIMITE TELAIO!</div>", unsafe_allow_html=True)
-                elif stato_alert == "critical":
-                    st.markdown("<div class='warning-red' style='font-size:12px; padding:6px; margin-top:5px;'>🚨 DISASTRO TELAIO: CAMBIARE ENTRO 15 MIN!</div>", unsafe_allow_html=True)
-                else:
-                    st.write("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-                    
-                # Tasto cambio kart di sicurezza a due stadi nativo
-                if not st.session_state.conferma_cambio_kart:
-                    st.markdown('<div class="cambio-kart-pronto">', unsafe_allow_html=True)
-                    if st.button("🟩 CAMBIO KART EFFETTUATO", key="dash_btn_pronto"):
-                        st.session_state.conferma_cambio_kart = True
-                        st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
-                else:
-                    st.markdown('<div class="cambio-kart-conferma">', unsafe_allow_html=True)
-                    if st.button("⚠️ CONFERMA CAMBIO? (PREMI ANCORA)", key="dash_btn_conferma"):
-                        st.session_state.timestamp_start_kart = time.time()
-                        st.session_state.conferma_cambio_kart = False
-                        st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
-                    if st.button("❌ Annulla errore click", key="dash_btn_annulla"):
-                        st.session_state.conferma_cambio_kart = False
-                        st.rerun()
-    
-            st.write("---")
-    
-            # --- DIVISIONE IN 3 COLONNE PRINCIPALI ---
-            col_sinistra, col_centrale, col_destra = st.columns([1, 1.4, 1.1])
-    
-            # 1. COLONNA SINISTRA: EQUIPAGGIO E LED DINAMICI
-            with col_sinistra:
-              st.markdown("<h4 style='color:#ff1744; margin-bottom:15px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
-            
+            if not st.session_state.conferma_cambio_kart:
+                if st.button("🟩 CAMBIO KART EFFETTUATO", key="dash_btn_pronto"):
+                    st.session_state.conferma_cambio_kart = True
+                    st.rerun()
+            else:
+                if st.button("⚠️ CONFERMA CAMBIO? (PREMI ANCORA)", key="dash_btn_conferma"):
+                    st.session_state.timestamp_start_kart = time.time()
+                    st.session_state.conferma_cambio_kart = False
+                    st.rerun()
+                if st.button("❌ Annulla errore click", key="dash_btn_annulla"):
+                    st.session_state.conferma_cambio_kart = False
+                    st.rerun()
+
+        st.write("---")
+        
+        # --- COLONNE PRINCIPALI ---
+        col_sinistra, col_centrale, col_destra = st.columns([1, 1.4, 1.1])
+        
+        with col_sinistra:
+            st.markdown("<h4 style='color:#ff1744; margin-bottom:15px;'>👤 EQUIPAGGIO GRT</h4>", unsafe_allow_html=True)
             for nome_p, dati_p in st.session_state.piloti_v2.items():
                 if dati_p["in_pista"]:
                     tempo_stint_live_sec = int(time.time() - st.session_state.timestamp_start_stint_live)
-                    min_live = tempo_stint_live_sec // 60
-                    sec_live = tempo_stint_live_sec % 60
-                    tempo_tot_totale_min = int((dati_p["tempo_totale_sec"] + tempo_stint_live_sec) // 60)
-                    
-                    st.markdown(f"""
-                    <div class="driver-row-active">
-                        <div>
-                            <b style="color:white; font-size:14px;">🏎️ {nome_p}</b><br>
-                            <span style="color:#00e676; font-size:11px;">Stint Live: {min_live:02d}:{sec_live:02d}</span><br>
-                            <span style="color:#a3a3a3; font-size:11px;">Totale: {tempo_tot_totale_min} min</span>
-                        </div>
-                        <span class="led-green"></span>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(f"""<div class="driver-row-active"><div><b style="color:white;">🏎️ {nome_p}</b><br><span style="color:#00e676;">Stint: {tempo_stint_live_sec//60:02d}:{tempo_stint_live_sec%60:02d}</span></div><span class="led-green"></span></div>""", unsafe_allow_html=True)
                 else:
-                    min_tot = int(dati_p["tempo_totale_sec"] // 60)
-                    st.markdown(f"""
-                    <div class="driver-row">
-                        <div>
-                            <b style="color:#a3a3a3; font-size:14px;">👤 {nome_p}</b><br>
-                            <span style="color:#6c7a89; font-size:11px;">Al Box (A riposo)</span><br>
-                            <span style="color:#6c7a89; font-size:11px;">Totale: {min_tot} min</span>
-                        </div>
-                        <span class="led-red"></span>
-                    </div>
-                    """, unsafe_allow_html=True)
-    
-    # Selezione e Cambio Pilota
-                # Aggiungi un key univoco a questo widget
-            p_subentrante = st.selectbox(
-                "Seleziona Pilota che ENTRA:", 
-                list(st.session_state.piloti_v2.keys()), 
-                key="selectbox_piloti_dashboard"
-            )
+                    st.markdown(f"""<div class="driver-row"><div><b style="color:#a3a3a3;">👤 {nome_p}</b></div><span class="led-red"></span></div>""", unsafe_allow_html=True)
             
-            # Aggiungi un key univoco anche al bottone
-            if st.button("🔄 CONFERMA CAMBIO PILOTA BOX", key="btn_conferma_cambio"):
+            p_subentrante = st.selectbox("Seleziona Pilota:", list(st.session_state.piloti_v2.keys()))
+            if st.button("🔄 CONFERMA CAMBIO PILOTA"):
                 for vecchio_p, v_dati in st.session_state.piloti_v2.items():
                     if v_dati["in_pista"]:
-                        tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
-                        st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
+                        st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += int(time.time() - st.session_state.timestamp_start_stint_live)
                         st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-                
                 st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
                 st.session_state.timestamp_start_stint_live = time.time()
-                st.success(f"{p_subentrante} in pista!")
                 st.rerun()
-                
-                for nome_p, dati_p in st.session_state.piloti_v2.items():
-                    if dati_p["in_pista"]:
-                        tempo_stint_live_sec = int(time.time() - st.session_state.timestamp_start_stint_live)
-                        min_live = tempo_stint_live_sec // 60
-                        sec_live = tempo_stint_live_sec % 60
-                        
-                        tempo_tot_totale_min = int((dati_p["tempo_totale_sec"] + tempo_stint_live_sec) // 60)
-                        
-                        st.markdown(f"""
-                        <div class="driver-row-active">
-                            <div>
-                                <b style="color:white; font-size:14px;">🏎️ {nome_p}</b><br>
-                                <span style="color:#00e676; font-size:11px;">Stint Live: {min_live:02d}:{sec_live:02d}</span><br>
-                                <span style="color:#a3a3a3; font-size:11px;">Totale: {tempo_tot_totale_min} min</span>
-                            </div>
-                            <span class="led-green"></span>
-                        </div>
-                        """, unsafe_allow_html=True)
-                    else:
-                        min_tot = int(dati_p["tempo_totale_sec"] // 60)
-                        # --- VERSIONE COMPATTA EQUIPAGGIO ---
-    with st.expander("🔄 Gestione Cambi Pilota"):
-        p_subentrante = st.selectbox(
-            "Seleziona Pilota che ENTRA:", 
-            list(st.session_state.piloti_v2.keys()), 
-            key="unique_pilota_selectbox_dash"
-        )
-        
-        if st.button("🔄 CONFERMA CAMBIO BOX", key="btn_conferma_cambio_pilota"):
-            for vecchio_p, v_dati in st.session_state.piloti_v2.items():
-                if v_dati["in_pista"]:
-                    tempo_stint_finito = int(time.time() - st.session_state.timestamp_start_stint_live)
-                    st.session_state.piloti_v2[vecchio_p]["tempo_totale_sec"] += tempo_stint_finito
-                    st.session_state.piloti_v2[vecchio_p]["in_pista"] = False
-            
-            st.session_state.piloti_v2[p_subentrante]["in_pista"] = True
-            st.session_state.timestamp_start_stint_live = time.time()
-            st.success(f"{p_subentrante} in pista!")
-            st.rerun()
-    
-            # 2. COLONNA CENTRALE: LIVE TIMING SINTETICO APEX
-            with col_centrale:
-                st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>📡 LIVE APEX TIMING (Sintesi)</h4>", unsafe_allow_html=True)
-                
-                tabella_dashboard = []
-                for r in st.session_state.database_rivali_v2:
-                    info_bibbia = st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓ Sconosciuto"})
-                    tabella_dashboard.append({
-                        "POS": f"#{r['pos']}",
-                        "TEAM": r["team"],
-                        "CAT": r["cat"],
-                        "ULTIMO GIRO": r["ultimo_giro"],
-                        "GIUDIZIO KART": info_bibbia["qualita"]
-                    })
-                
-                st.dataframe(pd.DataFrame(tabella_dashboard), use_container_width=True, hide_index=True)
-                
-                if st.button("🗺️ MOSTRA/NASCONDI MAPPA CIRCUITO LIVE"):
-                    st.session_state.mostra_mappa = not st.session_state.get("mostra_mappa", False)
-                    
-                if st.session_state.get("mostra_mappa", False):
-                    st.markdown("""
-                    <div class="map-container">
-                        <b style="color:white; font-size:16px;">🟢 TRACCIATO R-ONE INTEGRATO</b><br>
-                        <span style="font-size:12px;">[Mappa Vettoriale Attiva - Coordinate Sincronizzate da Apex Timing]</span><br><br>
-                        ⚫ GRT (Pos 1) | ⚫ Winner Team (Pos 2) | ⚫ Kartel (Pos 3)<br>
-                        <div style="font-size:11px; margin-top:15px; color:#6c7a89;">Aggiornamento istantaneo sul loop dei transponder.</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-    
-            # 3. COLONNA DESTRA: IL "RADAR" BOX INTELLIGENTE
-            with col_destra:
-                st.markdown("<h4 style='color:#ff9800; margin-bottom:15px;'>🔮 RADAR AUTOMAZIONI BOX</h4>", unsafe_allow_html=True)
-            
-            c_sim1, c_sim2 = st.columns(2)
-            with c_sim1:
-                if st.button("🚨 SIMULA IN CORSIA PIT"):
-                    st.session_state.radar_is_pit_lane = True
-                    st.session_state.timestamp_start_pit = time.time()
-                    st.rerun()
-            with c_sim2:
-                if st.button("🟢 SIMULA USCITA PIT"):
-                    st.session_state.radar_is_pit_lane = False
-                    st.rerun()
 
-            # --- SEZIONE PIT STOP LIVE CORRETTA ---
-            if st.session_state.radar_is_pit_lane:
-                tempo_pit_attuale = int(time.time() - st.session_state.timestamp_start_pit)
-                target_strategia_consigliato = st.session_state.config_tempo_pit_min
-                
-                if tempo_pit_attuale >= target_strategia_consigliato:
-                    stile_box = "radar-pit-safe"
-                    cronometro_classe = "macro-cronometro-safe"
-                    testo_aiuto = f"✅ TARGET RAGGIUNTO! Puoi uscire (Max: {st.session_state.config_tempo_pit_max}s)"
-                else:
-                    stile_box = "radar-pit-live"
-                    cronometro_classe = "macro-cronometro"
-                    testo_aiuto = f"🛑 ATTENDI: Target minimo = {target_strategia_consigliato}s"
-                
-                if tempo_pit_attuale >= (st.session_state.config_tempo_pit_max - 15):
-                    st.markdown("<div class='warning-red'>🚨 PERICOLO: SFORAMENTO TEMPO MASSIMO PIT! USCIRE!</div>", unsafe_allow_html=True)
-                
-                st.markdown(f"""
-                <div class="{stile_box}">
-                    <span style="font-size:12px; font-weight:bold; color:white;">⚠️ NOSTRO KART IN CORSIA BOX ⚠️</span><br>
-                    <div class="{cronometro_classe}">{tempo_pit_attuale}s</div>
-                    <span style="font-size:11px; color:#a3a3a3;">{testo_aiuto}</span>
-                </div>
-                    """, unsafe_allow_html=True)
-                    st.write("")
-    
-                ## --- GESTIONE PENALITÀ GRT ---
-                st.markdown(f"""
-                <div class="radar-box" style="border-left: 4px solid #ff1744;">
-                    <span style="font-size:11px; color:#a3a3a3;">SANZIONI E RECLAMI LIVE GRT</span><br>
-                    <b style="font-size:22px; color:white;">{st.session_state.nostre_penalita_sec} secondi</b><br>
-                    <span style="font-size:10px; color:#ff1744;">[Aggiunti automaticamente al calcolo del pit]</span>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                c_pen1, c_pen2 = st.columns(2)
-                with c_pen1:
-                    if st.button("➕ 10s Penalità"):
-                        st.session_state.nostre_penalita_sec += 10
-                        st.rerun()
-                with c_pen2:
-                    if st.button("🧹 Azzera"):
-                        st.session_state.nostre_penalita_sec = 0
-                        st.rerun()
-                
-                def render_radar():
-                    st.markdown("<span style='font-size:12px; font-weight:bold; color:#ff9800;'>🕵️ Spy Radar Competitori:</span>", unsafe_allow_html=True)
-        
-        # Iniziamo il div radar
-       radar_html += "</div>"
-        st.markdown(radar_html, unsafe_allow_html=True)
-    
-    # RICHIAMA LA FUNZIONE UNA SOLA VOLTA FUORI DALLA DEFINIZIONE
+        with col_centrale:
+            st.markdown("<h4 style='color:#ffffff; margin-bottom:15px;'>📡 LIVE APEX TIMING</h4>", unsafe_allow_html=True)
+            tabella = [{"POS": f"#{r['pos']}", "TEAM": r["team"], "ULTIMO": r["ultimo_giro"]} for r in st.session_state.database_rivali_v2]
+            st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
+
+        with col_destra:
+            st.markdown("<h4 style='color:#ff9800; margin-bottom:15px;'>🔮 RADAR AUTOMAZIONI</h4>", unsafe_allow_html=True)
+            if st.button("🚨 SIMULA PIT"): st.session_state.radar_is_pit_lane = True; st.rerun()
+            if st.button("🟢 USCITA"): st.session_state.radar_is_pit_lane = False; st.rerun()
+            
+            st.markdown(f"""<div class="radar-box" style="border-left: 4px solid #ff1744;">
+            <span style="font-size:11px; color:#a3a3a3;">PENALITÀ GRT</span><br>
+            <b style="font-size:22px; color:white;">{st.session_state.nostre_penalita_sec} s</b></div>""", unsafe_allow_html=True)
+
+    # RICHIAMA LA FUNZIONE UNA VOLTA (Allineata a sinistra, fuori dalla funzione)
     render_active_dashboard()
-
 
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
@@ -625,51 +442,33 @@ elif "Strategia" in pagina:
 # ==========================================
 elif "Live Timing" in pagina:
     st.title("📡 Live Timing Totale Sincronizzato")
-    st.write("Monitoraggio globale della classifica integrato. In caso di blocchi o disconnessioni, usa il tasto di backup in fondo.")
+    st.write("Monitoraggio globale della classifica integrato. In caso di blocchi, usa il tasto di backup in fondo.")
     st.write("---")
     
-    # Gestione del link (modificabile in pista)
+    # 1. GESTIONE LINK
     link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
-    
     url_live_timing = st.text_input(
-        "🔗 URL Live Timing Attivo (Modificabile in corsa):", 
-        value=link_predefinito,
-        placeholder="Incolla qui il link di YouCrono..."
+        "🔗 URL Live Timing Attivo:", 
+        value=link_predefinito
     )
     
     st.write("<br>", unsafe_allow_html=True)
     
-    # 1. LIVE TIMING SPECCHIATO (IFRAME NATIVO)
-    # Usiamo un container HTML per embeddare la pagina. L'altezza (height) è impostata a 700px per darti massima visibilità sul monitor del muretto.
+    # 2. IFRAME CON CATENA DI STRINGHE (PER EVITARE ERRORI DI COLORAZIONE)
+    iframe_code = '<iframe src="' + url_live_timing + '" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>'
+    
     try:
-        st.markdown(f"""
-            <iframe 
-                src="{url_live_timing}" 
-                width="100%" 
-                height="700" 
-                style="border:none; background-color: #0b0c10; border-radius: 8px;"
-                allowfullscreen>
-            </iframe>
-        """, unsafe_allow_html=True)
+        st.markdown(iframe_code, unsafe_allow_html=True)
     except Exception as e:
-        st.error("Impossibile caricare il widget integrato. Usa il pulsante di backup qui sotto.")
+        st.error(f"Errore widget: {e}")
         
-    st.write("<br>", unsafe_allow_html=True)
     st.write("---")
     
-    # 2. COLONNE PER IL TASTO DI EMERGENZA / ANTIBLOCCO
+    # 3. COLONNA DI EMERGENZA
     col_b1, col_b2, col_b3 = st.columns([1, 2, 1])
-    
     with col_b2:
-        st.markdown("<p style='text-align: center; color: #ff1744; font-weight: bold; margin-bottom: 5px;'>🚨 SE IL LIVE TIMING SOPRA VA IN CRASH O TI BUTTA FUORI:</p>", unsafe_allow_html=True)
-        
-        # Il pulsante apre il link direttamente in una nuova scheda bypassando i blocchi dell'app
-        st.link_button(
-            "🔄 APRI APEX / YOUCRONO IN CORREZIONE FULL SCREEN 🏎️", 
-            url=url_live_timing,
-            width="stretch"
-        )
-        st.markdown("<p style='text-align: center; font-size: 13px; color: #4f5d73; margin-top: 10px;'>Il tasto forza l'apertura del tabellone ufficiale in un tab esterno pulito, ripristinando la sessione al 100%.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: #ff1744; font-weight: bold;'>🚨 SE IL TIMING VA IN CRASH:</p>", unsafe_allow_html=True)
+        st.link_button("🔄 APRI IN TAB ESTERNO (FULL SCREEN)", url=url_live_timing)
 # ==========================================
 # PAGINA 4: KART'S PERFORMANCE (COLLEGAMENTO CORRETTO ELIF)
 # ==========================================
