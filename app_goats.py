@@ -282,7 +282,6 @@ if pagina == "🏎️ Dashboard Gara":
                 st.rerun()
 
         with col_dx:
-            with col_dx:
             st.markdown("#### 🚨 Radar Completo")
             
             # --- LOGICA BOTTONI ---
