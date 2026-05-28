@@ -246,34 +246,39 @@ if pagina == "🏎️ Dashboard Gara":
         col_sx, col_dx = st.columns([1, 1])
         
         with col_sx:
-            with col_sx:
             st.markdown("#### 👤 Gestione Piloti")
             
-            # --- 1. LISTA PILOTI CON TEMPO TOTALE ---
-            for nome_p, dati_p in st.session_state.piloti_v2.items():
-                # Calcolo tempo totale in minuti
+            # --- 1. DISPLAY PILOTI CON RIQUADRO E TEMPO ---
+            # Creiamo una griglia per i piloti
+            cols = st.columns(len(st.session_state.piloti_v2))
+            for i, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
                 totale_minuti = int(dati_p['tempo_totale_sec'] / 60)
                 stato = "🟢" if dati_p["in_pista"] else "🔴"
                 
-                # Visualizzazione riga con tempo
-                st.markdown(f"{stato} **{nome_p}**")
-                st.caption(f"⏱️ Tempo totale: {totale_minuti} min")
+                # Riquadro per ogni pilota
+                with cols[i]:
+                    st.markdown(f"""
+                        <div style="background-color: #262730; padding: 10px; border-radius: 5px; text-align: center;">
+                            <div style="font-size: 18px;">{stato}</div>
+                            <div style="font-weight: bold;">{nome_p}</div>
+                            <div style="font-size: 12px; color: #808495;">{totale_minuti} min</div>
+                        </div>
+                    """, unsafe_allow_html=True)
             
-            # --- 2. LOGICA CAMBIO PILOTA ---
-            p_sel = st.selectbox("Cambia Pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+            st.markdown("<br>", unsafe_allow_html=True)
             
-            if st.button("🔄 Conferma Swap", use_container_width=True):
-                # LOGICA DI SWAP REALE
-                # 1. Imposta tutti a False
-                for p in st.session_state.piloti_v2:
-                    st.session_state.piloti_v2[p]["in_pista"] = False
-                # 2. Imposta il selezionato a True
-                st.session_state.piloti_v2[p_sel]["in_pista"] = True
+            # --- 2. LOGICA CAMBIO PILOTA (CORRETTA) ---
+            p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+            
+            if st.button("🔄 Conferma Swap Pilota", use_container_width=True):
+                # Aggiornamento dello stato nel session_state
+                for nome in st.session_state.piloti_v2:
+                    st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
                 
-                # 3. Reset del timer dello stint live (opzionale)
+                # Reset timestamp stint live per il nuovo pilota
                 st.session_state.timestamp_start_stint_live = time.time()
                 
-                st.toast(f"Pilota in pista ora: {p_sel}")
+                st.toast(f"Pilota in pista cambiato: {p_sel}")
                 st.rerun()
         
         with col_dx:
