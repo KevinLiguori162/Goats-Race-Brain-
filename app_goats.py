@@ -193,8 +193,8 @@ def formatta_tempo(secondi_totali):
 # ==========================================
 if pagina == "🏎️ Dashboard Gara":
     
-    @st.fragment(run_every=1.0)
-    def render_active_dashboard():
+@st.fragment(run_every=1.0)
+def render_active_dashboard():
     # --- 1. CALCOLI LOGICI ---
     tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
     tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
