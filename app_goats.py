@@ -282,17 +282,41 @@ if pagina == "🏎️ Dashboard Gara":
                 st.rerun()
 
         with col_dx:
+            with col_dx:
             st.markdown("#### 🚨 Radar Completo")
-            c_a, c_b = st.columns(2)
-            if c_a.button("🚨 PIT", use_container_width=True): st.session_state.radar_is_pit_lane = True; st.rerun()
-            if c_b.button("🟢 USCITA", use_container_width=True): st.session_state.radar_is_pit_lane = False; st.rerun()
             
+            # --- LOGICA BOTTONI ---
+            c_a, c_b = st.columns(2)
+            if c_a.button("🚨 PIT", use_container_width=True): 
+                # Salva il momento esatto in cui è iniziato il PIT
+                st.session_state.timestamp_start_pit = time.time()
+                st.session_state.radar_is_pit_lane = True
+                st.rerun()
+                
+            if c_b.button("🟢 USCITA", use_container_width=True): 
+                st.session_state.radar_is_pit_lane = False
+                st.rerun()
+            
+            # --- GRAFICA CHIARA E LEGGIBILE ---
             if st.session_state.radar_is_pit_lane:
-                st.warning(f"⚠️ PIT IN CORSO: {int(time.time() - st.session_state.timestamp_start_pit)}s")
+                # Calcola secondi trascorsi dal momento del click
+                t_pit = int(time.time() - st.session_state.timestamp_start_pit)
+                
+                st.markdown(f"""
+                <div style="background-color: #7a1d1d; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #ff4b4b;">
+                    <div style="color: #ffcccc; font-size: 14px; text-transform: uppercase;">Tempo sosta PIT</div>
+                    <div style="color: #ffffff; font-size: 40px; font-weight: bold; font-family: monospace;">{t_pit}s</div>
+                </div>
+                """, unsafe_allow_html=True)
             else:
-                st.success("✅ In Pista (OK)")
+                st.markdown("""
+                <div style="background-color: #08331d; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #00ff41;">
+                    <div style="color: #ccffcc; font-size: 14px;">STATO ATTUALE</div>
+                    <div style="color: #00ff41; font-size: 30px; font-weight: bold;">IN PISTA (OK)</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
             st.markdown(f"**Penalità:** {st.session_state.nostre_penalita_sec}s")
-
     render_active_dashboard()
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
