@@ -246,11 +246,35 @@ if pagina == "🏎️ Dashboard Gara":
         col_sx, col_dx = st.columns([1, 1])
         
         with col_sx:
+            with col_sx:
             st.markdown("#### 👤 Gestione Piloti")
+            
+            # --- 1. LISTA PILOTI CON TEMPO TOTALE ---
             for nome_p, dati_p in st.session_state.piloti_v2.items():
-                st.markdown(f"{'🟢' if dati_p['in_pista'] else '🔴'} **{nome_p}**")
-            p_sel = st.selectbox("Cambio Pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
-            if st.button("🔄 Swap Pilota", use_container_width=True): st.toast(f"Pilota cambiato in: {p_sel}"); st.rerun()
+                # Calcolo tempo totale in minuti
+                totale_minuti = int(dati_p['tempo_totale_sec'] / 60)
+                stato = "🟢" if dati_p["in_pista"] else "🔴"
+                
+                # Visualizzazione riga con tempo
+                st.markdown(f"{stato} **{nome_p}**")
+                st.caption(f"⏱️ Tempo totale: {totale_minuti} min")
+            
+            # --- 2. LOGICA CAMBIO PILOTA ---
+            p_sel = st.selectbox("Cambia Pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+            
+            if st.button("🔄 Conferma Swap", use_container_width=True):
+                # LOGICA DI SWAP REALE
+                # 1. Imposta tutti a False
+                for p in st.session_state.piloti_v2:
+                    st.session_state.piloti_v2[p]["in_pista"] = False
+                # 2. Imposta il selezionato a True
+                st.session_state.piloti_v2[p_sel]["in_pista"] = True
+                
+                # 3. Reset del timer dello stint live (opzionale)
+                st.session_state.timestamp_start_stint_live = time.time()
+                
+                st.toast(f"Pilota in pista ora: {p_sel}")
+                st.rerun()
         
         with col_dx:
             st.markdown("#### 🚨 Radar Completo")
