@@ -192,74 +192,92 @@ def formatta_tempo(secondi_totali):
 # ZONA 1: ACTIVE DASHBOARD
 # ==========================================
 if pagina == "🏎️ Dashboard Gara":
-    
-        @st.fragment(run_every=1.0)
-        def render_active_dashboard():
-            # --- 1. CALCOLI LOGICI ---
-            tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
-            tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
-            gara_rimanente_sec = max(0, tempo_gara_totale_sec - tempo_trascorso_gara)
-            percentuale_gara = max(0.0, min(1.0, (tempo_trascorso_gara / tempo_gara_totale_sec)))
-            
-            limite_kart_sec = 4 * 3600
-            tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
-            kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
-            percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
+    # --- CSS PER GRAFICA E LAMPEGGIO ---
+    st.markdown("""
+        <style>
+        .timer-container { background-color: #0e1117; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #262730; }
+        .timer-digital { font-family: monospace; font-size: 24px; font-weight: bold; color: #ffffff; margin-top: 5px; }
+        .label-timer { color: #808495; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+        .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    @st.fragment(run_every=1.0)
+    def render_active_dashboard():
+        # --- 1. CALCOLI LOGICI ---
+        tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
+        tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
+        gara_rimanente_sec = max(0, tempo_gara_totale_sec - tempo_trascorso_gara)
+        percentuale_gara = max(0.0, min(1.0, (tempo_trascorso_gara / tempo_gara_totale_sec)))
         
-            # --- 2. RIGA SUPERIORE (GRAFICA TIMER) ---
-            r1_c1, r1_c2, r1_c3 = st.columns([1, 1, 1.2])
-            
-            with r1_c1:
-                st.markdown(f"**GARA:** {formatta_tempo(gara_rimanente_sec)}")
-                st.progress(percentuale_gara)
-            with r1_c2:
-                st.markdown(f"**KART:** {formatta_tempo(kart_rimanente_sec)}")
-                st.progress(percentuale_kart)
-            with r1_c3:
-                if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): 
-                    st.session_state.conferma_cambio_kart = True
-                if st.session_state.conferma_cambio_kart:
-                    if st.button("⚠️ CONFERMA?", key="btn_k_conf"): 
-                        st.session_state.timestamp_start_kart = time.time()
-                        st.session_state.conferma_cambio_kart = False
-                        st.rerun()
+        limite_kart_sec = 4 * 3600
+        tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
+        kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
+        percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
         
-            st.write("---")
+        # Logica lampeggio (sotto 30 minuti = 1800 secondi)
+        classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
         
-            # --- 3. RIGA INFERIORE (OPERATIVO) ---
-            r2_c1, r2_c2, r2_c3 = st.columns([0.8, 2, 1.2])
+        # --- 2. RIGA SUPERIORE (GRAFICA TIMER) ---
+        r1_c1, r1_c2, r1_c3 = st.columns([1, 1, 1.2])
+        
+        with r1_c1:
+            st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ff4b4b;">'
+                        f'<div class="label-timer">GARA</div>'
+                        f'<div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>', unsafe_allow_html=True)
+            st.progress(percentuale_gara)
             
-            with r2_c1:
-                st.markdown("#### 👤 Piloti")
-                for nome_p, dati_p in st.session_state.piloti_v2.items():
-                    stato = "🟢" if dati_p["in_pista"] else "🔴"
-                    st.markdown(f"{stato} **{nome_p}**")
-                
-                # Tasto cambio pilota
-                p_sel = st.selectbox("Cambio Pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
-                if st.button("🔄 Swap Pilota", use_container_width=True):
-                    # Aggiungi qui la tua logica di update stato piloti
-                    st.toast(f"Pilota cambiato in: {p_sel}")
+        with r1_c2:
+            st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ffaa00;">'
+                        f'<div class="label-timer">KART</div>'
+                        f'<div class="timer-digital {classe_blink}">{formatta_tempo(kart_rimanente_sec)}</div></div>', unsafe_allow_html=True)
+            st.progress(percentuale_kart)
+            
+        with r1_c3:
+            st.markdown("### 🔮 Radar Automazioni")
+            if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): 
+                st.session_state.conferma_cambio_kart = True
+            if st.session_state.conferma_cambio_kart:
+                if st.button("⚠️ CONFERMA CAMBIO?", key="btn_k_conf", type="primary", use_container_width=True): 
+                    st.session_state.timestamp_start_kart = time.time()
+                    st.session_state.conferma_cambio_kart = False
                     st.rerun()
+
+        st.write("---")
         
-            with r2_c2:
-                st.markdown("#### 📡 Timing")
-                tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro']} for r in st.session_state.database_rivali_v2]
-                st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
+        # --- 3. RIGA INFERIORE (OPERATIVO) ---
+        r2_c1, r2_c2, r2_c3 = st.columns([0.8, 2, 1.2])
         
-            with r2_c3:
-                st.markdown("#### 🚨 Radar")
-                c_a, c_b = st.columns(2)
-                if c_a.button("🚨 PIT", use_container_width=True): st.session_state.radar_is_pit_lane = True; st.rerun()
-                if c_b.button("🟢 USCITA", use_container_width=True): st.session_state.radar_is_pit_lane = False; st.rerun()
-                
-                if st.session_state.radar_is_pit_lane:
-                    st.warning(f"PIT IN CORSO: {int(time.time() - st.session_state.timestamp_start_pit)}s")
-                else:
-                    st.success("In Pista (OK)")
+        with r2_c1:
+            st.markdown("#### 👤 Piloti")
+            for nome_p, dati_p in st.session_state.piloti_v2.items():
+                stato = "🟢" if dati_p["in_pista"] else "🔴"
+                st.markdown(f"{stato} **{nome_p}**")
+            
+            p_sel = st.selectbox("Cambio Pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+            if st.button("🔄 Swap Pilota", use_container_width=True):
+                st.toast(f"Pilota cambiato in: {p_sel}")
+                st.rerun()
         
-        # Chiamata fuori dalla funzione
-        render_active_dashboard()
+        with r2_c2:
+            st.markdown("#### 📡 Timing")
+            tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro']} for r in st.session_state.database_rivali_v2]
+            st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
+        
+        with r2_c3:
+            st.markdown("#### 🚨 Radar")
+            c_a, c_b = st.columns(2)
+            if c_a.button("🚨 PIT", use_container_width=True): st.session_state.radar_is_pit_lane = True; st.rerun()
+            if c_b.button("🟢 USCITA", use_container_width=True): st.session_state.radar_is_pit_lane = False; st.rerun()
+            
+            if st.session_state.radar_is_pit_lane:
+                st.warning(f"PIT IN CORSO: {int(time.time() - st.session_state.timestamp_start_pit)}s")
+            else:
+                st.success("In Pista (OK)")
+
+    # Chiamata alla funzione
+    render_active_dashboard()
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
