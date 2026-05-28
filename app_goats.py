@@ -258,8 +258,8 @@ if pagina == "🏎️ Dashboard Gara":
                 minuti, secondi = divmod(int(dati_p.get('tempo_totale_sec', 0)), 60)
                 stato = "🟢" if dati_p["in_pista"] else "🔴"
                 
-               with cols[i]:
-            st.markdown(f"""
+                with cols[i]:
+                    st.markdown(f"""
 <div style="background-color: #262730; padding: 8px; border-radius: 5px; text-align: center;">
     <div style="font-size: 16px;">{stato}</div>
     <div style="font-weight: bold; font-size: 14px;">{nome_p}</div>
@@ -271,19 +271,16 @@ if pagina == "🏎️ Dashboard Gara":
             p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
             
             if st.button("🔄 Conferma Swap Pilota", use_container_width=True):
-                # Calcolo tempo
                 tempo_stint_appena_finito = time.time() - st.session_state.timestamp_start_stint_live
-                
-                # Aggiornamento dati
                 for nome in st.session_state.piloti_v2:
                     if st.session_state.piloti_v2[nome]["in_pista"]:
                         st.session_state.piloti_v2[nome]["tempo_totale_sec"] = st.session_state.piloti_v2[nome].get("tempo_totale_sec", 0) + tempo_stint_appena_finito
-                    
                     st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
                 
                 st.session_state.timestamp_start_stint_live = time.time()
                 st.toast(f"Swap effettuato: {p_sel} in pista.")
                 st.rerun()
+
         with col_dx:
             st.markdown("#### 🚨 Radar Completo")
             c_a, c_b = st.columns(2)
