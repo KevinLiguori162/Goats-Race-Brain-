@@ -258,16 +258,14 @@ if pagina == "🏎️ Dashboard Gara":
                 minuti, secondi = divmod(int(dati_p.get('tempo_totale_sec', 0)), 60)
                 stato = "🟢" if dati_p["in_pista"] else "🔴"
                 
-                with cols[i]:
-                    st.markdown(f"""
-                        <div style="background-color: #262730; padding: 8px; border-radius: 5px; text-align: center;">
-                            <div style="font-size: 16px;">{stato}</div>
-                            <div style="font-weight: bold; font-size: 14px;">{nome_p}</div>
-                            <div style="font-size: 12px; color: #808495;">{minuti}m {secondi:02d}s</div>
-                        </div>
-                    """, unsafe_html=True)
-            
-            st.markdown("<br>", unsafe_allow_html=True)
+               with cols[i]:
+            st.markdown(f"""
+<div style="background-color: #262730; padding: 8px; border-radius: 5px; text-align: center;">
+    <div style="font-size: 16px;">{stato}</div>
+    <div style="font-weight: bold; font-size: 14px;">{nome_p}</div>
+    <div style="font-size: 12px; color: #808495;">{minuti}m {secondi:02d}s</div>
+</div>
+""", unsafe_allow_html=True)
             
             # --- 2. LOGICA CAMBIO PILOTA ---
             p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
