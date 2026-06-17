@@ -1,3 +1,4 @@
+from scraper import ottieni_dati_aggiornati
 import streamlit as st
 import pandas as pd
 import time
@@ -203,13 +204,13 @@ if pagina == "🏎️ Dashboard Gara":
         </style>
     """, unsafe_allow_html=True)
 
-    @st.fragment(run_every=1.0)
-    def render_active_dashboard():
-        # --- 1. CALCOLI LOGICI ---
-        tempo_gara_totale_sec = st.session_state.config_durata_gara * 60
-        tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
-        gara_rimanente_sec = max(0, tempo_gara_totale_sec - tempo_trascorso_gara)
-        percentuale_gara = max(0.0, min(1.0, (tempo_trascorso_gara / tempo_gara_totale_sec)))
+   @st.fragment(run_every=1.0) # Lo scraper gira ogni 5 secondi
+def aggiorna_dati_scraper():
+    dati_live = ottieni_dati_aggiornati()
+    if dati_live:
+        st.session_state.database_rivali_v2 = dati_live
+
+# Poi nel tuo codice principale chiami solo aggiorna_dati_scraper()
         
         limite_kart_sec = 4 * 3600
         tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
