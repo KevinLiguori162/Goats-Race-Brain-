@@ -219,12 +219,12 @@ if pagina == "🏎️ Dashboard Gara":
         </style>
     """, unsafe_allow_html=True)
     
-        limite_kart_sec = 4 * 3600
-        tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
-        kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
-        percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
+    limite_kart_sec = 4 * 3600
+    tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
+    kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
+    percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
         
-        classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
+    classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
         
         # --- 2. RIGA SUPERIORE (COUNTDOWN) ---
         c1, c2, c3 = st.columns([1, 1, 1.2])
