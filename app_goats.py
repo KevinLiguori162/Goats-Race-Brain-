@@ -1,24 +1,56 @@
-from scraper import ottieni_dati_aggiornati
 import streamlit as st
 import pandas as pd
 import time
-import os
 import requests
-from bs4 import BeautifulSoup
+import json
+import os
 
-# --- SCRAPER INTEGRATO (Ora è tutto qui dentro) ---
+# 1. SETTINGS PAGINA (Sempre per primo)
+st.set_page_config(layout="wide")
+
+# 2. CONFIGURAZIONE
+MIO_TEAM = "GOATS RT RED" 
+API_URL = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
+BACKUP_FILE = "gara_backup.json"
+
+# 3. FUNZIONI DI MEMORIA E SCRAPER (Il blocco nuovo che sostituisce il vecchio)
+def salva_dati(dati):
+    with open(BACKUP_FILE, "w") as f:
+        json.dump(dati, f)
+
+def carica_dati():
+    if os.path.exists(BACKUP_FILE):
+        with open(BACKUP_FILE, "r") as f:
+            return json.load(f)
+    return []
+
 def ottieni_dati_aggiornati():
-    # Per ora dati simulati per non bloccare nulla
-    return [
-        {"pos": 1, "team": "GOATS RT RED", "cat": "EK1", "ultimo_giro": "1:03.950", "kart": "22", "status": "In Pista"},
-        {"pos": 2, "team": "Winner Team 1", "cat": "EK1", "ultimo_giro": "1:04.110", "kart": "14", "status": "In Pista"}
-    ]
+    try:
+        response = requests.get(API_URL, timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            if data and isinstance(data, list):
+                dati_puliti = []
+                for riga in data:
+                    dati_puliti.append({
+                        "pos": riga.get("Position", "-"),
+                        "team": riga.get("TeamName", "N/D"),
+                        "ultimo_giro": riga.get("LastLapTime", "00:00.000"),
+                        "kart": riga.get("KartNumber", "0")
+                    })
+                salva_dati(dati_puliti)
+                return dati_puliti
+    except Exception as e:
+        print(f"Errore connessione: {e}")
+    return carica_dati()
 
 @st.fragment(run_every=5.0)
 def aggiorna_dati_scraper():
-    dati = ottieni_dati_aggiornati()
-    if dati:
-        st.session_state.database_rivali_v2 = dati
+    st.session_state.database_rivali_v2 = ottieni_dati_aggiornati()
+
+# 4. INIZIALIZZAZIONE STATO
+if 'database_rivali_v2' not in st.session_state:
+    st.session_state.database_rivali_v2 = carica_dati()
 # --------------------------------------------------
 
 st.set_page_config(layout="wide")
