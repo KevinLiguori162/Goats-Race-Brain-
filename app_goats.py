@@ -196,13 +196,17 @@ def aggiorna_dati_scraper():
         st.session_state.database_rivali_v2 = dati_live
 
 def render_active_dashboard():
-    # ... tutto il codice della dashboard ...
-    # Ricordati di chiamare l'aggiornamento qui dentro:
+    # 1. Aggiorna i dati dallo scraper
     aggiorna_dati_scraper()
+    
+    # 2. Qui inserisci tutto il codice che avevi prima per la dashboard
+    # (Calcoli, variabili, st.markdown, st.columns, ecc.)
+    # ...
+    st.write("Dashboard attiva e sincronizzata")
 
 # ==========================================
-# ZONA 1: ACTIVE DASHBOARD
-# ==========================================
+# LOGICA DI NAVIGAZIONE (if/elif corretti)
+# ============================================
 if pagina == "🏎️ Dashboard Gara":
     # --- CSS PER GRAFICA E LAMPEGGIO ---
     st.markdown("""
