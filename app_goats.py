@@ -351,12 +351,12 @@ if pagina == "🏎️ Dashboard Gara":
 """, unsafe_allow_html=True)
             
             # --- 2. LOGICA CAMBIO PILOTA ---
-            p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+        p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
             
-            if st.button("🔄 Conferma Swap Pilota", use_container_width=True):
+        if st.button("🔄 Conferma Swap Pilota", use_container_width=True):
                 tempo_stint_appena_finito = time.time() - st.session_state.timestamp_start_stint_live
-                for nome in st.session_state.piloti_v2:
-                    if st.session_state.piloti_v2[nome]["in_pista"]:
+            for nome in st.session_state.piloti_v2:
+        if st.session_state.piloti_v2[nome]["in_pista"]:
                         st.session_state.piloti_v2[nome]["tempo_totale_sec"] = st.session_state.piloti_v2[nome].get("tempo_totale_sec", 0) + tempo_stint_appena_finito
                     st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
                 
@@ -364,33 +364,33 @@ if pagina == "🏎️ Dashboard Gara":
                 st.toast(f"Swap effettuato: {p_sel} in pista.")
                 st.rerun()
 
-        with col_dx:
-            st.markdown("#### 🚨 Radar Completo")
+    with col_dx:
+        st.markdown("#### 🚨 Radar Completo")
             
             # --- LOGICA BOTTONI ---
-            c_a, c_b = st.columns(2)
-            if c_a.button("🚨 PIT", use_container_width=True): 
+        c_a, c_b = st.columns(2)
+        if c_a.button("🚨 PIT", use_container_width=True): 
                 # Salva il momento esatto in cui è iniziato il PIT
                 st.session_state.timestamp_start_pit = time.time()
                 st.session_state.radar_is_pit_lane = True
                 st.rerun()
                 
-            if c_b.button("🟢 USCITA", use_container_width=True): 
+        if c_b.button("🟢 USCITA", use_container_width=True): 
                 st.session_state.radar_is_pit_lane = False
                 st.rerun()
             
             # --- GRAFICA CHIARA E LEGGIBILE ---
-            if st.session_state.radar_is_pit_lane:
+        if st.session_state.radar_is_pit_lane:
                 # Calcola secondi trascorsi dal momento del click
                 t_pit = int(time.time() - st.session_state.timestamp_start_pit)
                 
-                st.markdown(f"""
+        st.markdown(f"""
                 <div style="background-color: #7a1d1d; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #ff4b4b;">
                     <div style="color: #ffcccc; font-size: 14px; text-transform: uppercase;">Tempo sosta PIT</div>
                     <div style="color: #ffffff; font-size: 40px; font-weight: bold; font-family: monospace;">{t_pit}s</div>
                 </div>
                 """, unsafe_allow_html=True)
-            else:
+        else:
                 st.markdown("""
                 <div style="background-color: #08331d; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #00ff41;">
                     <div style="color: #ccffcc; font-size: 14px;">STATO ATTUALE</div>
@@ -398,7 +398,7 @@ if pagina == "🏎️ Dashboard Gara":
                 </div>
                 """, unsafe_allow_html=True)
                 
-            st.markdown(f"**Penalità:** {st.session_state.nostre_penalita_sec}s")
+        st.markdown(f"**Penalità:** {st.session_state.nostre_penalita_sec}s")
     render_active_dashboard()
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
