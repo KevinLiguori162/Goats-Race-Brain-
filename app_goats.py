@@ -3,10 +3,23 @@ import streamlit as st
 import pandas as pd
 import time
 import os
-import streamlit as st
+import requests
+from bs4 import BeautifulSoup
 
-st.write("File presenti nella cartella:")
-st.write(os.listdir('.')) # Ti mostrerà la lista di tutti i file che Streamlit vede
+# --- SCRAPER INTEGRATO (Ora è tutto qui dentro) ---
+def ottieni_dati_aggiornati():
+    # Per ora dati simulati per non bloccare nulla
+    return [
+        {"pos": 1, "team": "GOATS RT RED", "cat": "EK1", "ultimo_giro": "1:03.950", "kart": "22", "status": "In Pista"},
+        {"pos": 2, "team": "Winner Team 1", "cat": "EK1", "ultimo_giro": "1:04.110", "kart": "14", "status": "In Pista"}
+    ]
+
+@st.fragment(run_every=5.0)
+def aggiorna_dati_scraper():
+    dati = ottieni_dati_aggiornati()
+    if dati:
+        st.session_state.database_rivali_v2 = dati
+# --------------------------------------------------
 
 st.set_page_config(layout="wide")
 
