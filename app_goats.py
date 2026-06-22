@@ -227,18 +227,18 @@ if pagina == "🏎️ Dashboard Gara":
     classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
         
         # --- 2. RIGA SUPERIORE (COUNTDOWN) ---
-        c1, c2, c3 = st.columns([1, 1, 1.2])
-        with c1:
-            st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ff4b4b;"><div class="label-timer">GARA</div><div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>', unsafe_allow_html=True)
-            st.progress(percentuale_gara)
-        with c2:
-            st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ffaa00;"><div class="label-timer">KART</div><div class="timer-digital {classe_blink}">{formatta_tempo(kart_rimanente_sec)}</div></div>', unsafe_allow_html=True)
-            st.progress(percentuale_kart)
-        with c3:
-            st.markdown("### 🔮 Radar Automazioni")
-            if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): st.session_state.conferma_cambio_kart = True
-            if st.session_state.conferma_cambio_kart:
-                if st.button("⚠️ CONFERMA CAMBIO?", key="btn_k_conf", type="primary", use_container_width=True): 
+    c1, c2, c3 = st.columns([1, 1, 1.2])
+    with c1:
+        st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ff4b4b;"><div class="label-timer">GARA</div><div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>', unsafe_allow_html=True)
+        st.progress(percentuale_gara)
+    with c2:
+        st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ffaa00;"><div class="label-timer">KART</div><div class="timer-digital {classe_blink}">{formatta_tempo(kart_rimanente_sec)}</div></div>', unsafe_allow_html=True)
+        st.progress(percentuale_kart)
+    with c3:
+        st.markdown("### 🔮 Radar Automazioni")
+        if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): st.session_state.conferma_cambio_kart = True
+        if st.session_state.conferma_cambio_kart:
+            if st.button("⚠️ CONFERMA CAMBIO?", key="btn_k_conf", type="primary", use_container_width=True): 
                     st.session_state.timestamp_start_kart = time.time(); st.session_state.conferma_cambio_kart = False; st.rerun()
 
         st.write("---")
