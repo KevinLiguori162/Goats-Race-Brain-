@@ -189,6 +189,17 @@ def formatta_tempo(secondi_totali):
     secondi = int(secondi_totali % 60)
     return f"{ore:02d}:{minuti:02d}:{secondi:02d}"
 
+@st.fragment(run_every=5.0)
+def aggiorna_dati_scraper():
+    dati_live = ottieni_dati_aggiornati()
+    if dati_live:
+        st.session_state.database_rivali_v2 = dati_live
+
+def render_active_dashboard():
+    # ... tutto il codice della dashboard ...
+    # Ricordati di chiamare l'aggiornamento qui dentro:
+    aggiorna_dati_scraper()
+
 # ==========================================
 # ZONA 1: ACTIVE DASHBOARD
 # ==========================================
@@ -203,15 +214,7 @@ if pagina == "🏎️ Dashboard Gara":
         .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
         </style>
     """, unsafe_allow_html=True)
-
-@st.fragment(run_every=1.0) # Lo scraper gira ogni 5 secondi
-def aggiorna_dati_scraper():
-    dati_live = ottieni_dati_aggiornati()
-    if dati_live:
-        st.session_state.database_rivali_v2 = dati_live
-
-# Poi nel tuo codice principale chiami solo aggiorna_dati_scraper()
-        
+    
         limite_kart_sec = 4 * 3600
         tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
         kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
