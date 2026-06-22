@@ -328,21 +328,21 @@ if pagina == "🏎️ Dashboard Gara":
         # --- 4. RIGA INFERIORE (OPERATIVO) ---
         col_sx, col_dx = st.columns([1, 1])
         
-        with col_sx:
-            st.markdown("#### 👤 Gestione Piloti")
+    with col_sx:
+        st.markdown("#### 👤 Gestione Piloti")
             
             # --- PROTEZIONE INIZIALIZZAZIONE ---
-            if 'timestamp_start_stint_live' not in st.session_state:
+        if 'timestamp_start_stint_live' not in st.session_state:
                 st.session_state.timestamp_start_stint_live = time.time()
 
             # --- 1. DISPLAY PILOTI ---
-            cols = st.columns(len(st.session_state.piloti_v2))
-            for i, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
+        cols = st.columns(len(st.session_state.piloti_v2))
+        for i, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
                 minuti, secondi = divmod(int(dati_p.get('tempo_totale_sec', 0)), 60)
                 stato = "🟢" if dati_p["in_pista"] else "🔴"
                 
-                with cols[i]:
-                    st.markdown(f"""
+    with cols[i]:
+        st.markdown(f"""
 <div style="background-color: #262730; padding: 8px; border-radius: 5px; text-align: center;">
     <div style="font-size: 16px;">{stato}</div>
     <div style="font-weight: bold; font-size: 14px;">{nome_p}</div>
