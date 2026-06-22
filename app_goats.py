@@ -326,7 +326,7 @@ if pagina == "🏎️ Dashboard Gara":
     st.write("---")
 
         # --- 4. RIGA INFERIORE (OPERATIVO) ---
-        col_sx, col_dx = st.columns([1, 1])
+    col_sx, col_dx = st.columns([1, 1])
         
     with col_sx:
         st.markdown("#### 👤 Gestione Piloti")
