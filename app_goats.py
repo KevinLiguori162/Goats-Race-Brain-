@@ -204,7 +204,7 @@ if pagina == "🏎️ Dashboard Gara":
         </style>
     """, unsafe_allow_html=True)
 
-   @st.fragment(run_every=1.0) # Lo scraper gira ogni 5 secondi
+@st.fragment(run_every=1.0) # Lo scraper gira ogni 5 secondi
 def aggiorna_dati_scraper():
     dati_live = ottieni_dati_aggiornati()
     if dati_live:
