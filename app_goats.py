@@ -258,7 +258,33 @@ def render_active_dashboard():
 # LOGICA DI NAVIGAZIONE (if/elif corretti)
 # ============================================
 if pagina == "🏎️ Dashboard Gara":
-    # --- CSS PER GRAFICA E LAMPEGGIO ---
+    # 1. DEFINIZIONE FUNZIONE DI FORMATTAZIONE (deve stare qui o sopra)
+    def formatta_tempo(secondi_totali):
+        ore = int(secondi_totali // 3600)
+        minuti = int((secondi_totali % 3600) // 60)
+        secondi = int(secondi_totali % 60)
+        return f"{ore:02d}:{minuti:02d}:{secondi:02d}"
+
+    # 2. CALCOLO VARIABILI (Se non esistono, le inizializziamo)
+    # Assicurati che timestamp_start_gara sia inizializzato nel tuo setup iniziale!
+    if 'timestamp_start_gara' not in st.session_state:
+        st.session_state.timestamp_start_gara = time.time()
+    if 'timestamp_start_kart' not in st.session_state:
+        st.session_state.timestamp_start_kart = time.time()
+
+    limite_gara_sec = 6 * 3600 # Esempio: 6 ore
+    limite_kart_sec = 4 * 3600 # 4 ore
+    
+    tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
+    tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
+    
+    gara_rimanente_sec = max(0, limite_gara_sec - tempo_trascorso_gara)
+    kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
+    
+    percentuale_gara = max(0.0, min(1.0, (tempo_trascorso_gara / limite_gara_sec)))
+    percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
+
+    # --- CSS E GRAFICA ---
     st.markdown("""
         <style>
         .timer-container { background-color: #0e1117; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #262730; }
@@ -269,14 +295,9 @@ if pagina == "🏎️ Dashboard Gara":
         </style>
     """, unsafe_allow_html=True)
     
-    limite_kart_sec = 4 * 3600
-    tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
-    kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
-    percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
-        
     classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
         
-        # --- 2. RIGA SUPERIORE (COUNTDOWN) ---
+    # --- RIGA SUPERIORE (COUNTDOWN) ---
     c1, c2, c3 = st.columns([1, 1, 1.2])
     with c1:
         st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ff4b4b;"><div class="label-timer">GARA</div><div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>', unsafe_allow_html=True)
@@ -286,12 +307,16 @@ if pagina == "🏎️ Dashboard Gara":
         st.progress(percentuale_kart)
     with c3:
         st.markdown("### 🔮 Radar Automazioni")
-        if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): st.session_state.conferma_cambio_kart = True
-        if st.session_state.conferma_cambio_kart:
+        if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): 
+            st.session_state.conferma_cambio_kart = True
+        
+        if st.session_state.get("conferma_cambio_kart", False):
             if st.button("⚠️ CONFERMA CAMBIO?", key="btn_k_conf", type="primary", use_container_width=True): 
-                    st.session_state.timestamp_start_kart = time.time(); st.session_state.conferma_cambio_kart = False; st.rerun()
+                st.session_state.timestamp_start_kart = time.time()
+                st.session_state.conferma_cambio_kart = False
+                st.rerun()
 
-        st.write("---")
+    st.write("---")
         
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
         st.markdown("#### 📡 Live Timing")
