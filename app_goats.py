@@ -2,6 +2,11 @@ from scraper import ottieni_dati_aggiornati
 import streamlit as st
 import pandas as pd
 import time
+import os
+import streamlit as st
+
+st.write("File presenti nella cartella:")
+st.write(os.listdir('.')) # Ti mostrerà la lista di tutti i file che Streamlit vede
 
 st.set_page_config(layout="wide")
 
