@@ -355,7 +355,7 @@ if pagina == "🏎️ Dashboard Gara":
             
         if st.button("🔄 Conferma Swap Pilota", use_container_width=True):
                 tempo_stint_appena_finito = time.time() - st.session_state.timestamp_start_stint_live
-            for nome in st.session_state.piloti_v2:
+        for nome in st.session_state.piloti_v2:
         if st.session_state.piloti_v2[nome]["in_pista"]:
                         st.session_state.piloti_v2[nome]["tempo_totale_sec"] = st.session_state.piloti_v2[nome].get("tempo_totale_sec", 0) + tempo_stint_appena_finito
                     st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
