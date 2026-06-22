@@ -320,10 +320,10 @@ if pagina == "🏎️ Dashboard Gara":
         
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
     st.markdown("#### 📡 Live Timing")
-        tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro'], "KART": st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓"})["qualita"]} for r in st.session_state.database_rivali_v2]
-        st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
+    tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro'], "KART": st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓"})["qualita"]} for r in st.session_state.database_rivali_v2]
+    st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
 
-        st.write("---")
+    st.write("---")
 
         # --- 4. RIGA INFERIORE (OPERATIVO) ---
         col_sx, col_dx = st.columns([1, 1])
