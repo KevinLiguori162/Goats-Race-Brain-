@@ -221,6 +221,7 @@ st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=5
 st.sidebar.title("GRT Control Panel")
 
 # --- DEFINIZIONE PAGINE ---
+# --- DEFINIZIONE PAGINE ---
 nomi_pagine = [
     "🏎️ Dashboard Gara", "📊 Valutazione Kart Live", "📊 Strategia", 
     "📡 Live Timing", "🛠️ Kart's Performance", "📜 Regolamento", 
@@ -233,13 +234,6 @@ tab_list = st.tabs(nomi_pagine)
 # --- RENDERING DINAMICO ---
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
-        # --- ESPANDER DI BLOCCO ---
-        with st.expander("🔒 Gestione Sessione"):
-            c1, c2 = st.columns([3, 1])
-            c1.write("Sessione attiva.")
-            if c2.button("🔒 BLOCCO", key=f"lock_{i}"):
-                st.session_state.autenticato = False
-                st.rerun()
         
         # --- LOGICA PAGINE ---
         if nome == "🏎️ Dashboard Gara":
@@ -277,7 +271,6 @@ for i, nome in enumerate(nomi_pagine):
         elif nome == "🛠️ Configurazione GRB":
             st.subheader("⚙️ Configurazione GRB")
             # Incolla qui il codice che abbiamo preparato prima
-
 
 def formatta_tempo(secondi):
         ore = int(secondi // 3600)
@@ -323,15 +316,9 @@ def render_active_dashboard():
 # LOGICA DI NAVIGAZIONE (if/elif corretti)
 # ============================================
 # --- RENDERING DINAMICO ---
+# --- RENDERING DINAMICO ---
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
-        # --- ESPANDER DI BLOCCO ---
-        with st.expander("🔒 Gestione Sessione"):
-            c1, c2 = st.columns([3, 1])
-            c1.write("Sessione attiva.")
-            if c2.button("🔒 BLOCCO", key=f"lock_{i}"):
-                st.session_state.autenticato = False
-                st.rerun()
         
         # --- LOGICA PAGINA: DASHBOARD GARA ---
         if nome == "🏎️ Dashboard Gara":
@@ -402,18 +389,17 @@ for i, nome in enumerate(nomi_pagine):
                 
                 # Logica Doppio Tocco
                 if not st.session_state.get("conferma_cambio_kart", False):
-                    if st.button("🟩 CAMBIO KART"): 
+                    if st.button("🟩 CAMBIO KART", key="btn_cambio_kart_init"): 
                         st.session_state.conferma_cambio_kart = True
                         st.rerun()
                 else:
-                    if st.button("⚠️ CONFERMA?", type="primary"): 
+                    if st.button("⚠️ CONFERMA?", type="primary", key="btn_cambio_kart_confirm"): 
                         st.session_state.timestamp_start_kart = time.time()
                         st.session_state.totale_cambi = st.session_state.get('totale_cambi', 0) + 1
                         st.session_state.conferma_cambio_kart = False
                         st.rerun()
                 
                 st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
-
         
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
     st.markdown("#### 📡 Live Timing")
