@@ -119,7 +119,8 @@ st.markdown("""
         border-radius: 10px; 
         border-left: 6px solid #ff4b4b; 
         text-align: center; 
-        margin-bottom: 20px; 
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5); /* <-- Aggiungi questa riga */
     }
     
     .label-box { color: #888; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; }
@@ -332,7 +333,17 @@ if pagina == "🏎️ Dashboard Gara":
         """, unsafe_allow_html=True)
 
     with col3:
+        with col3:
         st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
+        
+        # Indicatori di stato (LED)
+        status_color = "#00e676" if 'youcrono_remaining_seconds' in st.session_state else "#ff1744"
+        st.markdown(f"""
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="width: 12px; height: 12px; background-color: {status_color}; border-radius: 50%; box-shadow: 0 0 10px {status_color};"></div>
+                <span style="font-size: 12px; color: #888;">LIVE DATA { "ON" if status_color == "#00e676" else "OFF" }</span>
+            </div>
+        """, unsafe_allow_html=True)
         
         # Logica Doppio Tocco (Bottone sicuro)
         if not st.session_state.get("conferma_cambio_kart", False):
