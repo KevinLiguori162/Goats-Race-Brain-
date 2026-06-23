@@ -46,7 +46,26 @@ def ottieni_dati_aggiornati():
 
 @st.fragment(run_every=5.0)
 def aggiorna_dati_scraper():
+    # 1. Questa è la funzione che già hai
     st.session_state.database_rivali_v2 = ottieni_dati_aggiornati()
+    
+    # 2. SUBITO DOPO, incolla questo ciclo:
+    for r in st.session_state.database_rivali_v2:
+        giro_tempo = r['ultimo_giro'] 
+        
+        # Salviamo solo se è un numero valido
+        if isinstance(giro_tempo, (int, float)):
+            team = r['team']
+            if team not in st.session_state.storico_tempi:
+                st.session_state.storico_tempi[team] = []
+            
+            # Evitiamo di salvare due volte lo stesso identico tempo (opzionale)
+            if not st.session_state.storico_tempi[team] or st.session_state.storico_tempi[team][-1] != giro_tempo:
+                st.session_state.storico_tempi[team].append(giro_tempo)
+                
+                # Teniamo solo gli ultimi 30 giri per non pesare sulla memoria
+                if len(st.session_state.storico_tempi[team]) > 30:
+                    st.session_state.storico_tempi[team].pop(0)
 
 # 4. INIZIALIZZAZIONE STATO
 if 'database_rivali_v2' not in st.session_state:
@@ -177,6 +196,10 @@ if "radar_is_pit_lane" not in st.session_state:
     st.session_state.config_tempo_pit_max = 90
     st.session_state.nostre_penalita_sec = 0
 
+if 'storico_tempi' not in st.session_state:
+    st.session_state.storico_tempi = {} # Dizionario: {'Team': [lista_tempi]}
+
+
 # ==========================================
 # 2. LOGICA DI LOGIN
 # ==========================================
@@ -200,7 +223,8 @@ if st.sidebar.button("🔒 Blocca"):
     st.rerun()
 
 lista_pagine = [
-    "🏎️ Dashboard Gara", 
+    "🏎️ Dashboard Gara",
+    "📊 Valutazione Kart Live",
     "📊 Strategia", 
     "📡 Live Timing", 
     "🛠️ Kart's Performance", 
@@ -399,6 +423,34 @@ if pagina == "🏎️ Dashboard Gara":
                 """, unsafe_allow_html=True)
                 
         st.markdown(f"**Penalità:** {st.session_state.nostre_penalita_sec}s")
+
+if pagina == "📊 Valutazione Kart Live":
+    st.header("📊 Valutazione Performance Kart")
+    
+    # Calcolo medie dinamiche
+    dati_valutazione = []
+    
+    for team, tempi in st.session_state.storico_tempi.items():
+        if len(tempi) >= 5: # Aspettiamo almeno 5 giri per una media sensata
+            media_mobile = sum(tempi[-20:]) / len(tempi[-20:]) # Media ultimi 20 giri
+            dati_valutazione.append({"Team": team, "Media (20g)": round(media_mobile, 3)})
+    
+    if dati_valutazione:
+        df_val = pd.DataFrame(dati_valutazione)
+        media_globale = df_val["Media (20g)"].mean()
+        
+        # Funzione emoji dinamica
+        def get_emoji(tempo):
+            if tempo < (media_globale - 0.5): return "🚀"
+            elif tempo > (media_globale + 0.5): return "💩"
+            else: return "🏎️"
+            
+        df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
+        
+        # Visualizzazione
+        st.dataframe(df_val.sort_values("Media (20g)"), use_container_width=True, hide_index=True)
+    else:
+        st.info("Sto raccogliendo dati... attendi qualche giro.")
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
