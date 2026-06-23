@@ -395,7 +395,7 @@ for i, nome in enumerate(nomi_pagine):
                 if st.session_state.get("radar_is_pit_lane"):
                     st.warning("PIT LANE ATTIVA")
 
-if pagina == "📊 Valutazione Kart Live":
+if nome == "📊 Valutazione Kart Live":
     st.header("📊 Valutazione Performance Kart")
 
     # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
@@ -437,7 +437,7 @@ if pagina == "📊 Valutazione Kart Live":
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
-elif "Strategia" in pagina:
+elif "Strategia" in nome:
     st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.write("Sincronizzazione muretto e calcolatore predittivo basato sui Tempi di Pit cumulativi.")
     st.write("---")
@@ -588,7 +588,7 @@ elif "Strategia" in pagina:
 # ==========================================
 # PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
 # ==========================================
-elif "Live Timing" in pagina:
+elif "Live Timing" in nome:
     st.title("📡 Live Timing Totale Sincronizzato")
     st.write("Monitoraggio globale della classifica integrato. In caso di blocchi, usa il tasto di backup in fondo.")
     st.write("---")
@@ -620,7 +620,7 @@ elif "Live Timing" in pagina:
 # ==========================================
 # PAGINA 4: KART'S PERFORMANCE (COLLEGAMENTO CORRETTO ELIF)
 # ==========================================
-elif pagina == "🛠️ Kart's Performance":
+elif nome == "🛠️ Kart's Performance":
     st.title("🛠️ Gestione e Performance Kart")
     st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'estrazione del sabato.")
     st.write("---")
@@ -770,7 +770,7 @@ elif pagina == "🛠️ Kart's Performance":
         # ==========================================
 # NUOVA PAGINA: REGOLAMENTO (RIASSUNTO RAPIDO CORSA)
 # ==========================================
-elif "Regolamento" in pagina:  # <--- Cambiato: ora intercetta solo "Regolamento"
+elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
     st.title("📋 Regolamento IRK Championship")
     st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
     st.write("---")
@@ -854,7 +854,7 @@ elif "Regolamento" in pagina:  # <--- Cambiato: ora intercetta solo "Regolamento
 # ==========================================
 # PAGINA 6: RADIO (VERSIONE PULITA SENZA ERRORI DI SPAZIO)
 # ==========================================
-elif pagina == "📻 Radio":
+elif nome == "📻 Radio":
     st.title("📻 Configurazione e Assegnazione Radio dPMR")
     st.write("Registro ufficiale degli apparati radio del team. Inserisci i dati definitivi dopo i test in pista.")
     st.write("---")
@@ -923,7 +923,7 @@ elif pagina == "📻 Radio":
 # ==========================================
 # NUOVA PAGINA: ARCHIVIO GARE & DEBRIEFING AI
 # ==========================================
-elif "Archivio" in pagina:
+elif "Archivio" in nome:
     import os
     st.title("🗄️ Archivio Gare & Debriefing AI")
     st.write("---")
