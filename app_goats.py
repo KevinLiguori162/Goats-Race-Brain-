@@ -369,41 +369,57 @@ if pagina == "🏎️ Dashboard Gara":
     col_sx, col_dx = st.columns([1, 1])
         
     with col_sx:
-        st.markdown("#### 👤 Gestione Piloti")
-            
-            # --- PROTEZIONE INIZIALIZZAZIONE ---
-        if 'timestamp_start_stint_live' not in st.session_state:
-                st.session_state.timestamp_start_stint_live = time.time()
+        # --- INIZIALIZZAZIONE SICURA ---
+if 'piloti_v2' not in st.session_state:
+    st.session_state.piloti_v2 = {
+        "Pilota 1": {"tempo_totale_sec": 0, "in_pista": True},
+        "Pilota 2": {"tempo_totale_sec": 0, "in_pista": False},
+        "Pilota 3": {"tempo_totale_sec": 0, "in_pista": False}
+    }
+if 'timestamp_start_stint_live' not in st.session_state:
+    st.session_state.timestamp_start_stint_live = time.time()
 
-            # --- 1. DISPLAY PILOTI ---
-        cols = st.columns(len(st.session_state.piloti_v2))
-        for i, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
-                minuti, secondi = divmod(int(dati_p.get('tempo_totale_sec', 0)), 60)
-                stato = "🟢" if dati_p["in_pista"] else "🔴"
-                
+# --- DISPLAY PILOTI ---
+st.markdown("#### 👤 Gestione Piloti")
+cols = st.columns(len(st.session_state.piloti_v2))
+
+for i, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
+    minuti = int(dati_p.get('tempo_totale_sec', 0)) // 60
+    secondi = int(dati_p.get('tempo_totale_sec', 0)) % 60
+    
+    # Usiamo le classi CSS racing-box o simili per uniformità
+    stato = "🟢" if dati_p["in_pista"] else "🔴"
+    
     with cols[i]:
         st.markdown(f"""
-<div style="background-color: #262730; padding: 8px; border-radius: 5px; text-align: center;">
-    <div style="font-size: 16px;">{stato}</div>
-    <div style="font-weight: bold; font-size: 14px;">{nome_p}</div>
-    <div style="font-size: 12px; color: #808495;">{minuti}m {secondi:02d}s</div>
-</div>
-""", unsafe_allow_html=True)
-            
-            # --- 2. LOGICA CAMBIO PILOTA ---
-        p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
-            
-        if st.button("🔄 Conferma Swap Pilota", use_container_width=True):
-            tempo_stint_appena_finito = time.time() - st.session_state.timestamp_start_stint_live
-            for nome in st.session_state.piloti_v2:
-                if st.session_state.piloti_v2[nome]["in_pista"]:
-                    st.session_state.piloti_v2[nome]["tempo_totale_sec"] = st.session_state.piloti_v2[nome].get("tempo_totale_sec", 0) + tempo_stint_appena_finito
-                    st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
-                    
-            st.session_state.timestamp_start_stint_live = time.time()
-            st.toast(f"Swap effettuato: {p_sel} in pista.")
-            st.rerun()
+            <div style="background-color: #12171e; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid {'#2e7d32' if dati_p['in_pista'] else '#333'};">
+                <div style="font-size: 20px;">{stato}</div>
+                <div style="font-weight: bold; font-size: 13px;">{nome_p}</div>
+                <div style="font-size: 11px; color: #888;">{minuti}m {secondi:02d}s</div>
+            </div>
+        """, unsafe_allow_html=True)
 
+# --- LOGICA CAMBIO PILOTA ---
+st.write("") # Spaziatore
+p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+
+if st.button("🔄 Conferma Swap Pilota", type="primary", use_container_width=True):
+    # Calcolo tempo trascorso dall'ultimo stint
+    tempo_trascorso = time.time() - st.session_state.timestamp_start_stint_live
+    
+    # Aggiornamento dati
+    for nome in st.session_state.piloti_v2:
+        # Se il pilota era in pista, aggiorna il suo tempo totale
+        if st.session_state.piloti_v2[nome]["in_pista"]:
+            st.session_state.piloti_v2[nome]["tempo_totale_sec"] += tempo_trascorso
+        
+        # Imposta in_pista solo per il pilota selezionato
+        st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
+    
+    # Reset timer stint e ricarica
+    st.session_state.timestamp_start_stint_live = time.time()
+    st.toast(f"✅ Swap effettuato: {p_sel} è in pista.")
+    st.rerun()
     with col_dx:
         st.markdown("#### 🚨 Radar Completo")
             
