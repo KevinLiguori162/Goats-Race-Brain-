@@ -112,39 +112,49 @@ st.markdown("""
     /* Reset e Colori Base */
     .stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
     
-   /* Stile base Box Kart */
-.kart-box { 
-    background-color: #12171e; 
-    padding: 20px; 
-    border-radius: 10px; 
-    border-left: 6px solid #ffcc00; /* Giallo Default */
-    text-align: center; 
-    margin-bottom: 20px;
-    transition: border-left 0.5s ease;
-}
-
-/* Classi dinamiche per i bordi */
-.kart-warning { border-left-color: #e65100 !important; } /* Arancione */
-.kart-critical { border-left-color: #ff1744 !important; } /* Rosso */
-    
-    .label-box { color: #888; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; }
-    .timer-big { font-size: 45px; font-weight: 900; color: #ffffff; font-family: 'Courier New', monospace; }
-    
-    /* Gestione Bottoni */
-    div.stButton > button { 
-        width: 100%; border-radius: 8px; font-weight: bold; height: 50px; border: none;
+    /* Box Container */
+    .racing-box, .kart-box { 
+        background-color: #12171e; 
+        padding: 20px; 
+        border-radius: 12px; 
+        border-left: 6px solid #ffcc00; 
+        text-align: center; 
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
-    /* Bottone Cambio Kart (Verde) */
-    div[data-testid="stButton"] button[kind="secondary"] { background-color: #2e7d32; color: white; }
-    /* Bottone Conferma (Arancio/Warning) */
-    div[data-testid="stButton"] button[kind="primary"] { background-color: #e65100; color: white; }
     
+    /* Variazioni colori bordo */
+    .kart-warning { border-left-color: #e65100 !important; } 
+    .kart-critical { border-left-color: #ff1744 !important; }
+    
+    .label-box { color: #888; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .timer-big { font-size: 40px; font-weight: 900; color: #ffffff; font-family: 'Courier New', monospace; }
+    
+    /* Gestione Pulsanti Racing */
+    div.stButton > button { 
+        width: 100%; 
+        border-radius: 8px; 
+        font-weight: 800; 
+        height: 50px; 
+        border: none; 
+        transition: transform 0.1s ease, filter 0.2s ease;
+    }
+    
+    div.stButton > button:hover { filter: brightness(1.2); transform: scale(1.02); }
+    
+    /* Pulsante Cambio Kart (Verde) */
+    /* Usiamo il selettore basato sul testo o sulla posizione se necessario, 
+       ma questo stile sovrascrive i bottoni standard */
+    div.stButton > button { background-color: #1a521c; color: white; }
+    div.stButton > button:active { background-color: #2e7d32; }
+
     /* Animazione Blink */
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-    .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    .blink-active { animation: blink 0.8s linear infinite; color: #ff1744 !important; }
     
-    /* Sezione Radar */
-    .radar-header { color: #ffffff; font-size: 20px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    /* Radar Section */
+    .radar-header { color: #ffffff; font-size: 18px; font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 5px; }
+    
     </style>
 """, unsafe_allow_html=True)
 # ==========================================
@@ -432,32 +442,40 @@ for i, nome in enumerate(nomi_pagine):
             
             stato = "🟢" if dati_p["in_pista"] else "🔴"
             
-            with cols[i]:
-                st.markdown(f"""
-                    <div style="background-color: #12171e; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid {'#2e7d32' if dati_p['in_pista'] else '#333'};">
-                        <div style="font-size: 20px;">{stato}</div>
-                        <div style="font-weight: bold; font-size: 13px;">{nome_p}</div>
-                        <div style="font-size: 11px; color: #888;">{minuti}m {secondi:02d}s</div>
-                    </div>
-                """, unsafe_allow_html=True)
+           with cols[i]:
+            st.markdown(f"""
+                <div style="background-color: #12171e; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid {'#2e7d32' if dati_p['in_pista'] else '#333'};">
+                    <div style="font-size: 20px;">{stato}</div>
+                    <div style="font-weight: bold; font-size: 13px;">{nome_p}</div>
+                    <div style="font-size: 11px; color: #888;">{minuti}m {secondi:02d}s</div>
+                </div>
+            """, unsafe_allow_html=True)
 
         # --- LOGICA CAMBIO PILOTA ---
         st.write("")
-       # Invece di key="sel_pil", usa:
-p_sel = st.selectbox(
-    "Seleziona nuovo pilota:", 
-    list(st.session_state.piloti_v2.keys()), 
-    key=f"sel_pil_{i}"
+        
+        # 1. Selettore pilota chiuso correttamente con )
+        p_sel = st.selectbox(
+            "Seleziona nuovo pilota:", 
+            list(st.session_state.piloti_v2.keys()), 
+            key=f"sel_pil_{i}"
+        )
 
-        if st.button("🔄 Conferma Swap Pilota", type="primary", use_container_width=True):
+        # 2. Pulsante di conferma
+        if st.button("🔄 Conferma Swap Pilota", type="primary", use_container_width=True, key=f"btn_swap_{i}"):
             tempo_trascorso = time.time() - st.session_state.timestamp_start_stint_live
-            for nome in st.session_state.piloti_v2:
-                if st.session_state.piloti_v2[nome]["in_pista"]:
-                    st.session_state.piloti_v2[nome]["tempo_totale_sec"] += tempo_trascorso
-                st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
             
+            # Aggiornamento stato piloti
+            for nome_pilota in st.session_state.piloti_v2:
+                # Se era in pista, aggiorna il suo tempo totale
+                if st.session_state.piloti_v2[nome_pilota]["in_pista"]:
+                    st.session_state.piloti_v2[nome_pilota]["tempo_totale_sec"] += tempo_trascorso
+                
+                # Assegna lo stato "in pista" solo al pilota selezionato
+                st.session_state.piloti_v2[nome_pilota]["in_pista"] = (nome_pilota == p_sel)
+            
+            # Reset del timer dello stint
             st.session_state.timestamp_start_stint_live = time.time()
-            st.toast(f"✅ Swap effettuato: {p_sel} è in pista.")
             st.rerun()
             
     with col_dx:
