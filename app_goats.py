@@ -4,7 +4,8 @@ import time
 import requests
 import json
 import os
-from streamlit_autorefresh import st_autorefresh
+from streamlit_autorefresh 
+import st_autorefresh
 
 # Ricarica la pagina automaticamente ogni 1000ms (1 secondo)
 # In questo modo il timer "scorre" ogni secondo
