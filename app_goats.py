@@ -244,44 +244,40 @@ tab_list = st.tabs(nomi_pagine)
 # --- RENDERING DINAMICO ---
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
+        # DA QUI IN POI: Tutto deve essere indentato dentro il 'with'
         
         # --- LOGICA PAGINE ---
         if nome == "🏎️ Dashboard Gara":
             st.subheader("🏎️ Dashboard Gara")
-            # Incolla qui il codice della tua Dashboard
+            # TUTTO il codice della dashboard DEVE stare qui dentro
             
         elif nome == "📊 Valutazione Kart Live":
             st.subheader("📊 Valutazione Kart Live")
-            # Incolla qui il codice analisi Kart
             
         elif nome == "📊 Strategia":
             st.subheader("📊 Strategia")
-            # Incolla qui il codice strategia
             
         elif nome == "📡 Live Timing":
             st.subheader("📡 Live Timing")
-            # Incolla qui il feed live timing
             
         elif nome == "🛠️ Kart's Performance":
             st.subheader("🛠️ Kart's Performance")
-            # Incolla qui il codice performance
             
         elif nome == "📜 Regolamento":
             st.subheader("📜 Regolamento")
-            # Incolla qui il testo o il PDF del regolamento
             
         elif nome == "📻 Radio":
             st.subheader("📻 Radio")
-            # Incolla qui eventuali collegamenti audio/chat
             
         elif nome == "📊 Archivio Gare":
             st.subheader("📊 Archivio Gare")
-            # Incolla qui il caricamento CSV/Archivio
             
         elif nome == "🛠️ Configurazione GRB":
             st.subheader("⚙️ Configurazione GRB")
-            # Incolla qui il codice che abbiamo preparato prima
-
+            # TUTTO il codice della configurazione DEVE stare qui dentro
+        
+        # ATTENZIONE: Se hai codice qui sotto, fuori dagli if/elif, 
+        # questo verrà stampato in TUTTE le tab. CONTROLLA!
 def formatta_tempo(secondi):
         ore = int(secondi // 3600)
         minuti = int((secondi % 3600) // 60)
