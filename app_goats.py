@@ -427,39 +427,53 @@ if pagina == "🏎️ Dashboard Gara":
 if pagina == "📊 Valutazione Kart Live":
     st.header("📊 Valutazione Performance Kart")
 
-    # --- INCOLLA QUI IL CODICE DI TEST ---
+    # --- CODICE DI TEST (Puoi lasciarlo, non dà fastidio) ---
     if st.button("🚀 Inserisci Dati di Test"):
-         st.session_state.storico_tempi = {
-              "GOATS RT RED": [63.5, 63.8, 63.2, 63.9, 64.0],
-              "Winner Team 1": [62.1, 62.0, 62.3, 62.2, 62.5],
-              "Lenti Team": [68.0, 69.1, 68.5, 69.0, 68.8]
+        st.session_state.storico_tempi = {
+            "GOATS RT RED": [63.5, 63.8, 63.2, 63.9, 64.0],
+            "Winner Team 1": [62.1, 62.0, 62.3, 62.2, 62.5],
+            "Lenti Team": [68.0, 69.1, 68.5, 69.0, 68.8]
         }
         st.rerun()
-    
-    # Calcolo medie dinamiche
+
+    # --- LOGICA TABELLA (Sempre eseguita) ---
     dati_valutazione = []
     
-    for team, tempi in st.session_state.storico_tempi.items():
-        if len(tempi) >= 5: # Aspettiamo almeno 5 giri per una media sensata
-            media_mobile = sum(tempi[-20:]) / len(tempi[-20:]) # Media ultimi 20 giri
-            dati_valutazione.append({"Team": team, "Media (20g)": round(media_mobile, 3)})
-    
-    if dati_valutazione:
-        df_val = pd.DataFrame(dati_valutazione)
-        media_globale = df_val["Media (20g)"].mean()
+    # Verifichiamo se esistono dati nello storico
+    if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
         
-        # Funzione emoji dinamica
-        def get_emoji(tempo):
-            if tempo < (media_globale - 0.4): return "🚀"
-            elif tempo > (media_globale + 0.3): return "🏎️"
-            else: return "💩"
+        for team, tempi in st.session_state.storico_tempi.items():
+            # Usiamo almeno 3 giri per iniziare a vedere dati (in gara alzerai a 5+)
+            if len(tempi) >= 3: 
+                # Calcolo media mobile ultimi 20 giri
+                media_mobile = sum(tempi[-20:]) / len(tempi[-20:])
+                dati_valutazione.append({"Team": team, "Media (20g)": round(media_mobile, 3)})
+        
+        if dati_valutazione:
+            df_val = pd.DataFrame(dati_valutazione)
+            media_globale = df_val["Media (20g)"].mean()
             
-        df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
-        
-        # Visualizzazione
-        st.dataframe(df_val.sort_values("Media (20g)"), use_container_width=True, hide_index=True)
+            # Funzione emoji dinamica
+            def get_emoji(tempo):
+                if tempo < (media_globale - 0.4): return "🚀"
+                elif tempo > (media_globale + 0.3): return "💩"
+                else: return "🏎️"
+                
+            df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
+            
+            # Visualizzazione tabella pulita
+            st.dataframe(
+                df_val.sort_values("Media (20g)"), 
+                use_container_width=True, 
+                hide_index=True,
+                column_config={
+                    "Media (20g)": st.column_config.NumberColumn(format="%.3f")
+                }
+            )
+        else:
+            st.info("Sto ancora raccogliendo dati (minimo 3 giri necessari).")
     else:
-        st.info("Sto raccogliendo dati... attendi qualche giro.")
+        st.info("Nessun dato ancora ricevuto da YouCrono. Attendi l'inizio della sessione o usa il test.")
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
