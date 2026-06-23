@@ -347,47 +347,6 @@ if pagina == "🏎️ Dashboard Gara":
                 st.rerun()
         
         st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
-
-    # 5. LAYOUT UNICO (Pulito e senza doppioni)
-    st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
-    
-    col1, col2, col3 = st.columns([1, 1, 1])
-
-    with col1:
-        st.markdown(f"""
-            <div style="background-color: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #ff4b4b; text-align: center;">
-                <h3 style="color: #888; margin: 0;">GARA</h3>
-                <h1 style="font-size: 50px; margin: 10px 0;">
-                    {int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}
-                </h1>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown(f"""
-            <div style="background-color: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #ffcc00; text-align: center;">
-                <h3 style="color: #888; margin: 0;">KART</h3>
-                <h1 class="{classe_blink}" style="font-size: 50px; margin: 10px 0;">
-                    {int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}
-                </h1>
-            </div>
-        """, unsafe_allow_html=True)
-        
-    
-
-    with col3:
-        st.subheader("🔮 Radar Automazioni")
-        
-        # Logica Doppio Tocco (Sicurezza)
-        if not st.session_state.get("conferma_cambio_kart", False):
-            if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): 
-                st.session_state.conferma_cambio_kart = True
-                st.rerun()
-        else:
-            if st.button("⚠️ CONFERMA?", key="btn_k_conf", type="primary", use_container_width=True): 
-                st.session_state.timestamp_start_kart = time.time()
-                st.session_state.conferma_cambio_kart = False
-                st.rerun()
         
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
     st.markdown("#### 📡 Live Timing")
