@@ -426,6 +426,15 @@ if pagina == "🏎️ Dashboard Gara":
 
 if pagina == "📊 Valutazione Kart Live":
     st.header("📊 Valutazione Performance Kart")
+
+    # --- INCOLLA QUI IL CODICE DI TEST ---
+if st.button("🚀 Inserisci Dati di Test"):
+    st.session_state.storico_tempi = {
+        "GOATS RT RED": [63.5, 63.8, 63.2, 63.9, 64.0],
+        "Winner Team 1": [62.1, 62.0, 62.3, 62.2, 62.5],
+        "Lenti Team": [68.0, 69.1, 68.5, 69.0, 68.8]
+    }
+    st.rerun()
     
     # Calcolo medie dinamiche
     dati_valutazione = []
