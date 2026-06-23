@@ -283,6 +283,11 @@ def render_active_dashboard():
 # ==========================================
 # LOGICA DI NAVIGAZIONE (if/elif corretti)
 # ============================================
+gara_rimanente_sec = 0
+kart_rimanente_sec = 0
+percentuale_gara = 0.0
+percentuale_kart = 0.0
+
 if pagina == "🏎️ Dashboard Gara":
     
     # 1. Inizializzazione sicura delle variabili (evita NameError)
