@@ -109,74 +109,39 @@ st.set_page_config(layout="wide")
 # --- CSS PERSONALIZZATO (DA INCOLLARE SUBITO SOTTO SET_PAGE_CONFIG) ---
 st.markdown("""
     <style>
-    .stApp { 
-        background-color: #0b0c10; 
-        color: #ffffff; 
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+    /* Reset e Colori Base */
+    .stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    
+    /* Box Timer (Stile Gara/Kart) */
+    .racing-box { 
+        background-color: #12171e; 
+        padding: 20px; 
+        border-radius: 10px; 
+        border-left: 6px solid #ff4b4b; 
+        text-align: center; 
+        margin-bottom: 20px; 
     }
-    .stTextInput>div>div>input { 
-        background-color: #1f2833 !important; color: white !important; 
-        border: 2px solid #45f3ff00 !important; border-bottom: 2px solid #d32f2f !important; 
-        border-radius: 6px !important; text-align: center; 
+    
+    .label-box { color: #888; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; }
+    .timer-big { font-size: 45px; font-weight: 900; color: #ffffff; font-family: 'Courier New', monospace; }
+    
+    /* Gestione Bottoni */
+    div.stButton > button { 
+        width: 100%; border-radius: 8px; font-weight: bold; height: 50px; border: none;
     }
+    /* Bottone Cambio Kart (Verde) */
+    div[data-testid="stButton"] button[kind="secondary"] { background-color: #2e7d32; color: white; }
+    /* Bottone Conferma (Arancio/Warning) */
+    div[data-testid="stButton"] button[kind="primary"] { background-color: #e65100; color: white; }
     
-    /* Pulsanti Standard Rosso Corsa GRT */
-    div.stButton > button:first-child { 
-        background-color: #d32f2f !important; color: white !important; 
-        border-radius: 8px !important; border: 1px solid #ff1744 !important; 
-        font-weight: bold !important; width: 100% !important; 
-        box-shadow: 0px 4px 15px rgba(211, 47, 47, 0.4); 
-    }
-    div.stButton > button:first-child:hover { background-color: #b71c1c !important; transform: translateY(-1px); }
+    /* Animazione Blink */
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+    .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
     
-    /* Pulsanti di Sicurezza Cambio Kart (Sistema Arma e Spara) */
-    div.cambio-kart-pronto > div > button {
-        background-color: #2e7d32 !important; color: white !important; border: 2px solid #4caf50 !important;
-        font-size: 18px !important; font-weight: bold !important; height: 55px !important; border-radius: 12px !important;
-        box-shadow: 0px 4px 20px rgba(46, 125, 50, 0.4) !important;
-    }
-    div.cambio-kart-pronto > div > button:hover { background-color: #1b5e20 !important; }
-    
-    div.cambio-kart-conferma > div > button {
-        background-color: #e65100 !important; color: white !important; border: 2px solid #ff9800 !important;
-        font-size: 15px !important; font-weight: bold !important; height: 55px !important; border-radius: 12px !important;
-        box-shadow: 0px 4px 20px rgba(230, 81, 0, 0.6) !important;
-    }
-    div.cambio-kart-conferma > div > button:hover { background-color: #b53d00 !important; }
-    
-    /* Box ed Elementi del Radar */
-    .radar-box { background-color: #12171e; border: 1px solid #1f2833; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
-    .radar-pit-live { background-color: #1a1012; border: 2px solid #d32f2f; border-radius: 10px; padding: 20px; text-align: center; }
-    .radar-pit-safe { background-color: #101c14; border: 2px solid #2e7d32; border-radius: 10px; padding: 20px; text-align: center; }
-    .macro-cronometro { font-size: 48px; font-weight: 900; color: #ff1744; font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
-    .macro-cronometro-safe { font-size: 48px; font-weight: 900; color: #00e676; font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; }
-    
-    /* Timer Lineari Custom Container */
-    .timer-container { background-color: #12171e; border: 1px solid #1f2833; border-radius: 10px; padding: 15px; text-align: center; }
-    .timer-digital { font-size: 32px; font-weight: bold; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin-bottom: 2px; }
-    
-    /* Piloti e LED di stato */
-    .driver-row { display: flex; align-items: center; justify-content: space-between; background-color: #1f2833; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #4f5d73; }
-    .driver-row-active { display: flex; align-items: center; justify-content: space-between; background-color: #1a231b; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #2e7d32; box-shadow: 0px 0px 10px rgba(46,125,50,0.2); }
-    .led-green { height: 12px; width: 12px; background-color: #00e676; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #00e676; }
-    .led-red { height: 12px; width: 12px; background-color: #ff1744; border-radius: 50%; display: inline-block; }
-    
-    /* Mappa circuito finta */
-    .map-container { background-color: #12171e; border: 1px dashed #4f5d73; border-radius: 10px; padding: 40px; text-align: center; margin-top: 20px; color: #a3a3a3; }
-    
-    /* Animazioni Warning sfumati */
-    @keyframes pulse-orange { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-    @keyframes pulse-red { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
-    .warning-orange { animation: pulse-orange 2s infinite ease-in-out; border: 2px solid #ff9800; border-radius: 8px; padding: 10px; background-color: rgba(255, 152, 0, 0.1); text-align: center; color: #ff9800; font-weight: bold; }
-    .warning-red { animation: pulse-red 1s infinite ease-in-out; border: 2px solid #f44336; border-radius: 8px; padding: 10px; background-color: rgba(244, 67, 54, 0.2); text-align: center; color: #f44336; font-weight: bold; font-size: 15px; }
-    
-    .footer-credits { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #0b0c10; color: #4f5d73; text-align: center; padding: 10px; font-size: 11px; border-top: 1px solid #1f2833; z-index: 999; }
-    .logo-container { text-align: center; margin: 15px auto; }
-    .shield { display: inline-block; background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%); border: 2px solid #d32f2f; border-radius: 10px 10px 40px 40px; padding: 10px 25px; }
-    .grt-text { font-size: 32px; font-weight: 900; color: #ffffff; font-style: italic; text-shadow: 2px 2px 0px #d32f2f; }
-    .highlight-box { background-color: #1f2833; border-left: 5px solid #d32f2f; padding: 15px; border-radius: 4px; }
+    /* Sezione Radar */
+    .radar-header { color: #ffffff; font-size: 20px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 # ==========================================
 # 1. INIZIALIZZAZIONE STATI (IL MOTORE - DEVE ESSERE IN CIMA)
 # ==========================================
@@ -328,33 +293,60 @@ classe_blink = ""
 
 if pagina == "🏎️ Dashboard Gara":
     
-    # 1. Inizializzazione sicura
+    # 1. Inizializzazione e Sincronizzazione (Già funzionante)
     if 'timestamp_start_gara' not in st.session_state:
         st.session_state.timestamp_start_gara = time.time()
     if 'timestamp_start_kart' not in st.session_state:
         st.session_state.timestamp_start_kart = time.time()
 
-    # 2. Sincronizzazione con YouCrono
     if 'youcrono_remaining_seconds' in st.session_state:
         st.session_state.timestamp_start_gara = time.time() - (LIMITE_GARA_SEC - st.session_state.youcrono_remaining_seconds)
 
-    # 3. Calcoli
+    # 2. Calcoli
     tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
     tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
     
     gara_rimanente_sec = max(0, LIMITE_GARA_SEC - tempo_trascorso_gara)
     kart_rimanente_sec = max(0, LIMITE_KART_SEC - tempo_trascorso_kart)
-    
-    # Logica Blink (ultimi 30 min)
     classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
 
-    # 4. CSS per lo stile e il lampeggio (Blink)
-    st.markdown("""
-        <style>
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-        .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
-        </style>
-    """, unsafe_allow_html=True)
+    # 3. LAYOUT VISUALE (Usa le nuove classi CSS)
+    st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
+    
+    col1, col2, col3 = st.columns([1, 1, 1])
+
+    with col1:
+        st.markdown(f"""
+            <div class="racing-box" style="border-left-color: #ff4b4b;">
+                <div class="label-box">GARA</div>
+                <div class="timer-big">{int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"""
+            <div class="racing-box" style="border-left-color: #ffcc00;">
+                <div class="label-box">KART</div>
+                <div class="timer-big {classe_blink}">{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
+        
+        # Logica Doppio Tocco (Bottone sicuro)
+        if not st.session_state.get("conferma_cambio_kart", False):
+            if st.button("🟩 CAMBIO KART"): 
+                st.session_state.conferma_cambio_kart = True
+                st.rerun()
+        else:
+            if st.button("⚠️ CONFERMA?", type="primary"): 
+                st.session_state.timestamp_start_kart = time.time()
+                st.session_state.totale_cambi = st.session_state.get('totale_cambi', 0) + 1
+                st.session_state.conferma_cambio_kart = False
+                st.rerun()
+        
+        st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
 
     # 5. LAYOUT UNICO (Pulito e senza doppioni)
     st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
