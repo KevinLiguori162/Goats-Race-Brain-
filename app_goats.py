@@ -4,20 +4,31 @@ import time
 import requests
 import json
 import os
-from streamlit_autorefresh 
-import st_autorefresh
+from streamlit_autorefresh import st_autorefresh
 
-# Ricarica la pagina automaticamente ogni 1000ms (1 secondo)
-# In questo modo il timer "scorre" ogni secondo
-st_autorefresh(interval=1000, key="datarefresh")
-
-# 1. SETTINGS PAGINA (Sempre per primo)
+# 1. SETTINGS PAGINA
 st.set_page_config(layout="wide")
 
-# 2. CONFIGURAZIONE
+# 2. AUTOREFRESH (Ricarica pagina ogni secondo)
+st_autorefresh(interval=1000, key="datarefresh")
+
+# 3. CONFIGURAZIONE
 MIO_TEAM = "GOATS RT RED" 
 API_URL = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
 BACKUP_FILE = "gara_backup.json"
+
+# 4. INIZIALIZZAZIONE STATO (Fondamentale per evitare errori di variabili mancanti)
+def inizializza_stato():
+    if 'timestamp_start_gara' not in st.session_state:
+        st.session_state.timestamp_start_gara = time.time()
+    if 'timestamp_start_kart' not in st.session_state:
+        st.session_state.timestamp_start_kart = time.time()
+    if 'database_rivali_v2' not in st.session_state:
+        st.session_state.database_rivali_v2 = {}
+
+inizializza_stato()
+
+# Ora il codice è stabile e pronto per il resto delle tue funzioni!
 
 # 3. FUNZIONI DI MEMORIA E SCRAPER (Il blocco nuovo che sostituisce il vecchio)
 def salva_dati(dati):
