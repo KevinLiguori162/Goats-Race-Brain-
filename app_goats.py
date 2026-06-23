@@ -332,20 +332,18 @@ for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         
         # --- LOGICA PAGINA: DASHBOARD GARA ---
+        # --- LOGICA PAGINA: DASHBOARD GARA ---
         if nome == "🏎️ Dashboard Gara":
             
             # --- CONFIGURAZIONE COSTANTI ---
-            LIMITE_GARA_SEC = 8 * 3600  # 8 ore
-            LIMITE_KART_SEC = 4 * 3600  # 4 ore
+            LIMITE_GARA_SEC = 8 * 3600
+            LIMITE_KART_SEC = 4 * 3600
 
-            # 1. Inizializzazione e Sincronizzazione
+            # 1. Inizializzazione
             if 'timestamp_start_gara' not in st.session_state:
                 st.session_state.timestamp_start_gara = time.time()
             if 'timestamp_start_kart' not in st.session_state:
                 st.session_state.timestamp_start_kart = time.time()
-
-            if 'youcrono_remaining_seconds' in st.session_state:
-                st.session_state.timestamp_start_gara = time.time() - (LIMITE_GARA_SEC - st.session_state.youcrono_remaining_seconds)
 
             # 2. Calcoli
             tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
@@ -353,159 +351,49 @@ for i, nome in enumerate(nomi_pagine):
             
             gara_rimanente_sec = max(0, LIMITE_GARA_SEC - tempo_trascorso_gara)
             kart_rimanente_sec = max(0, LIMITE_KART_SEC - tempo_trascorso_kart)
-            classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
 
             # 3. LAYOUT VISUALE
             st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
             
-            col1, col2, col3 = st.columns([1, 1, 1])
-
+            col1, col2, col3 = st.columns(3)
             with col1:
-                st.markdown(f"""
-                    <div class="racing-box" style="border-left-color: #ff4b4b;">
-                        <div class="label-box">GARA</div>
-                        <div class="timer-big">{int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-
+                st.markdown(f'<div class="racing-box"><div class="label-box">GARA</div><div class="timer-big">{int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}</div></div>', unsafe_allow_html=True)
             with col2:
-                # Logica colore dinamico
-                if kart_rimanente_sec < 300: # Meno di 5 min
-                    colore_box = "kart-box kart-critical"
-                    classe_blink = "blink-active"
-                elif kart_rimanente_sec < 600: # Meno di 10 min
-                    colore_box = "kart-box kart-warning"
-                    classe_blink = ""
-                else:
-                    colore_box = "kart-box"
-                    classe_blink = ""
-
-                st.markdown(f"""
-                    <div class="{colore_box}">
-                        <div class="label-box">KART</div>
-                        <div class="timer-big {classe_blink}">{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-
+                colore_box = "kart-box kart-critical" if kart_rimanente_sec < 300 else ("kart-box kart-warning" if kart_rimanente_sec < 600 else "kart-box")
+                st.markdown(f'<div class="{colore_box}"><div class="label-box">KART</div><div class="timer-big">{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}</div></div>', unsafe_allow_html=True)
             with col3:
                 st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
+                if st.button("🟩 CAMBIO KART", key=f"btn_swap_{i}"):
+                    st.session_state.conferma_cambio_kart = True
+                    st.rerun()
+
+            # --- LIVE TIMING ---
+            st.markdown("#### 📡 Live Timing")
+            tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro']} for r in st.session_state.get("database_rivali_v2", [])]
+            st.dataframe(pd.DataFrame(tabella), use_container_width=True)
+
+            # --- GESTIONE PILOTI E RADAR ---
+            col_sx, col_dx = st.columns([2, 1])
+            with col_sx:
+                st.markdown("#### 👤 Gestione Piloti")
+                if 'piloti_v2' not in st.session_state:
+                    st.session_state.piloti_v2 = {"Pilota 1": {"tempo_totale_sec": 0, "in_pista": True}, "Pilota 2": {"tempo_totale_sec": 0, "in_pista": False}}
                 
-                status_color = "#00e676" if 'youcrono_remaining_seconds' in st.session_state else "#ff1744"
-                st.markdown(f"""
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <div style="width: 12px; height: 12px; background-color: {status_color}; border-radius: 50%; box-shadow: 0 0 10px {status_color};"></div>
-                        <span style="font-size: 12px; color: #888;">LIVE DATA { "ON" if status_color == "#00e676" else "OFF" }</span>
-                    </div>
-                """, unsafe_allow_html=True)
+                cols = st.columns(len(st.session_state.piloti_v2))
+                for idx, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
+                    with cols[idx]:
+                        st.markdown(f"**{nome_p}**<br>{int(dati_p['tempo_totale_sec']//60)}m", unsafe_allow_html=True)
                 
-                # Logica Doppio Tocco
-                if not st.session_state.get("conferma_cambio_kart", False):
-                    if st.button("🟩 CAMBIO KART", key="btn_cambio_kart_init"): 
-                        st.session_state.conferma_cambio_kart = True
-                        st.rerun()
-                else:
-                    if st.button("⚠️ CONFERMA?", type="primary", key="btn_cambio_kart_confirm"): 
-                        st.session_state.timestamp_start_kart = time.time()
-                        st.session_state.totale_cambi = st.session_state.get('totale_cambi', 0) + 1
-                        st.session_state.conferma_cambio_kart = False
-                        st.rerun()
-                
-                st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
-        # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
-    st.markdown("#### 📡 Live Timing")
-    tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro'], "KART": st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓"})["qualita"]} for r in st.session_state.database_rivali_v2]
-    st.dataframe(pd.DataFrame(tabella), use_container_width=True, hide_index=True)
+                p_sel = st.selectbox("Nuovo pilota:", list(st.session_state.piloti_v2.keys()), key=f"sel_{i}")
+                if st.button("🔄 Swap", key=f"swap_{i}"):
+                    st.session_state.piloti_v2[p_sel]["in_pista"] = True
+                    st.rerun()
 
-    st.write("---")
-
-        # --- 4. RIGA INFERIORE (OPERATIVO) ---
-    col_sx, col_dx = st.columns([2, 1])
-
-    with col_sx:
-        # --- INIZIALIZZAZIONE SICURA ---
-        if 'piloti_v2' not in st.session_state:
-            st.session_state.piloti_v2 = {
-                "Pilota 1": {"tempo_totale_sec": 0, "in_pista": True},
-                "Pilota 2": {"tempo_totale_sec": 0, "in_pista": False},
-                "Pilota 3": {"tempo_totale_sec": 0, "in_pista": False}
-            }
-        if 'timestamp_start_stint_live' not in st.session_state:
-            st.session_state.timestamp_start_stint_live = time.time()
-
-        # --- DISPLAY PILOTI ---
-        st.markdown("#### 👤 Gestione Piloti")
-        cols = st.columns(len(st.session_state.piloti_v2))
-
-        # --- ESEMPIO DI RENDERING PILOTI (Assicurati che cols sia definito) ---
-            # Esempio: cols = st.columns(len(st.session_state.piloti_v2))
-            
-            for i, (nome_p, dati_p) in enumerate(st.session_state.piloti_v2.items()):
-                # Esempio logica per stato e tempi
-                stato = "🟢" if dati_p['in_pista'] else "⚪"
-                minuti = int(dati_p.get('tempo_totale_sec', 0) // 60)
-                secondi = int(dati_p.get('tempo_totale_sec', 0) % 60)
-                
-                with cols[i]:
-                    st.markdown(f"""
-                        <div style="background-color: #12171e; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid {'#2e7d32' if dati_p['in_pista'] else '#333'};">
-                            <div style="font-size: 20px;">{stato}</div>
-                            <div style="font-weight: bold; font-size: 13px;">{nome_p}</div>
-                            <div style="font-size: 11px; color: #888;">{minuti}m {secondi:02d}s</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-            # --- LOGICA CAMBIO PILOTA ---
-            st.write("")
-            p_sel = st.selectbox(
-                "Seleziona nuovo pilota:", 
-                list(st.session_state.piloti_v2.keys()), 
-                key=f"sel_pil_{i}"
-            )
-
-            if st.button("🔄 Conferma Swap Pilota", type="primary", use_container_width=True, key=f"btn_swap_{i}"):
-                tempo_trascorso = time.time() - st.session_state.timestamp_start_stint_live
-                for nome_pilota in st.session_state.piloti_v2:
-                    if st.session_state.piloti_v2[nome_pilota]["in_pista"]:
-                        st.session_state.piloti_v2[nome_pilota]["tempo_totale_sec"] += tempo_trascorso
-                    st.session_state.piloti_v2[nome_pilota]["in_pista"] = (nome_pilota == p_sel)
-                st.session_state.timestamp_start_stint_live = time.time()
-                st.rerun()
-            
-    with col_dx:
-        st.markdown("#### 🚨 Radar Completo")
-            
-        # --- LOGICA BOTTONI ---
-        c_a, c_b = st.columns(2)
-        if c_a.button("🚨 PIT", use_container_width=True): 
-            # Salva il momento esatto in cui è iniziato il PIT
-            st.session_state.timestamp_start_pit = time.time()
-            st.session_state.radar_is_pit_lane = True
-            st.rerun()
-            
-        if c_b.button("🟢 USCITA", use_container_width=True): 
-            st.session_state.radar_is_pit_lane = False
-            st.rerun()
-            
-        # --- GRAFICA CHIARA E LEGGIBILE ---
-        if st.session_state.radar_is_pit_lane:
-            # Calcola secondi trascorsi dal momento del click
-            t_pit = int(time.time() - st.session_state.timestamp_start_pit)
-                
-            st.markdown(f"""
-                <div style="background-color: #7a1d1d; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #ff4b4b;">
-                    <div style="color: #ffcccc; font-size: 14px; text-transform: uppercase;">Tempo sosta PIT</div>
-                    <div style="color: #ffffff; font-size: 40px; font-weight: bold; font-family: monospace;">{t_pit}s</div>
-                </div>
-                """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-                <div style="background-color: #08331d; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #00ff41;">
-                    <div style="color: #ccffcc; font-size: 14px;">STATO ATTUALE</div>
-                    <div style="color: #00ff41; font-size: 30px; font-weight: bold;">IN PISTA (OK)</div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-        st.markdown(f"**Penalità:** {st.session_state.nostre_penalita_sec}s")
+            with col_dx:
+                st.markdown("#### 🚨 Radar")
+                if st.button("🚨 PIT", key=f"pit_{i}"): st.session_state.radar_is_pit_lane = True
+                if st.session_state.get("radar_is_pit_lane"):
+                    st.warning("PIT LANE ATTIVA")
 
 if pagina == "📊 Valutazione Kart Live":
     st.header("📊 Valutazione Performance Kart")
