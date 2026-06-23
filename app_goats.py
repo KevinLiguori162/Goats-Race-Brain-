@@ -381,9 +381,7 @@ if pagina == "🏎️ Dashboard Gara":
             </div>
         """, unsafe_allow_html=True)
         
-        if st.button("🔄 Reset Manuale Kart", use_container_width=True):
-            st.session_state.timestamp_start_kart = time.time()
-            st.rerun()
+    
 
     with col3:
         st.subheader("🔮 Radar Automazioni")
