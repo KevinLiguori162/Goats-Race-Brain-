@@ -970,7 +970,7 @@ elif "Archivio" in nome:
                     with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: dest.write(f.getbuffer())
             st.success("Tutto salvato correttamente!")
 
-elif pagina == "🛠️ Configurazione GRB":
+elif nome == "🛠️ Configurazione GRB":
     import json
     import os
 
