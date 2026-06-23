@@ -284,32 +284,19 @@ def render_active_dashboard():
 # LOGICA DI NAVIGAZIONE (if/elif corretti)
 # ============================================
 if pagina == "🏎️ Dashboard Gara":
-    # 1. DEFINIZIONE FUNZIONE DI FORMATTAZIONE (deve stare qui o sopra)
-    def formatta_tempo(secondi_totali):
-        ore = int(secondi_totali // 3600)
-        minuti = int((secondi_totali % 3600) // 60)
-        secondi = int(secondi_totali % 60)
-        return f"{ore:02d}:{minuti:02d}:{secondi:02d}"
-
-    # 2. CALCOLO VARIABILI (Se non esistono, le inizializziamo)
-    # Assicurati che timestamp_start_gara sia inizializzato nel tuo setup iniziale!
-    if 'timestamp_start_gara' not in st.session_state:
-        st.session_state.timestamp_start_gara = time.time()
-    if 'timestamp_start_kart' not in st.session_state:
-        st.session_state.timestamp_start_kart = time.time()
-
-    limite_gara_sec = 6 * 3600 # Esempio: 6 ore
-    limite_kart_sec = 4 * 3600 # 4 ore
+    # 1. AGGIORNAMENTO DINAMICO DA YOUCRONO
+    # Supponiamo che il tuo scraper salvi i secondi rimanenti in una variabile
+    # chiamiamola 'st.session_state.youcrono_remaining_seconds'
     
-    tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
-    tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
-    
-    gara_rimanente_sec = max(0, limite_gara_sec - tempo_trascorso_gara)
-    kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
-    
-    percentuale_gara = max(0.0, min(1.0, (tempo_trascorso_gara / limite_gara_sec)))
-    percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / limite_kart_sec)))
+    if 'youcrono_remaining_seconds' in st.session_state:
+        # Sincronizziamo il nostro timer interno con quello di YouCrono
+        # Ogni volta che aggiorni, "resetta" l'inizio della gara in base al tempo reale
+        st.session_state.timestamp_start_gara = time.time() + st.session_state.youcrono_remaining_seconds - (6 * 3600)
 
+    # 2. CALCOLO E VISUALIZZAZIONE
+    gara_rimanente_sec = max(0, (st.session_state.timestamp_start_gara + (6 * 3600)) - time.time())
+    
+    # ... resto del tuo codice ...
     # --- CSS E GRAFICA ---
     st.markdown("""
         <style>
