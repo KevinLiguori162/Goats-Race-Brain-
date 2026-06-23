@@ -332,8 +332,7 @@ if pagina == "🏎️ Dashboard Gara":
             </div>
         """, unsafe_allow_html=True)
 
-    with col3:
-        with col3:
+   with col3:
         st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
         
         # Indicatori di stato (LED)
