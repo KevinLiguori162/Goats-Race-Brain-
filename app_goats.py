@@ -322,94 +322,98 @@ def render_active_dashboard():
 # ==========================================
 # LOGICA DI NAVIGAZIONE (if/elif corretti)
 # ============================================
-# --- CONFIGURAZIONE COSTANTI ---
-LIMITE_GARA_SEC = 8 * 3600  # 8 ore
-LIMITE_KART_SEC = 4 * 3600  # 4 ore
-
-# Inizializzazione variabili globali per evitare NameError
-gara_rimanente_sec = 0
-kart_rimanente_sec = 0
-percentuale_gara = 0.0
-percentuale_kart = 0.0
-classe_blink = ""
-
-if nome == "🏎️ Dashboard Gara":
-    
-    # 1. Inizializzazione e Sincronizzazione (Già funzionante)
-    if 'timestamp_start_gara' not in st.session_state:
-        st.session_state.timestamp_start_gara = time.time()
-    if 'timestamp_start_kart' not in st.session_state:
-        st.session_state.timestamp_start_kart = time.time()
-
-    if 'youcrono_remaining_seconds' in st.session_state:
-        st.session_state.timestamp_start_gara = time.time() - (LIMITE_GARA_SEC - st.session_state.youcrono_remaining_seconds)
-
-    # 2. Calcoli
-    tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
-    tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
-    
-    gara_rimanente_sec = max(0, LIMITE_GARA_SEC - tempo_trascorso_gara)
-    kart_rimanente_sec = max(0, LIMITE_KART_SEC - tempo_trascorso_kart)
-    classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
-
-    # 3. LAYOUT VISUALE (Usa le nuove classi CSS)
-    st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
-    
-    col1, col2, col3 = st.columns([1, 1, 1])
-
-    with col1:
-        st.markdown(f"""
-            <div class="racing-box" style="border-left-color: #ff4b4b;">
-                <div class="label-box">GARA</div>
-                <div class="timer-big">{int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}</div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        # Logica colore dinamico
-        if kart_rimanente_sec < 300: # Meno di 5 min
-            colore_box = "kart-box kart-critical"
-            classe_blink = "blink-active"
-        elif kart_rimanente_sec < 600: # Meno di 10 min
-            colore_box = "kart-box kart-warning"
-            classe_blink = ""
-        else:
-            colore_box = "kart-box"
-            classe_blink = ""
-
-        # Generazione HTML del box
-        st.markdown(f"""
-            <div class="{colore_box}">
-                <div class="label-box">KART</div>
-                <div class="timer-big {classe_blink}">{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}</div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col3:
-        st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
-        
-        # Indicatori di stato (LED)
-        status_color = "#00e676" if 'youcrono_remaining_seconds' in st.session_state else "#ff1744"
-        st.markdown(f"""
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                <div style="width: 12px; height: 12px; background-color: {status_color}; border-radius: 50%; box-shadow: 0 0 10px {status_color};"></div>
-                <span style="font-size: 12px; color: #888;">LIVE DATA { "ON" if status_color == "#00e676" else "OFF" }</span>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Logica Doppio Tocco
-        if not st.session_state.get("conferma_cambio_kart", False):
-            if st.button("🟩 CAMBIO KART"): 
-                st.session_state.conferma_cambio_kart = True
+# --- RENDERING DINAMICO ---
+for i, nome in enumerate(nomi_pagine):
+    with tab_list[i]:
+        # --- ESPANDER DI BLOCCO ---
+        with st.expander("🔒 Gestione Sessione"):
+            c1, c2 = st.columns([3, 1])
+            c1.write("Sessione attiva.")
+            if c2.button("🔒 BLOCCO", key=f"lock_{i}"):
+                st.session_state.autenticato = False
                 st.rerun()
-        else:
-            if st.button("⚠️ CONFERMA?", type="primary"): 
+        
+        # --- LOGICA PAGINA: DASHBOARD GARA ---
+        if nome == "🏎️ Dashboard Gara":
+            
+            # --- CONFIGURAZIONE COSTANTI ---
+            LIMITE_GARA_SEC = 8 * 3600  # 8 ore
+            LIMITE_KART_SEC = 4 * 3600  # 4 ore
+
+            # 1. Inizializzazione e Sincronizzazione
+            if 'timestamp_start_gara' not in st.session_state:
+                st.session_state.timestamp_start_gara = time.time()
+            if 'timestamp_start_kart' not in st.session_state:
                 st.session_state.timestamp_start_kart = time.time()
-                st.session_state.totale_cambi = st.session_state.get('totale_cambi', 0) + 1
-                st.session_state.conferma_cambio_kart = False
-                st.rerun()
-        
-        st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
+
+            if 'youcrono_remaining_seconds' in st.session_state:
+                st.session_state.timestamp_start_gara = time.time() - (LIMITE_GARA_SEC - st.session_state.youcrono_remaining_seconds)
+
+            # 2. Calcoli
+            tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
+            tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
+            
+            gara_rimanente_sec = max(0, LIMITE_GARA_SEC - tempo_trascorso_gara)
+            kart_rimanente_sec = max(0, LIMITE_KART_SEC - tempo_trascorso_kart)
+            classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
+
+            # 3. LAYOUT VISUALE
+            st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
+            
+            col1, col2, col3 = st.columns([1, 1, 1])
+
+            with col1:
+                st.markdown(f"""
+                    <div class="racing-box" style="border-left-color: #ff4b4b;">
+                        <div class="label-box">GARA</div>
+                        <div class="timer-big">{int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+            with col2:
+                # Logica colore dinamico
+                if kart_rimanente_sec < 300: # Meno di 5 min
+                    colore_box = "kart-box kart-critical"
+                    classe_blink = "blink-active"
+                elif kart_rimanente_sec < 600: # Meno di 10 min
+                    colore_box = "kart-box kart-warning"
+                    classe_blink = ""
+                else:
+                    colore_box = "kart-box"
+                    classe_blink = ""
+
+                st.markdown(f"""
+                    <div class="{colore_box}">
+                        <div class="label-box">KART</div>
+                        <div class="timer-big {classe_blink}">{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+            with col3:
+                st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
+                
+                status_color = "#00e676" if 'youcrono_remaining_seconds' in st.session_state else "#ff1744"
+                st.markdown(f"""
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="width: 12px; height: 12px; background-color: {status_color}; border-radius: 50%; box-shadow: 0 0 10px {status_color};"></div>
+                        <span style="font-size: 12px; color: #888;">LIVE DATA { "ON" if status_color == "#00e676" else "OFF" }</span>
+                    </div>
+                """, unsafe_allow_html=True)
+                
+                # Logica Doppio Tocco
+                if not st.session_state.get("conferma_cambio_kart", False):
+                    if st.button("🟩 CAMBIO KART"): 
+                        st.session_state.conferma_cambio_kart = True
+                        st.rerun()
+                else:
+                    if st.button("⚠️ CONFERMA?", type="primary"): 
+                        st.session_state.timestamp_start_kart = time.time()
+                        st.session_state.totale_cambi = st.session_state.get('totale_cambi', 0) + 1
+                        st.session_state.conferma_cambio_kart = False
+                        st.rerun()
+                
+                st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
+
         
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
     st.markdown("#### 📡 Live Timing")
