@@ -443,7 +443,11 @@ for i, nome in enumerate(nomi_pagine):
 
         # --- LOGICA CAMBIO PILOTA ---
         st.write("")
-        p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
+       # Invece di key="sel_pil", usa:
+p_sel = st.selectbox(
+    "Seleziona nuovo pilota:", 
+    list(st.session_state.piloti_v2.keys()), 
+    key=f"sel_pil_{i}"
 
         if st.button("🔄 Conferma Swap Pilota", type="primary", use_container_width=True):
             tempo_trascorso = time.time() - st.session_state.timestamp_start_stint_live
