@@ -220,28 +220,65 @@ if not st.session_state.autenticato:
 st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
 st.sidebar.title("GRT Control Panel")
 
-if st.sidebar.button("🔒 Blocca"):
-    st.session_state.autenticato = False
-    st.rerun()
-
-lista_pagine = [
-    "🏎️ Dashboard Gara",
-    "📊 Valutazione Kart Live",
-    "📊 Strategia", 
-    "📡 Live Timing", 
-    "🛠️ Kart's Performance", 
-    "📜 Regolamento", 
-    "📻 Radio",               
-    "📊 Archivio Gare", 
-    "🛠️ Configurazione GRB"
+# --- DEFINIZIONE PAGINE ---
+nomi_pagine = [
+    "🏎️ Dashboard Gara", "📊 Valutazione Kart Live", "📊 Strategia", 
+    "📡 Live Timing", "🛠️ Kart's Performance", "📜 Regolamento", 
+    "📻 Radio", "📊 Archivio Gare", "🛠️ Configurazione GRB"
 ]
 
-voce_selezionata = st.sidebar.radio("Seleziona Area:", lista_pagine, key="menu_navigazione_grb")
-pagina = voce_selezionata  # <--- ORA VIENE DEFINITA PRIMA!
+# --- NAVIGAZIONE A TABS ---
+tab_list = st.tabs(nomi_pagine)
 
-if st.sidebar.button("🔒 Blocca Schermo"):
-    st.session_state.autenticato = False
-    st.rerun()
+# --- RENDERING DINAMICO ---
+for i, nome in enumerate(nomi_pagine):
+    with tab_list[i]:
+        # --- ESPANDER DI BLOCCO ---
+        with st.expander("🔒 Gestione Sessione"):
+            c1, c2 = st.columns([3, 1])
+            c1.write("Sessione attiva.")
+            if c2.button("🔒 BLOCCO", key=f"lock_{i}"):
+                st.session_state.autenticato = False
+                st.rerun()
+        
+        # --- LOGICA PAGINE ---
+        if nome == "🏎️ Dashboard Gara":
+            st.subheader("🏎️ Dashboard Gara")
+            # Incolla qui il codice della tua Dashboard
+            
+        elif nome == "📊 Valutazione Kart Live":
+            st.subheader("📊 Valutazione Kart Live")
+            # Incolla qui il codice analisi Kart
+            
+        elif nome == "📊 Strategia":
+            st.subheader("📊 Strategia")
+            # Incolla qui il codice strategia
+            
+        elif nome == "📡 Live Timing":
+            st.subheader("📡 Live Timing")
+            # Incolla qui il feed live timing
+            
+        elif nome == "🛠️ Kart's Performance":
+            st.subheader("🛠️ Kart's Performance")
+            # Incolla qui il codice performance
+            
+        elif nome == "📜 Regolamento":
+            st.subheader("📜 Regolamento")
+            # Incolla qui il testo o il PDF del regolamento
+            
+        elif nome == "📻 Radio":
+            st.subheader("📻 Radio")
+            # Incolla qui eventuali collegamenti audio/chat
+            
+        elif nome == "📊 Archivio Gare":
+            st.subheader("📊 Archivio Gare")
+            # Incolla qui il caricamento CSV/Archivio
+            
+        elif nome == "🛠️ Configurazione GRB":
+            st.subheader("⚙️ Configurazione GRB")
+            # Incolla qui il codice che abbiamo preparato prima
+
+
 def formatta_tempo(secondi):
         ore = int(secondi // 3600)
         minuti = int((secondi % 3600) // 60)
