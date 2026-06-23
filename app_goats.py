@@ -112,16 +112,20 @@ st.markdown("""
     /* Reset e Colori Base */
     .stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
     
-    /* Box Timer (Stile Gara/Kart) */
-    .racing-box { 
-        background-color: #12171e; 
-        padding: 20px; 
-        border-radius: 10px; 
-        border-left: 6px solid #ff4b4b; 
-        text-align: center; 
-        margin-bottom: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5); /* <-- Aggiungi questa riga */
-    }
+   /* Stile base Box Kart */
+.kart-box { 
+    background-color: #12171e; 
+    padding: 20px; 
+    border-radius: 10px; 
+    border-left: 6px solid #ffcc00; /* Giallo Default */
+    text-align: center; 
+    margin-bottom: 20px;
+    transition: border-left 0.5s ease;
+}
+
+/* Classi dinamiche per i bordi */
+.kart-warning { border-left-color: #e65100 !important; } /* Arancione */
+.kart-critical { border-left-color: #ff1744 !important; } /* Rosso */
     
     .label-box { color: #888; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; }
     .timer-big { font-size: 45px; font-weight: 900; color: #ffffff; font-family: 'Courier New', monospace; }
