@@ -63,27 +63,42 @@ def ottieni_dati_aggiornati():
 
 @st.fragment(run_every=5.0)
 def aggiorna_dati_scraper():
-    # 1. Questa è la funzione che già hai
-    st.session_state.database_rivali_v2 = ottieni_dati_aggiornati()
+    # 1. Recupero dati dallo scraper
+    dati_live = ottieni_dati_aggiornati()
     
-    # 2. SUBITO DOPO, incolla questo ciclo:
-    for r in st.session_state.database_rivali_v2:
-        giro_tempo = r['ultimo_giro'] 
+    if dati_live:
+        st.session_state.database_rivali_v2 = dati_live
         
-        # Salviamo solo se è un numero valido
-        if isinstance(giro_tempo, (int, float)):
-            team = r['team']
-            if team not in st.session_state.storico_tempi:
-                st.session_state.storico_tempi[team] = []
-            
-            # Evitiamo di salvare due volte lo stesso identico tempo (opzionale)
-            if not st.session_state.storico_tempi[team] or st.session_state.storico_tempi[team][-1] != giro_tempo:
-                st.session_state.storico_tempi[team].append(giro_tempo)
-                
-                # Teniamo solo gli ultimi 30 giri per non pesare sulla memoria
-                if len(st.session_state.storico_tempi[team]) > 30:
-                    st.session_state.storico_tempi[team].pop(0)
+        # 2. SINCRONIZZAZIONE TIMER GARA (MASTER)
+        # Se nel JSON esiste il tempo rimanente, riallineiamo il timer
+        if 'timer_gara_youcrono' in dati_live:
+            tempo_rimanente = dati_live['timer_gara_youcrono']
+            # Sincronizza l'inizio gara in modo che manchino esattamente 'tempo_rimanente' secondi
+            st.session_state.timestamp_start_gara = time.time() - (6 * 3600 - tempo_rimanente)
 
+        # 3. GESTIONE STORICO GIRI
+        # (Assicurati che storio_tempi sia inizializzato nello session_state all'avvio)
+        if 'storico_tempi' not in st.session_state:
+            st.session_state.storico_tempi = {}
+
+        for r in st.session_state.database_rivali_v2:
+            # Verifica che il campo esista
+            if 'ultimo_giro' in r and 'team' in r:
+                giro_tempo = r['ultimo_giro']
+                
+                # Salviamo solo se è un numero valido
+                if isinstance(giro_tempo, (int, float)):
+                    team = r['team']
+                    if team not in st.session_state.storico_tempi:
+                        st.session_state.storico_tempi[team] = []
+                    
+                    # Evitiamo di salvare due volte lo stesso identico tempo
+                    if not st.session_state.storico_tempi[team] or st.session_state.storico_tempi[team][-1] != giro_tempo:
+                        st.session_state.storico_tempi[team].append(giro_tempo)
+                        
+                        # Teniamo solo gli ultimi 30 giri per non pesare sulla memoria
+                        if len(st.session_state.storico_tempi[team]) > 30:
+                            st.session_state.storico_tempi[team].pop(0)
 # 4. INIZIALIZZAZIONE STATO
 if 'database_rivali_v2' not in st.session_state:
     st.session_state.database_rivali_v2 = carica_dati()
