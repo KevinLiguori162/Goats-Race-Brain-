@@ -332,7 +332,7 @@ if pagina == "🏎️ Dashboard Gara":
             </div>
         """, unsafe_allow_html=True)
 
-   with col3:
+    with col3:
         st.markdown('<div class="radar-header">🔮 Radar Automazioni</div>', unsafe_allow_html=True)
         
         # Indicatori di stato (LED)
@@ -344,7 +344,7 @@ if pagina == "🏎️ Dashboard Gara":
             </div>
         """, unsafe_allow_html=True)
         
-        # Logica Doppio Tocco (Bottone sicuro)
+        # Logica Doppio Tocco
         if not st.session_state.get("conferma_cambio_kart", False):
             if st.button("🟩 CAMBIO KART"): 
                 st.session_state.conferma_cambio_kart = True
