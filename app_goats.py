@@ -366,9 +366,9 @@ if pagina == "🏎️ Dashboard Gara":
     st.write("---")
 
         # --- 4. RIGA INFERIORE (OPERATIVO) ---
-    col_sx, col_dx = st.columns([1, 1])
-        
-   with col_sx:
+    col_sx, col_dx = st.columns([2, 1])
+
+    with col_sx:
         # --- INIZIALIZZAZIONE SICURA ---
         if 'piloti_v2' not in st.session_state:
             st.session_state.piloti_v2 = {
@@ -387,7 +387,6 @@ if pagina == "🏎️ Dashboard Gara":
             minuti = int(dati_p.get('tempo_totale_sec', 0)) // 60
             secondi = int(dati_p.get('tempo_totale_sec', 0)) % 60
             
-            # Usiamo le classi CSS racing-box o simili per uniformità
             stato = "🟢" if dati_p["in_pista"] else "🔴"
             
             with cols[i]:
@@ -400,26 +399,20 @@ if pagina == "🏎️ Dashboard Gara":
                 """, unsafe_allow_html=True)
 
         # --- LOGICA CAMBIO PILOTA ---
-        st.write("") # Spaziatore
+        st.write("")
         p_sel = st.selectbox("Seleziona nuovo pilota:", list(st.session_state.piloti_v2.keys()), key="sel_pil")
 
         if st.button("🔄 Conferma Swap Pilota", type="primary", use_container_width=True):
-            # Calcolo tempo trascorso dall'ultimo stint
             tempo_trascorso = time.time() - st.session_state.timestamp_start_stint_live
-            
-            # Aggiornamento dati
             for nome in st.session_state.piloti_v2:
-                # Se il pilota era in pista, aggiorna il suo tempo totale
                 if st.session_state.piloti_v2[nome]["in_pista"]:
                     st.session_state.piloti_v2[nome]["tempo_totale_sec"] += tempo_trascorso
-                
-                # Imposta in_pista solo per il pilota selezionato
                 st.session_state.piloti_v2[nome]["in_pista"] = (nome == p_sel)
             
-            # Reset timer stint e ricarica
             st.session_state.timestamp_start_stint_live = time.time()
             st.toast(f"✅ Swap effettuato: {p_sel} è in pista.")
             st.rerun()
+            
     with col_dx:
         st.markdown("#### 🚨 Radar Completo")
             
