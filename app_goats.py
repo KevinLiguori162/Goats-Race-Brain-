@@ -329,8 +329,20 @@ if pagina == "🏎️ Dashboard Gara":
         """, unsafe_allow_html=True)
 
     with col2:
+        # Logica colore dinamico
+        if kart_rimanente_sec < 300: # Meno di 5 min
+            colore_box = "kart-box kart-critical"
+            classe_blink = "blink-active"
+        elif kart_rimanente_sec < 600: # Meno di 10 min
+            colore_box = "kart-box kart-warning"
+            classe_blink = ""
+        else:
+            colore_box = "kart-box"
+            classe_blink = ""
+
+        # Generazione HTML del box
         st.markdown(f"""
-            <div class="racing-box" style="border-left-color: #ffcc00;">
+            <div class="{colore_box}">
                 <div class="label-box">KART</div>
                 <div class="timer-big {classe_blink}">{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}</div>
             </div>
