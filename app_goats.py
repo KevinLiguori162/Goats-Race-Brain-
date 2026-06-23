@@ -284,19 +284,33 @@ def render_active_dashboard():
 # LOGICA DI NAVIGAZIONE (if/elif corretti)
 # ============================================
 if pagina == "🏎️ Dashboard Gara":
-    # 1. AGGIORNAMENTO DINAMICO DA YOUCRONO
-    # Supponiamo che il tuo scraper salvi i secondi rimanenti in una variabile
-    # chiamiamola 'st.session_state.youcrono_remaining_seconds'
     
-    if 'youcrono_remaining_seconds' in st.session_state:
-        # Sincronizziamo il nostro timer interno con quello di YouCrono
-        # Ogni volta che aggiorni, "resetta" l'inizio della gara in base al tempo reale
-        st.session_state.timestamp_start_gara = time.time() + st.session_state.youcrono_remaining_seconds - (6 * 3600)
+    # 1. Inizializzazione sicura delle variabili (evita NameError)
+    if 'timestamp_start_gara' not in st.session_state:
+        st.session_state.timestamp_start_gara = time.time()
+    if 'timestamp_start_kart' not in st.session_state:
+        st.session_state.timestamp_start_kart = time.time()
 
-    # 2. CALCOLO E VISUALIZZAZIONE
-    gara_rimanente_sec = max(0, (st.session_state.timestamp_start_gara + (6 * 3600)) - time.time())
+    # 2. Sincronizzazione con YouCrono (se il dato arriva)
+    if 'youcrono_remaining_seconds' in st.session_state:
+        # Calcola l'inizio gara basato sul tempo rimanente reale
+        st.session_state.timestamp_start_gara = time.time() - (6 * 3600 - st.session_state.youcrono_remaining_seconds)
+
+    # 3. Calcolo dei secondi rimanenti (SEMPRE definiti qui)
+    limite_gara_sec = 6 * 3600
+    limite_kart_sec = 4 * 3600
     
-    # ... resto del tuo codice ...
+    tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
+    tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
+    
+    gara_rimanente_sec = max(0, limite_gara_sec - tempo_trascorso_gara)
+    kart_rimanente_sec = max(0, limite_kart_sec - tempo_trascorso_kart)
+    
+    # 4. Ora la variabile esiste sempre, quindi l'errore blink scompare
+    classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
+    
+    # ... Ora puoi continuare con il tuo layout (st.columns, st.metric, ecc.)
+    st.write(f"Gara rimanente: {int(gara_rimanente_sec)} secondi")
     # --- CSS E GRAFICA ---
     st.markdown("""
         <style>
