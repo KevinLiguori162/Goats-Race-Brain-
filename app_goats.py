@@ -328,47 +328,54 @@ classe_blink = ""
 
 if pagina == "🏎️ Dashboard Gara":
     
-    # 1. Inizializzazione sicura (Session State)
+    # 1. Inizializzazione sicura e Sincronizzazione (Già pronta)
     if 'timestamp_start_gara' not in st.session_state:
         st.session_state.timestamp_start_gara = time.time()
     if 'timestamp_start_kart' not in st.session_state:
         st.session_state.timestamp_start_kart = time.time()
 
-    # 2. Sincronizzazione con YouCrono (se il dato esiste)
     if 'youcrono_remaining_seconds' in st.session_state:
-        # Sincronizziamo il timer gara: tempo attuale - (Durata Totale - Tempo Rimanente)
         st.session_state.timestamp_start_gara = time.time() - (LIMITE_GARA_SEC - st.session_state.youcrono_remaining_seconds)
 
-    # 3. Calcoli (Logica sempre eseguita se nella pagina)
+    # 2. Calcoli
     tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
     tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
     
     gara_rimanente_sec = max(0, LIMITE_GARA_SEC - tempo_trascorso_gara)
     kart_rimanente_sec = max(0, LIMITE_KART_SEC - tempo_trascorso_kart)
     
-    # Calcolo percentuali per la progress bar (0.0 a 1.0)
-    percentuale_gara = max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC)))
-    percentuale_kart = max(0.0, min(1.0, (tempo_trascorso_kart / LIMITE_KART_SEC)))
+    # 3. Visualizzazione (Solo i Box grandi)
+    st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
     
-    # 4. Logica Blink (attiva negli ultimi 30 minuti del kart)
-    classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
+    col1, col2, col3 = st.columns([1, 1, 1])
 
-    # --- VISUALIZZAZIONE ---
-    # Verifica se i dati sono "vivi" (se il timer gara è al limite, forse non è iniziata)
-    if gara_rimanente_sec >= LIMITE_GARA_SEC and 'youcrono_remaining_seconds' not in st.session_state:
-        st.info("⏳ In attesa di dati dalla gara...")
-    else:
-        # Layout: ProgressBar + Metriche
-        st.progress(percentuale_gara)
+    with col1:
+        st.markdown(f"""
+            <div style="background-color: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #ff4b4b; text-align: center;">
+                <h3 style="color: #888; margin: 0;">GARA</h3>
+                <h1 style="font-size: 50px; margin: 10px 0;">
+                    {int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}
+                </h1>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"""
+            <div style="background-color: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #ffcc00; text-align: center;">
+                <h3 style="color: #888; margin: 0;">KART</h3>
+                <h1 style="font-size: 50px; margin: 10px 0;">
+                    {int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}
+                </h1>
+            </div>
+        """, unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("GARA Rimanente", f"{int(gara_rimanente_sec // 3600):02d}:{int((gara_rimanente_sec % 3600) // 60):02d}:{int(gara_rimanente_sec % 60):02d}")
-        with col2:
-            st.metric("KART Rimanente", f"{int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}")
-            if st.button("Reset Cambio Kart"):
-                st.session_state.timestamp_start_kart = time.time()
-                st.rerun()
+        if st.button("🔄 Reset Cambio Kart", use_container_width=True):
+            st.session_state.timestamp_start_kart = time.time()
+            st.rerun()
+
+    with col3:
+        st.subheader("🔮 Radar Automazioni")
+        st.button("🟩 CAMBIO KART", use_container_width=True)
     # --- CSS E GRAFICA ---
     st.markdown("""
         <style>
