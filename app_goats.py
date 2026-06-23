@@ -333,7 +333,7 @@ percentuale_gara = 0.0
 percentuale_kart = 0.0
 classe_blink = ""
 
-if pagina == "🏎️ Dashboard Gara":
+if nome == "🏎️ Dashboard Gara":
     
     # 1. Inizializzazione e Sincronizzazione (Già funzionante)
     if 'timestamp_start_gara' not in st.session_state:
