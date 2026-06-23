@@ -427,33 +427,25 @@ if pagina == "🏎️ Dashboard Gara":
 if pagina == "📊 Valutazione Kart Live":
     st.header("📊 Valutazione Performance Kart")
 
-    # --- CODICE DI TEST (Puoi lasciarlo, non dà fastidio) ---
-    if st.button("🚀 Inserisci Dati di Test"):
-        st.session_state.storico_tempi = {
-            "GOATS RT RED": [63.5, 63.8, 63.2, 63.9, 64.0],
-            "Winner Team 1": [62.1, 62.0, 62.3, 62.2, 62.5],
-            "Lenti Team": [68.0, 69.1, 68.5, 69.0, 68.8]
-        }
-        st.rerun()
-
-    # --- LOGICA TABELLA (Sempre eseguita) ---
+    # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
     dati_valutazione = []
     
-    # Verifichiamo se esistono dati nello storico
     if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
-        
         for team, tempi in st.session_state.storico_tempi.items():
-            # Usiamo almeno 3 giri per iniziare a vedere dati (in gara alzerai a 5+)
             if len(tempi) >= 3: 
-                # Calcolo media mobile ultimi 20 giri
                 media_mobile = sum(tempi[-20:]) / len(tempi[-20:])
-                dati_valutazione.append({"Team": team, "Media (20g)": round(media_mobile, 3)})
+                best_lap_mobile = min(tempi[-20:])
+                
+                dati_valutazione.append({
+                    "Team": team, 
+                    "Media (20g)": round(media_mobile, 3),
+                    "Best Lap (20g)": round(best_lap_mobile, 3)
+                })
         
         if dati_valutazione:
             df_val = pd.DataFrame(dati_valutazione)
             media_globale = df_val["Media (20g)"].mean()
             
-            # Funzione emoji dinamica
             def get_emoji(tempo):
                 if tempo < (media_globale - 0.4): return "🚀"
                 elif tempo > (media_globale + 0.3): return "💩"
@@ -461,19 +453,16 @@ if pagina == "📊 Valutazione Kart Live":
                 
             df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
             
-            # Visualizzazione tabella pulita
+            # Mostriamo la tabella pulita
             st.dataframe(
                 df_val.sort_values("Media (20g)"), 
                 use_container_width=True, 
-                hide_index=True,
-                column_config={
-                    "Media (20g)": st.column_config.NumberColumn(format="%.3f")
-                }
+                hide_index=True
             )
         else:
-            st.info("Sto ancora raccogliendo dati (minimo 3 giri necessari).")
+            st.info("In attesa di dati (minimo 3 giri)...")
     else:
-        st.info("Nessun dato ancora ricevuto da YouCrono. Attendi l'inizio della sessione o usa il test.")
+        st.info("Nessun dato ancora ricevuto da YouCrono.")
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
