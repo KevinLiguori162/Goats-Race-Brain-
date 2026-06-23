@@ -327,6 +327,7 @@ def render_active_dashboard():
 # ============================================
 # --- RENDERING DINAMICO ---
 # --- RENDERING DINAMICO ---
+# --- RENDERING DINAMICO ---
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         
@@ -410,7 +411,6 @@ for i, nome in enumerate(nomi_pagine):
                         st.rerun()
                 
                 st.metric("Totale Cambi", st.session_state.get('totale_cambi', 0))
-        
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
     st.markdown("#### 📡 Live Timing")
     tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro'], "KART": st.session_state.archivio_performance.get(r["kart"], {"qualita": "❓"})["qualita"]} for r in st.session_state.database_rivali_v2]
