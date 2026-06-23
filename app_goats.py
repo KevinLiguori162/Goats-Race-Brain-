@@ -328,23 +328,35 @@ classe_blink = ""
 
 if pagina == "🏎️ Dashboard Gara":
     
-    # 1. Inizializzazione sicura e Sincronizzazione (Già pronta)
+    # 1. Inizializzazione sicura
     if 'timestamp_start_gara' not in st.session_state:
         st.session_state.timestamp_start_gara = time.time()
     if 'timestamp_start_kart' not in st.session_state:
         st.session_state.timestamp_start_kart = time.time()
 
+    # 2. Sincronizzazione con YouCrono
     if 'youcrono_remaining_seconds' in st.session_state:
         st.session_state.timestamp_start_gara = time.time() - (LIMITE_GARA_SEC - st.session_state.youcrono_remaining_seconds)
 
-    # 2. Calcoli
+    # 3. Calcoli
     tempo_trascorso_gara = time.time() - st.session_state.timestamp_start_gara
     tempo_trascorso_kart = time.time() - st.session_state.timestamp_start_kart
     
     gara_rimanente_sec = max(0, LIMITE_GARA_SEC - tempo_trascorso_gara)
     kart_rimanente_sec = max(0, LIMITE_KART_SEC - tempo_trascorso_kart)
     
-    # 3. Visualizzazione (Solo i Box grandi)
+    # Logica Blink (ultimi 30 min)
+    classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
+
+    # 4. CSS per lo stile e il lampeggio (Blink)
+    st.markdown("""
+        <style>
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+        .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 5. LAYOUT UNICO (Pulito e senza doppioni)
     st.progress(max(0.0, min(1.0, (tempo_trascorso_gara / LIMITE_GARA_SEC))))
     
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -363,52 +375,29 @@ if pagina == "🏎️ Dashboard Gara":
         st.markdown(f"""
             <div style="background-color: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #ffcc00; text-align: center;">
                 <h3 style="color: #888; margin: 0;">KART</h3>
-                <h1 style="font-size: 50px; margin: 10px 0;">
+                <h1 class="{classe_blink}" style="font-size: 50px; margin: 10px 0;">
                     {int(kart_rimanente_sec // 3600):02d}:{int((kart_rimanente_sec % 3600) // 60):02d}:{int(kart_rimanente_sec % 60):02d}
                 </h1>
             </div>
         """, unsafe_allow_html=True)
         
-        if st.button("🔄 Reset Cambio Kart", use_container_width=True):
+        if st.button("🔄 Reset Manuale Kart", use_container_width=True):
             st.session_state.timestamp_start_kart = time.time()
             st.rerun()
 
     with col3:
         st.subheader("🔮 Radar Automazioni")
-        st.button("🟩 CAMBIO KART", use_container_width=True)
-    # --- CSS E GRAFICA ---
-    st.markdown("""
-        <style>
-        .timer-container { background-color: #0e1117; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #262730; }
-        .timer-digital { font-family: monospace; font-size: 24px; font-weight: bold; color: #ffffff; margin-top: 5px; }
-        .label-timer { color: #808495; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-        .blink-active { animation: blink 1s linear infinite; color: #ff4b4b !important; }
-        </style>
-    """, unsafe_allow_html=True)
-    
-    classe_blink = "blink-active" if kart_rimanente_sec < 1800 else ""
         
-    # --- RIGA SUPERIORE (COUNTDOWN) ---
-    c1, c2, c3 = st.columns([1, 1, 1.2])
-    with c1:
-        st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ff4b4b;"><div class="label-timer">GARA</div><div class="timer-digital">{formatta_tempo(gara_rimanente_sec)}</div></div>', unsafe_allow_html=True)
-        st.progress(percentuale_gara)
-    with c2:
-        st.markdown(f'<div class="timer-container" style="border-top: 4px solid #ffaa00;"><div class="label-timer">KART</div><div class="timer-digital {classe_blink}">{formatta_tempo(kart_rimanente_sec)}</div></div>', unsafe_allow_html=True)
-        st.progress(percentuale_kart)
-    with c3:
-        st.markdown("### 🔮 Radar Automazioni")
-        if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): 
-            st.session_state.conferma_cambio_kart = True
-        
-        if st.session_state.get("conferma_cambio_kart", False):
-            if st.button("⚠️ CONFERMA CAMBIO?", key="btn_k_conf", type="primary", use_container_width=True): 
+        # Logica Doppio Tocco (Sicurezza)
+        if not st.session_state.get("conferma_cambio_kart", False):
+            if st.button("🟩 CAMBIO KART", key="btn_k", use_container_width=True): 
+                st.session_state.conferma_cambio_kart = True
+                st.rerun()
+        else:
+            if st.button("⚠️ CONFERMA?", key="btn_k_conf", type="primary", use_container_width=True): 
                 st.session_state.timestamp_start_kart = time.time()
                 st.session_state.conferma_cambio_kart = False
                 st.rerun()
-
-    st.write("---")
         
         # --- 3. LIVE TIMING (TUTTA LARGHEZZA) ---
     st.markdown("#### 📡 Live Timing")
