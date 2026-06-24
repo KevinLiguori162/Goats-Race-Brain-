@@ -380,7 +380,6 @@ for i, nome in enumerate(nomi_pagine):
     st.table(pd.DataFrame(riepilogo_piloti))
     
             # [Inserisci qui il codice della Strategia]
-
         elif nome == "🛠️ Kart's Performance":
             st.title("🛠️ Gestione e Performance Kart")
 
