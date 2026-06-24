@@ -192,7 +192,8 @@ for i, nome in enumerate(nomi_pagine):
         
         # --- LOGICA PAGINA: DASHBOARD GARA ---
         # --- LOGICA PAGINA: DASHBOARD GARA ---
-        if nome == "🏎️ Dashboard Gara":
+       if nome == "🏎️ Dashboard Gara":
+            st.subheader("🏎️ Dashboard Gara")
             
             # --- CONFIGURAZIONE COSTANTI ---
             LIMITE_GARA_SEC = 8 * 3600
@@ -254,9 +255,8 @@ for i, nome in enumerate(nomi_pagine):
                 if st.session_state.get("radar_is_pit_lane"):
                     st.warning("PIT LANE ATTIVA")
 
-if nome == "📊 Valutazione Kart Live":
-    st.header("📊 Valutazione Performance Kart")
-
+elif nome == "📊 Valutazione Kart Live":
+            st.subheader("📊 Valutazione Performance Kart")
     # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
     dati_valutazione = []
     
@@ -296,7 +296,8 @@ if nome == "📊 Valutazione Kart Live":
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
-elif "Strategia" in nome:
+elif nome == "📊 Strategia":
+            st.subheader("📋 Strategia Endurance")
     st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.write("Sincronizzazione muretto e calcolatore predittivo basato sui Tempi di Pit cumulativi.")
     st.write("---")
