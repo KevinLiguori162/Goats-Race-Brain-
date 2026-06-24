@@ -378,7 +378,6 @@ for i, nome in enumerate(nomi_pagine):
         riepilogo_piloti.append({"Pilota": p, "Tempo di Guida Accumulato": f"{minuti_guida} Minuti", "Stato Turno Obbligatorio": "✅ ASSOLTO" if minuti_guida >= 10 else "❌ DA EFFETTUARE"})
     st.table(pd.DataFrame(riepilogo_piloti))
             # [Inserisci qui il codice della Strategia]
-
         elif "Live Timing" in nome:
             st.title("📡 Live Timing Totale Sincronizzato")
             link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
@@ -534,13 +533,13 @@ st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'
             # [Inserisci qui il codice di Kart's Performance]
 
 
-        elif "Regolamento" in nome:
-            st.title("📋 Regolamento IRK Championship")
+        elif nome == "📻 Radio":
+            st.subheader("📻 Radio")
             st.write("Consultazione rapida delle regole di ingaggio.")
             # [Inserisci qui il codice del Regolamento]
 
-        elif nome == "📻 Radio":
-            st.subheader("📻 Radio")
+        elif "Regolamento" in nome:
+            st.title("📋 Regolamento IRK Championship")
 st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
             st.write("---")
                 
