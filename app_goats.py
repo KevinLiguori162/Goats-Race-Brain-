@@ -280,8 +280,8 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
-elif nome == "📊 Strategia":
-    st.subheader("📋 Strategia Endurance")
+        elif nome == "📊 Strategia":
+            st.subheader("📋 Strategia Endurance")
     st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.write("Sincronizzazione muretto e calcolatore predittivo basato sui Tempi di Pit cumulativi.")
     st.write("---")
