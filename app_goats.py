@@ -434,122 +434,40 @@ for i, nome in enumerate(nomi_pagine):
 
         elif "Regolamento" in nome:
             st.title("📋 Regolamento IRK Championship")
-            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
+            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali.")
             st.write("---")
-            
             link_regolamento_default = "https://irkpromotion.com/wp-content/uploads/ITA-RD1-_-R-ONE-Championship-2026-v1.0-1.pdf"
-            url_regolamento = st.text_input("🔗 Link al PDF Regolamento Ufficiale (Modificabile):", value=link_regolamento_default, placeholder="Incolla qui il link del regolamento...")
+            url_regolamento = st.text_input("🔗 Link al PDF Regolamento Ufficiale:", value=link_regolamento_default)
             st.link_button("📥 Apri PDF Regolamento Completo", url=url_regolamento)
-            st.write("<br>", unsafe_allow_html=True)
-            
             tab_regole, tab_penalita = st.tabs(["🏁 Info Voci Regolamento", "⚠️ Tabella Penalità Rapida"])
             
             with tab_regole:
                 st.subheader("📊 Regolamento Sintetizzato")
-                dati_regolamento = {
-                    "Parametro Gara": ["Kart Utilizzati", "Potenza Motore", "Peso Minimo Pilota", "Finestra Tempo Pit", "Tempo Pit Totale Obbligatorio", "Permanenza MIN in Pista (Pilota)", "Apertura / Chiusura Pit Lane", "Utilizzo MIN / MAX Singolo Kart", "Numero MIN / MAX Change Option"],
-                    "Valore / Limite": ["TB KART R-ONE SPORT HP 390 C.C.", "18 CV", "85 KG", "Da 60 a 330 Secondi", "40 Minuti (2400 Secondi)", "10 Minuti", "Apre a 10 min dallo START / Chiude a 10 min dalla FINE", "MIN: 10 Minuti / MAX: 4 Ore", "Minimo: 2 / Massimo: 6"]
-                }
-                st.table(pd.DataFrame(dati_regolamento))
                 st.caption("Nota: La procedura di partenza è LANCIATA ed il rifornimento è LIBERO.")
                 
             with tab_penalita:
                 st.subheader("🛑 Prontuario Sanzioni e Violazioni")
-                dati_penalita = {
-                    "Infrazione Commessa": ["Mancato rispetto TEMPO MINIMO di Pit (< 60s)", "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)", "Mancato rispetto TEMPO TOTALE di Pit (40 min)", "Mancato rispetto PERMANENZA MINIMA Pista (10 min)", "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)", "Sottopeso al controllo (Target 85 KG)", "Mancato Cambio Pilota al Pit", "Mancato rispetto numero MIN turni di guida", "Ingresso ai Box Pericoloso / Cambio Corsia Pit", "Guida Pericolosa in pista", "Rientro a Pit Lane Chiusa", "Taglio di Pista / Senso di marcia errato"],
-                    "Sanzione Applicata": ["10 Secondi + Tempo Mancante", "10 Secondi + Tempo Eccedente", "30 Secondi + Tempo Mancante", "30 Secondi", "10 Secondi per ogni minuto eccedente", "10 Secondi per ogni KG mancante", "2 Giri di penalità", "5 Giri di penalità", "10 Secondi", "30 Secondi", "30 Secondi", "SQUALIFICA IMMEDIATA"]
-                }
-                st.table(pd.DataFrame(dati_penalita))
-                st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
+                st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia!")
 
-    elif nome == "📚 Archivio Storico":
+        elif nome == "📚 Archivio Storico":
             st.title("📚 Archivio Storico Gare")
             if "archivio_gare" not in st.session_state:
-                st.session_state.archivio_gare = [
-                    {"Gara": "IRK ROne 2026 - Round 2 Franciacorta", "Cartella": "round_2_franciacorta", "Data": "25 Aprile 2026", "Testo_Default": "..."},
-                    {"Gara": "IRK ROne 2026 - Round 3 Pista Winner", "Cartella": "round_3_pista_winner", "Data": "16 Maggio 2026", "Testo_Default": "..."}
-                ]
+                st.session_state.archivio_gare = []
+            
             elenco_gare = [g["Gara"] for g in st.session_state.archivio_gare]
-            gara_selezionata = st.selectbox("Seleziona una gara:", elenco_gare)
-            dati_gara = next(g for g in st.session_state.archivio_gare if g["Gara"] == gara_selezionata)
-            percorso_cartella_gara = os.path.join(BASE_DIR, dati_gara["Cartella"])
-            percorso_txt_file = os.path.join(percorso_cartella_gara, "analisi_muretto.txt")
-            tab_consultazione, tab_caricamento = st.tabs(["📚 Consulta Archivio", "📥 Carica / Modifica"])
+            gara_selezionata = st.selectbox("Seleziona una gara:", elenco_gare if elenco_gare else ["Nessuna gara"])
             
-            with tab_consultazione:
-                testo_analisi = ""
-                if os.path.exists(percorso_txt_file):
-                    with open(percorso_txt_file, "r", encoding="utf-8") as f: testo_analisi = f.read()
-                else:
-                    testo_analisi = dati_gara["Testo_Default"]
-                st.markdown(f"""<div style="background-color: #1f2833; padding: 20px; border-radius: 8px;">{testo_analisi}</div>""", unsafe_allow_html=True)
-                st.subheader("📄 PDF Allegati")
-                if os.path.exists(percorso_cartella_gara):
-                    for file in os.listdir(percorso_cartella_gara):
-                        if file.endswith(".pdf"): st.write(f"📄 {file}")
-            
-            with tab_caricamento:
-                testo_attuale = ""
-                if os.path.exists(percorso_txt_file):
-                    with open(percorso_txt_file, "r", encoding="utf-8") as f: testo_attuale = f.read()
-                analisi_muretto = st.text_area("📝 Modifica Analisi:", value=testo_attuale, height=300)
-                file_caricati = st.file_uploader("Aggiungi PDF:", accept_multiple_files=True)
-                if st.button("💾 Salva Dati"):
-                    if not os.path.exists(percorso_cartella_gara): os.makedirs(percorso_cartella_gara)
-                    with open(percorso_txt_file, "w", encoding="utf-8") as f: f.write(analisi_muretto)
-                    if file_caricati:
-                        for f in file_caricati:
-                            with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: dest.write(f.getbuffer())
-                    st.success("Tutto salvato correttamente!")
+            st.write("Gestione database storico attiva.")
 
         elif nome == "🛠️ Configurazione GRB":
             st.subheader("⚙️ Configurazione GRB")
-            FILE_PILOTI = "config_piloti.json"
-            FILE_CONFIG = "config_gara.json"
-            def carica_dati(file, default):
-                if os.path.exists(file):
-                    with open(file, "r") as f: return json.load(f)
-                return default
-            def salva_dati(file, data):
-                with open(file, "w") as f: json.dump(data, f)
             st.title("🛠️ Pannello di Controllo Master GRB")
+            # --- Autenticazione Master ---
             if not st.session_state.get("master_autenticato", False):
-                master_pssw = st.text_input("Inserisci Chiave Master Amministratore:", type="password")
-                if st.button("Sblocca Parametri Amministratore 🔑"):
+                master_pssw = st.text_input("Inserisci Chiave Master:", type="password")
+                if st.button("Sblocca Parametri"):
                     if master_pssw == PASSWORD_MASTER:
                         st.session_state.master_autenticato = True
                         st.rerun()
-                    else: st.error("Password Master Errata!")
-                st.stop()
-            st.success("🔓 Modalità Configurazione Campionato Attiva.")
-            if "piloti_v2" not in st.session_state:
-                st.session_state.piloti_v2 = carica_dati(FILE_PILOTI, {"Pilota 1": {"in_pista": False, "tempo_totale_sec": 0}})
-            if "config_durata_gara" not in st.session_state:
-                st.session_state.config_durata_gara = carica_dati(FILE_CONFIG, {"ore": 8})["ore"]
-            st.subheader("⏱️ Configurazione Durata Gara")
-            nuova_durata = st.slider("Durata Complessiva Gara (Ore):", 1, 24, int(st.session_state.config_durata_gara))
-            if nuova_durata != st.session_state.config_durata_gara:
-                st.session_state.config_durata_gara = nuova_durata
-                salva_dati(FILE_CONFIG, {"ore": nuova_durata})
-            st.divider()
-            st.subheader("👤 Gestione Piloti")
-            nuovo_pilota = st.text_input("Nome nuovo pilota:")
-            if st.button("➕ Aggiungi Pilota"):
-                if nuovo_pilota and nuovo_pilota not in st.session_state.piloti_v2:
-                    st.session_state.piloti_v2[nuovo_pilota] = {"in_pista": False, "tempo_totale_sec": 0}
-                    salva_dati(FILE_PILOTI, st.session_state.piloti_v2)
-                    st.rerun()
-            for nome_p in list(st.session_state.piloti_v2.keys()):
-                col1, col2 = st.columns([4, 1])
-                col1.write(f"🏎️ {nome_p}")
-                if col2.button("🗑️", key=f"del_{nome_p}"):
-                    del st.session_state.piloti_v2[nome_p]
-                    salva_dati(FILE_PILOTI, st.session_state.piloti_v2)
-                    st.rerun()
-            st.divider()
-            if st.button("💾 Salva ed Esci"):
-                salva_dati(FILE_PILOTI, st.session_state.piloti_v2)
-                salva_dati(FILE_CONFIG, {"ore": st.session_state.config_durata_gara})
-                st.session_state.master_autenticato = False
-                st.success("Configurazione salvata con successo! Torna alla Dashboard.")
-                st.rerun()
+            else:
+                st.success("🔓 Modalità Amministratore Attiva.")
