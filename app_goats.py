@@ -256,7 +256,7 @@ for i, nome in enumerate(nomi_pagine):
                     st.warning("PIT LANE ATTIVA")
 
 elif nome == "📊 Valutazione Kart Live":
-            st.subheader("📊 Valutazione Performance Kart")
+    st.subheader("📊 Valutazione Performance Kart")
     # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
     dati_valutazione = []
     
@@ -297,7 +297,7 @@ elif nome == "📊 Valutazione Kart Live":
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
 elif nome == "📊 Strategia":
-            st.subheader("📋 Strategia Endurance")
+    st.subheader("📋 Strategia Endurance")
     st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.write("Sincronizzazione muretto e calcolatore predittivo basato sui Tempi di Pit cumulativi.")
     st.write("---")
