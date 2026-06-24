@@ -6,31 +6,15 @@ import json
 import os
 from streamlit_autorefresh import st_autorefresh
 
-# 1. SETTINGS PAGINA
+# --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(layout="wide")
-
-# 2. AUTOREFRESH (Ricarica pagina ogni secondo)
 st_autorefresh(interval=1000, key="datarefresh")
 
-# 3. CONFIGURAZIONE
-MIO_TEAM = "GOATS RT RED" 
+# --- 2. FUNZIONI (Logica e Dati) ---
+MIO_TEAM = "GOATS RT RED"
 API_URL = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
 BACKUP_FILE = "gara_backup.json"
 
-# 4. INIZIALIZZAZIONE STATO (Fondamentale per evitare errori di variabili mancanti)
-def inizializza_stato():
-    if 'timestamp_start_gara' not in st.session_state:
-        st.session_state.timestamp_start_gara = time.time()
-    if 'timestamp_start_kart' not in st.session_state:
-        st.session_state.timestamp_start_kart = time.time()
-    if 'database_rivali_v2' not in st.session_state:
-        st.session_state.database_rivali_v2 = {}
-
-inizializza_stato()
-
-# Ora il codice è stabile e pronto per il resto delle tue funzioni!
-
-# 3. FUNZIONI DI MEMORIA E SCRAPER (Il blocco nuovo che sostituisce il vecchio)
 def salva_dati(dati):
     with open(BACKUP_FILE, "w") as f:
         json.dump(dati, f)
@@ -46,191 +30,46 @@ def ottieni_dati_aggiornati():
         response = requests.get(API_URL, timeout=5)
         if response.status_code == 200:
             data = response.json()
-            if data and isinstance(data, list):
-                dati_puliti = []
-                for riga in data:
-                    dati_puliti.append({
-                        "pos": riga.get("Position", "-"),
-                        "team": riga.get("TeamName", "N/D"),
-                        "ultimo_giro": riga.get("LastLapTime", "00:00.000"),
-                        "kart": riga.get("KartNumber", "0")
-                    })
+            if isinstance(data, list):
+                dati_puliti = [{"pos": r.get("Position", "-"), "team": r.get("TeamName", "N/D"), "ultimo_giro": r.get("LastLapTime", "00:00.000"), "kart": r.get("KartNumber", "0")} for r in data]
                 salva_dati(dati_puliti)
                 return dati_puliti
     except Exception as e:
-        print(f"Errore connessione: {e}")
+        st.error(f"Errore: {e}")
     return carica_dati()
 
-@st.fragment(run_every=5.0)
-def aggiorna_dati_scraper():
-    # 1. Recupero dati dallo scraper
-    dati_live = ottieni_dati_aggiornati()
-    
-    if dati_live:
-        st.session_state.database_rivali_v2 = dati_live
-        
-        # 2. SINCRONIZZAZIONE TIMER GARA (MASTER)
-        # Se nel JSON esiste il tempo rimanente, riallineiamo il timer
-        if 'timer_gara_youcrono' in dati_live:
-            tempo_rimanente = dati_live['timer_gara_youcrono']
-            # Sincronizza l'inizio gara in modo che manchino esattamente 'tempo_rimanente' secondi
-            st.session_state.timestamp_start_gara = time.time() - (6 * 3600 - tempo_rimanente)
-
-        # 3. GESTIONE STORICO GIRI
-        # (Assicurati che storio_tempi sia inizializzato nello session_state all'avvio)
-        if 'storico_tempi' not in st.session_state:
-            st.session_state.storico_tempi = {}
-
-        for r in st.session_state.database_rivali_v2:
-            # Verifica che il campo esista
-            if 'ultimo_giro' in r and 'team' in r:
-                giro_tempo = r['ultimo_giro']
-                
-                # Salviamo solo se è un numero valido
-                if isinstance(giro_tempo, (int, float)):
-                    team = r['team']
-                    if team not in st.session_state.storico_tempi:
-                        st.session_state.storico_tempi[team] = []
-                    
-                    # Evitiamo di salvare due volte lo stesso identico tempo
-                    if not st.session_state.storico_tempi[team] or st.session_state.storico_tempi[team][-1] != giro_tempo:
-                        st.session_state.storico_tempi[team].append(giro_tempo)
-                        
-                        # Teniamo solo gli ultimi 30 giri per non pesare sulla memoria
-                        if len(st.session_state.storico_tempi[team]) > 30:
-                            st.session_state.storico_tempi[team].pop(0)
-# 4. INIZIALIZZAZIONE STATO
-if 'database_rivali_v2' not in st.session_state:
-    st.session_state.database_rivali_v2 = carica_dati()
-# --------------------------------------------------
-
-st.set_page_config(layout="wide")
-
-# --- CSS PERSONALIZZATO (DA INCOLLARE SUBITO SOTTO SET_PAGE_CONFIG) ---
-st.markdown("""
-    <style>
-    /* Reset e Colori Base */
-    .stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-    
-    /* Box Container */
-    .racing-box, .kart-box { 
-        background-color: #12171e; 
-        padding: 20px; 
-        border-radius: 12px; 
-        border-left: 6px solid #ffcc00; 
-        text-align: center; 
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+# --- 3. INIZIALIZZAZIONE STATI ---
+def inizializza_stato():
+    defaults = {
+        "autenticato": False,
+        "database_rivali_v2": carica_dati(),
+        "archivio_performance": {"22": {"qualita": "Top"}, "14": {"qualita": "Medio"}},
+        "piloti_v2": {"Kevin Liguori": {"in_pista": True, "tempo_totale_sec": 0}, "Bruno Colombo": {"in_pista": False, "tempo_totale_sec": 0}, "Daniele Rossi": {"in_pista": False, "tempo_totale_sec": 0}},
+        "conferma_cambio_kart": False,
+        "timestamp_start_gara": time.time(),
+        "timestamp_start_kart": time.time(),
+        "radar_is_pit_lane": False,
+        "storico_tempi": {}
     }
-    
-    /* Variazioni colori bordo */
-    .kart-warning { border-left-color: #e65100 !important; } 
-    .kart-critical { border-left-color: #ff1744 !important; }
-    
-    .label-box { color: #888; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-    .timer-big { font-size: 40px; font-weight: 900; color: #ffffff; font-family: 'Courier New', monospace; }
-    
-    /* Gestione Pulsanti Racing */
-    div.stButton > button { 
-        width: 100%; 
-        border-radius: 8px; 
-        font-weight: 800; 
-        height: 50px; 
-        border: none; 
-        transition: transform 0.1s ease, filter 0.2s ease;
-    }
-    
-    div.stButton > button:hover { filter: brightness(1.2); transform: scale(1.02); }
-    
-    /* Pulsante Cambio Kart (Verde) */
-    /* Usiamo il selettore basato sul testo o sulla posizione se necessario, 
-       ma questo stile sovrascrive i bottoni standard */
-    div.stButton > button { background-color: #1a521c; color: white; }
-    div.stButton > button:active { background-color: #2e7d32; }
+    for key, value in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
-    /* Animazione Blink */
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-    .blink-active { animation: blink 0.8s linear infinite; color: #ff1744 !important; }
-    
-    /* Radar Section */
-    .radar-header { color: #ffffff; font-size: 18px; font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 5px; }
-    
-    </style>
-""", unsafe_allow_html=True)
-# ==========================================
-# 1. INIZIALIZZAZIONE STATI (IL MOTORE - DEVE ESSERE IN CIMA)
-# ==========================================
-if "autenticato" not in st.session_state:
-    st.session_state.autenticato = False
+inizializza_stato()
 
-if "database_rivali_v2" not in st.session_state:
-    st.session_state.database_rivali_v2 = [
-        {"pos": 1, "team": "GOATS Racing Team", "cat": "EK1", "ultimo_giro": "1:03.950", "kart": "22", "status": "In Pista"},
-        {"pos": 2, "team": "Winner Team 1", "cat": "EK1", "ultimo_giro": "1:04.110", "kart": "14", "status": "In Pista"}
-    ]
-
-if "archivio_performance" not in st.session_state:
-    st.session_state.archivio_performance = {"22": {"qualita": "Top"}, "14": {"qualita": "Medio"}}
-
-if "piloti_v2" not in st.session_state:
-    st.session_state.piloti_v2 = {
-        "Kevin Liguori": {"in_pista": True, "tempo_totale_sec": 0},
-        "Bruno Colombo": {"in_pista": False, "tempo_totale_sec": 0},
-        "Daniele Rossi": {"in_pista": False, "tempo_totale_sec": 0}
-    }
-
-if "conferma_cambio_kart" not in st.session_state:
-    st.session_state.conferma_cambio_kart = False
-
-
-if "config_durata_gara" not in st.session_state:
-    st.session_state.config_durata_gara = 480 # 8 ore
-
-if "timestamp_start_gara" not in st.session_state:
-    st.session_state.timestamp_start_gara = time.time()
-    st.session_state.timestamp_start_kart = time.time()
-    st.session_state.timestamp_start_stint_live = time.time()
-    
-if "piloti" not in st.session_state:
-    st.session_state.piloti = {
-        "Kevin Liguori": {"stato": "Riposo"},
-        "Bruno Colombo": {"stato": "Riposo"},
-        "Daniele Rossi": {"stato": "Riposo"}
-    }
-    
-if "conferma_cambio_kart" not in st.session_state:
-    st.session_state.conferma_cambio_kart = False
-
-if "radar_is_pit_lane" not in st.session_state:
-    st.session_state.radar_is_pit_lane = False
-    st.session_state.timestamp_start_pit = time.time()
-    st.session_state.config_tempo_pit_min = 60
-    st.session_state.config_tempo_pit_max = 90
-    st.session_state.nostre_penalita_sec = 0
-
-if 'storico_tempi' not in st.session_state:
-    st.session_state.storico_tempi = {} # Dizionario: {'Team': [lista_tempi]}
-
-
-# ==========================================
-# 2. LOGICA DI LOGIN
-# ==========================================
+# --- 4. LOGIN ---
 if not st.session_state.autenticato:
     st.title("ACCESSO CENTRALINA BOX")
-    password = st.text_input("PASSWORD:", type="password")
-    if st.button("SBLOCCA 🔒"):
-        if password == "1234":
+    if st.text_input("PASSWORD:", type="password") == "1234":
+        if st.button("SBLOCCA 🔒"):
             st.session_state.autenticato = True
             st.rerun()
     st.stop()
 
-# ==========================================
-# 3. DASHBOARD E NAVIGAZIONE (Solo se loggato)
-# ==========================================
+# --- 5. SIDEBAR E NAVIGAZIONE ---
 st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=50)
 st.sidebar.title("GRT Control Panel")
 
-# --- DEFINIZIONE PAGINE ---
 # --- DEFINIZIONE PAGINE ---
 nomi_pagine = [
     "🏎️ Dashboard Gara", "📊 Valutazione Kart Live", "📊 Strategia", 
@@ -293,13 +132,6 @@ def formatta_tempo(secondi):
 # ==========================================
 # FUNZIONE STRATEGICA: FORMATTAZIONE TEMPO
 # ==========================================
-def formatta_tempo(secondi_totali):
-    if secondi_totali <= 0:
-        return "00:00:00"
-    ore = int(secondi_totali // 3600)
-    minuti = int((secondi_totali % 3600) // 60)
-    secondi = int(secondi_totali % 60)
-    return f"{ore:02d}:{minuti:02d}:{secondi:02d}"
 
 @st.fragment(run_every=5.0)
 def aggiorna_dati_scraper():
