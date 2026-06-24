@@ -614,84 +614,84 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
         elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
             st.title("📋 Regolamento IRK Championship")
-    st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
-    st.write("---")
-    
-    # 1. GESTIONE LINK UFFICIALE MODIFICABILE
-    link_regolamento_default = "https://irkpromotion.com/wp-content/uploads/ITA-RD1-_-R-ONE-Championship-2026-v1.0-1.pdf"
-    
-    url_regolamento = st.text_input(
-        "🔗 Link al PDF Regolamento Ufficiale (Modificabile):", 
-        value=link_regolamento_default,
-        placeholder="Incolla qui il link del regolamento..."
-    )
-    
-    # Pulsante rapido per aprire il PDF originale in un'altra scheda
-    st.link_button("📥 Apri PDF Regolamento Completo", url=url_regolamento, width="stretch")
-    st.write("<br>", unsafe_allow_html=True)
-    
-    # Creiamo due tab per non affollare lo schermo e permettere una lettura immediata
-    tab_regole, tab_penalita = st.tabs(["🏁 Info Voci Regolamento", "⚠️ Tabella Penalità Rapida"])
-    
-    # --- TAB 1: REGOLE DI GARA ---
-    with tab_regole:
-        st.subheader("📊 Regolamento Sintetizzato")
-        
-        # Dati estratti direttamente dalla prima pagina del tuo PDF
-        dati_regolamento = {
-            "Parametro Gara": [
-                "Kart Utilizzati", "Potenza Motore", "Peso Minimo Pilota", 
-                "Finestra Tempo Pit", "Tempo Pit Totale Obbligatorio", 
-                "Permanenza MIN in Pista (Pilota)", "Apertura / Chiusura Pit Lane",
-                "Utilizzo MIN / MAX Singolo Kart", "Numero MIN / MAX Change Option"
-            ],
-            "Valore / Limite": [
-                "TB KART R-ONE SPORT HP 390 C.C.", "18 CV", "85 KG",
-                "Da 60 a 330 Secondi", "40 Minuti (2400 Secondi)", 
-                "10 Minuti", "Apre a 10 min dallo START / Chiude a 10 min dalla FINE",
-                "MIN: 10 Minuti / MAX: 4 Ore", "Minimo: 2 / Massimo: 6"
-            ]
-        }
-        st.table(pd.DataFrame(dati_regolamento))
-        st.caption("Nota: La procedura di partenza è LANCIATA ed il rifornimento è LIBERO.")
-        
-    # --- TAB 2: TABELLA PENALITÀ ---
-    with tab_penalita:
-        st.subheader("🛑 Prontuario Sanzioni e Violazioni")
-        
-        # Dati estratti direttamente dalla seconda pagina del tuo PDF
-        dati_penalita = {
-            "Infrazione Commessa": [
-                "Mancato rispetto TEMPO MINIMO di Pit (< 60s)",
-                "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)",
-                "Mancato rispetto TEMPO TOTALE di Pit (40 min)",
-                "Mancato rispetto PERMANENZA MINIMA Pista (10 min)",
-                "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)",
-                "Sottopeso al controllo (Target 85 KG)",
-                "Mancato Cambio Pilota al Pit",
-                "Mancato rispetto numero MIN turni di guida",
-                "Ingresso ai Box Pericoloso / Cambio Corsia Pit",
-                "Guida Pericolosa in pista",
-                "Rientro a Pit Lane Chiusa",
-                "Taglio di Pista / Senso di marcia errato"
-            ],
-            "Sanzione Applicata": [
-                "10 Secondi + Tempo Mancante",
-                "10 Secondi + Tempo Eccedente",
-                "30 Secondi + Tempo Mancante",
-                "30 Secondi",
-                "10 Secondi per ogni minuto eccedente",
-                "10 Secondi per ogni KG mancante",
-                "2 Giri di penalità",
-                "5 Giri di penalità",
-                "10 Secondi",
-                "30 Secondi",
-                "30 Secondi",
-                "SQUALIFICA IMMEDIATA"
-            ]
-        }
-        st.table(pd.DataFrame(dati_penalita))
-        st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
+            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
+            st.write("---")
+            
+            # 1. GESTIONE LINK UFFICIALE MODIFICABILE
+            link_regolamento_default = "https://irkpromotion.com/wp-content/uploads/ITA-RD1-_-R-ONE-Championship-2026-v1.0-1.pdf"
+            
+            url_regolamento = st.text_input(
+                "🔗 Link al PDF Regolamento Ufficiale (Modificabile):", 
+                value=link_regolamento_default,
+                placeholder="Incolla qui il link del regolamento..."
+            )
+            
+            # Pulsante rapido per aprire il PDF originale in un'altra scheda
+            st.link_button("📥 Apri PDF Regolamento Completo", url=url_regolamento)
+            st.write("<br>", unsafe_allow_html=True)
+            
+            # Creiamo due tab per non affollare lo schermo e permettere una lettura immediata
+            tab_regole, tab_penalita = st.tabs(["🏁 Info Voci Regolamento", "⚠️ Tabella Penalità Rapida"])
+            
+            # --- TAB 1: REGOLE DI GARA ---
+            with tab_regole:
+                st.subheader("📊 Regolamento Sintetizzato")
+                
+                # Dati estratti direttamente dalla prima pagina del tuo PDF
+                dati_regolamento = {
+                    "Parametro Gara": [
+                        "Kart Utilizzati", "Potenza Motore", "Peso Minimo Pilota", 
+                        "Finestra Tempo Pit", "Tempo Pit Totale Obbligatorio", 
+                        "Permanenza MIN in Pista (Pilota)", "Apertura / Chiusura Pit Lane",
+                        "Utilizzo MIN / MAX Singolo Kart", "Numero MIN / MAX Change Option"
+                    ],
+                    "Valore / Limite": [
+                        "TB KART R-ONE SPORT HP 390 C.C.", "18 CV", "85 KG",
+                        "Da 60 a 330 Secondi", "40 Minuti (2400 Secondi)", 
+                        "10 Minuti", "Apre a 10 min dallo START / Chiude a 10 min dalla FINE",
+                        "MIN: 10 Minuti / MAX: 4 Ore", "Minimo: 2 / Massimo: 6"
+                    ]
+                }
+                st.table(pd.DataFrame(dati_regolamento))
+                st.caption("Nota: La procedura di partenza è LANCIATA ed il rifornimento è LIBERO.")
+                
+            # --- TAB 2: TABELLA PENALITÀ ---
+            with tab_penalita:
+                st.subheader("🛑 Prontuario Sanzioni e Violazioni")
+                
+                # Dati estratti direttamente dalla seconda pagina del tuo PDF
+                dati_penalita = {
+                    "Infrazione Commessa": [
+                        "Mancato rispetto TEMPO MINIMO di Pit (< 60s)",
+                        "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)",
+                        "Mancato rispetto TEMPO TOTALE di Pit (40 min)",
+                        "Mancato rispetto PERMANENZA MINIMA Pista (10 min)",
+                        "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)",
+                        "Sottopeso al controllo (Target 85 KG)",
+                        "Mancato Cambio Pilota al Pit",
+                        "Mancato rispetto numero MIN turni di guida",
+                        "Ingresso ai Box Pericoloso / Cambio Corsia Pit",
+                        "Guida Pericolosa in pista",
+                        "Rientro a Pit Lane Chiusa",
+                        "Taglio di Pista / Senso di marcia errato"
+                    ],
+                    "Sanzione Applicata": [
+                        "10 Secondi + Tempo Mancante",
+                        "10 Secondi + Tempo Eccedente",
+                        "30 Secondi + Tempo Mancante",
+                        "30 Secondi",
+                        "10 Secondi per ogni minuto eccedente",
+                        "10 Secondi per ogni KG mancante",
+                        "2 Giri di penalità",
+                        "5 Giri di penalità",
+                        "10 Secondi",
+                        "30 Secondi",
+                        "30 Secondi",
+                        "SQUALIFICA IMMEDIATA"
+                    ]
+                }
+                st.table(pd.DataFrame(dati_penalita))
+                st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
 
 # ==========================================
 # PAGINA 6: RADIO (VERSIONE PULITA SENZA ERRORI DI SPAZIO)
