@@ -143,13 +143,13 @@ for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         if nome == "🏎️ Dashboard Gara":
             st.subheader("🏎️ Stato GOATS RT RED")
-dati_miei = get_dati_mio_team(st.session_state.database_rivali_v2)
-if dati_miei:
-    col1, col2 = st.columns(2)
-    col1.metric("Posizione", dati_miei['pos'])
-    col2.metric("Ultimo Tempo", dati_miei['ultimo_giro'])
-else:
-    st.warning("GOATS RT RED non trovato nel Live Timing.")
+            dati_miei = get_dati_mio_team(st.session_state.database_rivali_v2)
+            if dati_miei:
+                col1, col2 = st.columns(2)
+                col1.metric("Posizione", dati_miei['pos'])
+                col2.metric("Ultimo Tempo", dati_miei['ultimo_giro'])
+            else:
+                st.warning("GOATS RT RED non trovato nel Live Timing.")
             
             # Costanti
             LIMITE_GARA_SEC = 8 * 3600
@@ -190,7 +190,6 @@ else:
 
             # --- LIVE TIMING ---
             st.markdown("#### 📡 Live Timing")
-            # Assicurati che database_rivali_v2 esista
             dati_rivali = st.session_state.get("database_rivali_v2", [])
             if dati_rivali:
                 tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro']} for r in dati_rivali]
