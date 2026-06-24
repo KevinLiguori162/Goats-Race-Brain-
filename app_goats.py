@@ -432,35 +432,33 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
 # ==========================================
-elif "Live Timing" in nome:
-    st.title("📡 Live Timing Totale Sincronizzato")
-    st.write("Monitoraggio globale della classifica integrato. In caso di blocchi, usa il tasto di backup in fondo.")
-    st.write("---")
-    
-    # 1. GESTIONE LINK
-    link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
-    url_live_timing = st.text_input(
-        "🔗 URL Live Timing Attivo:", 
-        value=link_predefinito
-    )
-    
-    st.write("<br>", unsafe_allow_html=True)
-    
-    # 2. IFRAME CON CATENA DI STRINGHE (PER EVITARE ERRORI DI COLORAZIONE)
-    iframe_code = '<iframe src="' + url_live_timing + '" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>'
-    
-    try:
-        st.markdown(iframe_code, unsafe_allow_html=True)
-    except Exception as e:
-        st.error(f"Errore widget: {e}")
+# --- LOGICA DI NAVIGAZIONE ---
+for i, nome in enumerate(nomi_pagine):
+    with tab_list[i]:
         
-    st.write("---")
-    
-    # 3. COLONNA DI EMERGENZA
-    col_b1, col_b2, col_b3 = st.columns([1, 2, 1])
-    with col_b2:
-        st.markdown("<p style='text-align: center; color: #ff1744; font-weight: bold;'>🚨 SE IL TIMING VA IN CRASH:</p>", unsafe_allow_html=True)
-        st.link_button("🔄 APRI IN TAB ESTERNO (FULL SCREEN)", url=url_live_timing)
+        if nome == "🏎️ Dashboard Gara":
+            st.subheader("🏎️ Dashboard Gara")
+            # ... (Tutto il codice della dashboard) ...
+
+        elif nome == "📊 Valutazione Kart Live":
+            st.subheader("📊 Valutazione Performance Kart")
+            # ... (Tutto il codice della valutazione) ...
+
+        elif "Live Timing" in nome:
+            st.title("📡 Live Timing Totale Sincronizzato")
+            st.write("Monitoraggio globale della classifica integrato.")
+            
+            link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
+            url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
+            
+            iframe_code = f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>'
+            st.markdown(iframe_code, unsafe_allow_html=True)
+            
+            col_b1, col_b2, col_b3 = st.columns([1, 2, 1])
+            with col_b2:
+                st.link_button("🔄 APRI IN TAB ESTERNO", url=url_live_timing)
+
+        # Se hai altre pagine, continua qui con altri elif...
 # ==========================================
 # PAGINA 4: KART'S PERFORMANCE (COLLEGAMENTO CORRETTO ELIF)
 # ==========================================
