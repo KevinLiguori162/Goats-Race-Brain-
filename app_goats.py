@@ -510,14 +510,7 @@ for i, nome in enumerate(nomi_pagine):
                 }
                 st.table(pd.DataFrame(dati_penalita))
                 st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
-        elif nome == "📊 Archivio Gare":
-            st.subheader("📊 Archivio Gare")
-    st.title("🗄️ Archivio Gare & Debriefing AI")
-    st.write("---")
-
-    BASE_DIR = "report_pdf"
-    
-    elif nome == "📚 Archivio Storico":
+       elif nome == "📚 Archivio Storico":
             st.title("📚 Archivio Storico Gare")
             
             if "archivio_gare" not in st.session_state:
