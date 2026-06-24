@@ -462,7 +462,7 @@ for i, nome in enumerate(nomi_pagine):
                 st.table(pd.DataFrame(dati_penalita))
                 st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
 
-        elif nome == "📚 Archivio Storico":
+    elif nome == "📚 Archivio Storico":
             st.title("📚 Archivio Storico Gare")
             if "archivio_gare" not in st.session_state:
                 st.session_state.archivio_gare = [
@@ -477,6 +477,7 @@ for i, nome in enumerate(nomi_pagine):
             tab_consultazione, tab_caricamento = st.tabs(["📚 Consulta Archivio", "📥 Carica / Modifica"])
             
             with tab_consultazione:
+                testo_analisi = ""
                 if os.path.exists(percorso_txt_file):
                     with open(percorso_txt_file, "r", encoding="utf-8") as f: testo_analisi = f.read()
                 else:
@@ -500,55 +501,37 @@ for i, nome in enumerate(nomi_pagine):
                         for f in file_caricati:
                             with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: dest.write(f.getbuffer())
                     st.success("Tutto salvato correttamente!")
-            
-       elif nome == "🛠️ Configurazione GRB":
-            st.subheader("⚙️ Configurazione GRB")
 
-            # Percorsi file per la persistenza
+        elif nome == "🛠️ Configurazione GRB":
+            st.subheader("⚙️ Configurazione GRB")
             FILE_PILOTI = "config_piloti.json"
             FILE_CONFIG = "config_gara.json"
-
-            # --- FUNZIONI DI SUPPORTO ---
             def carica_dati(file, default):
                 if os.path.exists(file):
                     with open(file, "r") as f: return json.load(f)
                 return default
-
             def salva_dati(file, data):
                 with open(file, "w") as f: json.dump(data, f)
-
             st.title("🛠️ Pannello di Controllo Master GRB")
-
-            # --- 1. AUTENTICAZIONE ---
             if not st.session_state.get("master_autenticato", False):
                 master_pssw = st.text_input("Inserisci Chiave Master Amministratore:", type="password")
                 if st.button("Sblocca Parametri Amministratore 🔑"):
                     if master_pssw == PASSWORD_MASTER:
                         st.session_state.master_autenticato = True
                         st.rerun()
-                    else: 
-                        st.error("Password Master Errata!")
+                    else: st.error("Password Master Errata!")
                 st.stop()
-
             st.success("🔓 Modalità Configurazione Campionato Attiva.")
-
-            # Inizializza dati se non presenti
             if "piloti_v2" not in st.session_state:
                 st.session_state.piloti_v2 = carica_dati(FILE_PILOTI, {"Pilota 1": {"in_pista": False, "tempo_totale_sec": 0}})
-            
             if "config_durata_gara" not in st.session_state:
                 st.session_state.config_durata_gara = carica_dati(FILE_CONFIG, {"ore": 8})["ore"]
-
-            # --- 2. CONFIGURAZIONE DURATA ---
             st.subheader("⏱️ Configurazione Durata Gara")
             nuova_durata = st.slider("Durata Complessiva Gara (Ore):", 1, 24, int(st.session_state.config_durata_gara))
             if nuova_durata != st.session_state.config_durata_gara:
                 st.session_state.config_durata_gara = nuova_durata
                 salva_dati(FILE_CONFIG, {"ore": nuova_durata})
-
             st.divider()
-
-            # --- 3. GESTIONE PILOTI ---
             st.subheader("👤 Gestione Piloti")
             nuovo_pilota = st.text_input("Nome nuovo pilota:")
             if st.button("➕ Aggiungi Pilota"):
@@ -556,8 +539,6 @@ for i, nome in enumerate(nomi_pagine):
                     st.session_state.piloti_v2[nuovo_pilota] = {"in_pista": False, "tempo_totale_sec": 0}
                     salva_dati(FILE_PILOTI, st.session_state.piloti_v2)
                     st.rerun()
-
-            # Visualizzazione lista piloti
             for nome_p in list(st.session_state.piloti_v2.keys()):
                 col1, col2 = st.columns([4, 1])
                 col1.write(f"🏎️ {nome_p}")
@@ -565,10 +546,7 @@ for i, nome in enumerate(nomi_pagine):
                     del st.session_state.piloti_v2[nome_p]
                     salva_dati(FILE_PILOTI, st.session_state.piloti_v2)
                     st.rerun()
-
             st.divider()
-
-            # --- 4. SALVA ED ESCI ---
             if st.button("💾 Salva ed Esci"):
                 salva_dati(FILE_PILOTI, st.session_state.piloti_v2)
                 salva_dati(FILE_CONFIG, {"ore": st.session_state.config_durata_gara})
