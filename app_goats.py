@@ -197,7 +197,7 @@ for i, nome in enumerate(nomi_pagine):
                 if st.session_state.get("radar_is_pit_lane"):
                     st.warning("PIT LANE ATTIVA")
 
-       elif nome == "📊 Valutazione Kart Live":
+        elif nome == "📊 Valutazione Kart Live":
             st.subheader("📊 Valutazione Performance Kart")
 
             dati_valutazione = []
