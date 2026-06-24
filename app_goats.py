@@ -612,7 +612,7 @@ for i, nome in enumerate(nomi_pagine):
         # ==========================================
 # NUOVA PAGINA: REGOLAMENTO (RIASSUNTO RAPIDO CORSA)
 # ==========================================
-        elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
+        elif "Regolamento" in nome:
             st.title("📋 Regolamento IRK Championship")
             st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
             st.write("---")
