@@ -475,42 +475,43 @@ for i, nome in enumerate(nomi_pagine):
                 st.caption("Nota: La procedura di partenza è LANCIATA ed il rifornimento è LIBERO.")
                 
             # --- TAB 2: TABELLA PENALITÀ ---
-            with tab_penalita:
-                st.subheader("🛑 Prontuario Sanzioni e Violazioni")
-                
-                dati_penalita = {
-                    "Infrazione Commessa": [
-                        "Mancato rispetto TEMPO MINIMO di Pit (< 60s)",
-                        "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)",
-                        "Mancato rispetto TEMPO TOTALE di Pit (40 min)",
-                        "Mancato rispetto PERMANENZA MINIMA Pista (10 min)",
-                        "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)",
-                        "Sottopeso al controllo (Target 85 KG)",
-                        "Mancato Cambio Pilota al Pit",
-                        "Mancato rispetto numero MIN turni di guida",
-                        "Ingresso ai Box Pericoloso / Cambio Corsia Pit",
-                        "Guida Pericolosa in pista",
-                        "Rientro a Pit Lane Chiusa",
-                        "Taglio di Pista / Senso di marcia errato"
-                    ],
-                    "Sanzione Applicata": [
-                        "10 Secondi + Tempo Mancante",
-                        "10 Secondi + Tempo Eccedente",
-                        "30 Secondi + Tempo Mancante",
-                        "30 Secondi",
-                        "10 Secondi per ogni minuto eccedente",
-                        "10 Secondi per ogni KG mancante",
-                        "2 Giri di penalità",
-                        "5 Giri di penalità",
-                        "10 Secondi",
-                        "30 Secondi",
-                        "30 Secondi",
-                        "SQUALIFICA IMMEDIATA"
-                    ]
-                }
-                st.table(pd.DataFrame(dati_penalita))
-                st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
-       elif nome == "📚 Archivio Storico":
+          with tab_penalita:
+            st.subheader("🛑 Prontuario Sanzioni e Violazioni")
+            
+            dati_penalita = {
+                "Infrazione Commessa": [
+                    "Mancato rispetto TEMPO MINIMO di Pit (< 60s)",
+                    "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)",
+                    "Mancato rispetto TEMPO TOTALE di Pit (40 min)",
+                    "Mancato rispetto PERMANENZA MINIMA Pista (10 min)",
+                    "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)",
+                    "Sottopeso al controllo (Target 85 KG)",
+                    "Mancato Cambio Pilota al Pit",
+                    "Mancato rispetto numero MIN turni di guida",
+                    "Ingresso ai Box Pericoloso / Cambio Corsia Pit",
+                    "Guida Pericolosa in pista",
+                    "Rientro a Pit Lane Chiusa",
+                    "Taglio di Pista / Senso di marcia errato"
+                ],
+                "Sanzione Applicata": [
+                    "10 Secondi + Tempo Mancante",
+                    "10 Secondi + Tempo Eccedente",
+                    "30 Secondi + Tempo Mancante",
+                    "30 Secondi",
+                    "10 Secondi per ogni minuto eccedente",
+                    "10 Secondi per ogni KG mancante",
+                    "2 Giri di penalità",
+                    "5 Giri di penalità",
+                    "10 Secondi",
+                    "30 Secondi",
+                    "30 Secondi",
+                    "SQUALIFICA IMMEDIATA"
+                ]
+            }
+            st.table(pd.DataFrame(dati_penalita))
+            st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
+
+        elif nome == "📚 Archivio Storico":
             st.title("📚 Archivio Storico Gare")
             
             if "archivio_gare" not in st.session_state:
