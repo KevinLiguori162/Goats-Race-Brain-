@@ -13,6 +13,8 @@ st_autorefresh(interval=1000, key="datarefresh")
 st.markdown("""
     <style>
     .stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    
+    /* Box Container */
     .racing-box, .kart-box { 
         background-color: #12171e; padding: 20px; border-radius: 12px; 
         border-left: 6px solid #ffcc00; text-align: center; margin-bottom: 20px;
@@ -22,15 +24,23 @@ st.markdown("""
     .kart-critical { border-left-color: #ff1744 !important; }
     .label-box { color: #888; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
     .timer-big { font-size: 40px; font-weight: 900; color: #ffffff; font-family: 'Courier New', monospace; }
+    
+    /* Pulsanti */
     div.stButton > button { width: 100%; border-radius: 8px; font-weight: 800; height: 50px; border: none; transition: transform 0.1s ease; }
     div.stButton > button:hover { transform: scale(1.02); }
     div.stButton > button { background-color: #1a521c; color: white; }
+    
+    /* Animazioni */
     @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     .blink-active { animation: blink 0.8s linear infinite; color: #ff1744 !important; }
     .radar-header { color: #ffffff; font-size: 18px; font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 5px; }
+    
+    /* Navbar Tabs potenziate */
+    div[data-baseweb="tab-list"] { background-color: #1a1f26; padding: 10px; border-radius: 12px; }
+    button[data-baseweb="tab"] { font-size: 18px !important; font-weight: 800 !important; color: white !important; }
+    button[aria-selected="true"] { background-color: #ffcc00 !important; color: #000 !important; border-radius: 8px !important; }
     </style>
 """, unsafe_allow_html=True)
-
 # --- 2. FUNZIONI (Logica e Dati) ---
 MIO_TEAM = "GOATS RT RED"
 API_URL = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
