@@ -149,20 +149,13 @@ for i, nome in enumerate(nomi_pagine):
         # ATTENZIONE: Se hai codice qui sotto, fuori dagli if/elif, 
         # questo verrà stampato in TUTTE le tab. CONTROLLA!
 def formatta_tempo(secondi):
-        ore = int(secondi // 3600)
-        minuti = int((secondi % 3600) // 60)
-        secs = int(secondi % 60)
-        if ore > 0:
-            return f"{ore:01d}:{minuti:02d}:{secs:02d}"
-        else:
-            return f"{minuti:02d}:{secs:02d}"
-
-# ==========================================
-# DOPO: INIZIANO I CONTROLLI DELLE PAGINE (Riga 200+)
-# ==========================================
-# ==========================================
-# FUNZIONE STRATEGICA: FORMATTAZIONE TEMPO
-# ==========================================
+    ore = int(secondi // 3600)
+    minuti = int((secondi % 3600) // 60)
+    secs = int(secondi % 60)
+    if ore > 0:
+        return f"{ore:01d}:{minuti:02d}:{secs:02d}"
+    else:
+        return f"{minuti:02d}:{secs:02d}"
 
 @st.fragment(run_every=5.0)
 def aggiorna_dati_scraper():
@@ -171,28 +164,18 @@ def aggiorna_dati_scraper():
         st.session_state.database_rivali_v2 = dati_live
 
 def render_active_dashboard():
-    # 1. Aggiorna i dati dallo scraper
     aggiorna_dati_scraper()
-    
-    # --- RIGA DI DEBUG (da aggiungere) ---
     st.write("--- Dati grezzi ricevuti ---")
     st.write(st.session_state.database_rivali_v2)
-    # -------------------------------------
-    
-    # ... resto del tuo codice ...
 
 # ==========================================
-# LOGICA DI NAVIGAZIONE (if/elif corretti)
-# ============================================
-# --- RENDERING DINAMICO ---
-# --- RENDERING DINAMICO ---
-# --- RENDERING DINAMICO ---
+# 2. LOGICA DI NAVIGAZIONE UNIFICATA
+# ==========================================
+
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         
-        # --- LOGICA PAGINA: DASHBOARD GARA ---
-        # --- LOGICA PAGINA: DASHBOARD GARA ---
-       if nome == "🏎️ Dashboard Gara":
+        if nome == "🏎️ Dashboard Gara":
             st.subheader("🏎️ Dashboard Gara")
             
             # --- CONFIGURAZIONE COSTANTI ---
