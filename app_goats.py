@@ -6,6 +6,7 @@ import json
 import os
 from streamlit_autorefresh import st_autorefresh
 
+
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(layout="wide")
 st_autorefresh(interval=1000, key="datarefresh")
@@ -392,7 +393,7 @@ for i, nome in enumerate(nomi_pagine):
 
         elif "Regolamento" in nome:
             st.title("📋 Regolamento IRK Championship")
-st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
+            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
             st.write("---")
                 
                 # 1. GESTIONE LINK UFFICIALE MODIFICABILE
@@ -473,7 +474,6 @@ st.write("Consultazione rapida delle regole di ingaggio e delle penalità uffici
         
         elif nome == "📊 Archivio Gare":
             st.subheader("📊 Archivio Gare")
-import os
     st.title("🗄️ Archivio Gare & Debriefing AI")
     st.write("---")
 
@@ -521,8 +521,7 @@ import os
             
         elif nome == "🛠️ Configurazione GRB":
             st.subheader("⚙️ Configurazione GRB")
-    import json
-    import os
+  
 
     # Percorsi file per la persistenza
     FILE_PILOTI = "config_piloti.json"
