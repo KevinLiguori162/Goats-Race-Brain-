@@ -239,43 +239,49 @@ for i, nome in enumerate(nomi_pagine):
                 st.info("Nessun dato ancora ricevuto da YouCrono.")
 
         elif nome == "📊 Strategia":
-            st.title("📊 Strategia Endurance - Goats Racing Team")
+            st.title("📊 Strategia Endurance - GRT")
+
+            # --- 1. TABELLA CENTRALE DI RIEPILOGO ---
+            st.subheader("🏁 Riassunto Strategico")
+            dati_riepilogo = {
+                "Parametro": ["Giri Totali Stimati", "Tempo Medio Stint", "Gap Teorico (s)", "Stato Box"],
+                "Valore": ["450", "45 min", "0", "Aperto"]
+            }
+            st.table(pd.DataFrame(dati_riepilogo))
+
+            # --- 2. CALCOLO GAP AVVERSARIO ---
+            st.subheader("⚔️ Analisi Gap Avversario")
+            col_gap1, col_gap2 = st.columns(2)
+            with col_gap1:
+                distacco_pista = st.number_input("Distacco in Pista (s):", value=0.0)
+            with col_gap2:
+                diff_pit = st.number_input("Differenza Totale Pit (s):", value=0.0)
             
-            # --- INPUT STRATEGICI ---
-            col_a, col_b = st.columns(2)
-            with col_a:
-                durata_totale = st.number_input("Durata Gara (min):", value=480) # 8 ore
-            with col_b:
-                tempo_min_pit = st.number_input("Tempo Minimo Pit (s):", value=60)
-            
-            # --- CALCOLI MURETTO ---
-            st.subheader("⏱️ Proiezioni Stint")
-            tempo_stimato_giro = st.slider("Tempo stimato per giro (s):", 50.0, 70.0, 55.0)
-            
-            # Calcolo basato sui dati inseriti
-            totale_giri = durata_totale * 60 / tempo_stimato_giro
-            st.metric("Giri totali stimati", f"{int(totale_giri)}")
-            
-            # --- DASHBOARD PILOTI ---
+            gap_reale = distacco_pista - diff_pit
+            st.metric("Gap Reale (s)", f"{gap_reale:.2f}", delta=f"{-diff_pit}")
+
+            # --- 3. CALCOLO TEMPO MEDIO STINT ---
+            st.subheader("⏱️ Monitoraggio Stint")
+            # Logica calcolo medio (se hai dati storici o in session_state)
+            if "stint_tempi" in st.session_state and st.session_state.stint_tempi:
+                media = sum(st.session_state.stint_tempi) / len(st.session_state.stint_tempi)
+                st.write(f"Tempo medio stint: **{media:.2f} minuti**")
+            else:
+                st.write("Nessun dato di stint disponibile.")
+
+            # --- 4. GESTIONE PILOTI ---
             st.divider()
-            st.subheader("🏎️ Stato Piloti")
-            # Assumiamo di avere st.session_state.piloti_v2
+            st.subheader("👤 Swap Piloti")
             if "piloti_v2" in st.session_state:
                 for nome_p, dati in st.session_state.piloti_v2.items():
-                    c1, c2 = st.columns([3, 1])
-                    c1.write(f"**{nome_p}**")
-                    if c2.button("🔄 Swap", key=f"swap_{nome_p}"):
+                    c1, c2, c3 = st.columns([2, 1, 1])
+                    c1.write(f"🏎️ {nome_p}")
+                    c2.write("In Pista" if dati["in_pista"] else "Box")
+                    if c3.button("🔄 Swap", key=f"swap_{nome_p}"):
                         st.session_state.piloti_v2[nome_p]["in_pista"] = not st.session_state.piloti_v2[nome_p]["in_pista"]
                         st.rerun()
             else:
                 st.warning("Configura i piloti nel pannello 'Configurazione GRB'.")
-
-            # --- LOGICA DI ALLERTA ---
-            st.divider()
-            st.subheader("⚠️ Monitoraggio Limiti")
-            if st.button("Verifica Vincoli Pit"):
-                st.info("Controllo: Finestra Pit (60s - 330s) OK.")
-                st.success("Strategia in linea con il regolamento 2026.")
         elif nome == "🛠️ Kart's Performance":
             st.title("🛠️ Gestione e Performance Kart")
             st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'estrazione del sabato.")
