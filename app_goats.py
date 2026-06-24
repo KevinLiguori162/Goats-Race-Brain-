@@ -432,12 +432,11 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
 # ==========================================
-
         elif "Live Timing" in nome:
             st.title("📡 Live Timing Totale Sincronizzato")
-            link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
-            url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
-            st.markdown(f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>', unsafe_allow_html=True)
+        link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
+        url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
+        st.markdown(f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>', unsafe_allow_html=True)
 
         # Se hai altre pagine, continua qui con altri elif...
 # ==========================================
