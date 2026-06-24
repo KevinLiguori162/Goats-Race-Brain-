@@ -715,69 +715,21 @@ elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
 # PAGINA 6: RADIO (VERSIONE PULITA SENZA ERRORI DI SPAZIO)
 # ==========================================
 elif nome == "📻 Radio":
-    st.title("📻 Configurazione e Assegnazione Radio dPMR")
-    st.write("Registro ufficiale degli apparati radio del team. Inserisci i dati definitivi dopo i test in pista.")
-    st.write("---")
-
-    st.subheader("⚙️ Linee Guida di Riferimento Rapido")
-    col_g1, col_g2 = st.columns(2)
-    with col_g1:
-        st.info("🗣️ **CH 1 - MASTER:** Canale principale del Team Manager. Parla con tutti i piloti contemporaneamente.")
-    with col_g2:
-        st.warning("🤫 **CH 2-5 - SELETTIVI:** Canali dedicati ai singoli piloti per comunicazioni mirate muretto-casco.")
-
-    st.markdown("---")
-    st.subheader("📋 Registro Apparati e Parametri di Configurazione")
-    st.write("Modifica i campi direttamente dalla tabella. I dati vengono preservati nella memoria della centralina.")
-
-    # 1. FUNZIONE DI CALLBACK PER IL SALVATAGGIO DEI DATI
-    def salva_modifiche_radio():
-        if "editor_radio_goats_def" in st.session_state:
-            edizioni = st.session_state["editor_radio_goats_def"]
-            if "edited_rows" in edizioni:
-                for riga_idx, variazioni in edizioni["edited_rows"].items():
-                    for colonna, nuovo_valore in variazioni.items():
-                        st.session_state.database_radio_team[riga_idx][colonna] = nuovo_valore
-
-    # 2. INIZIALIZZAZIONE MEMORIA DATABASE RADIO
-    if "database_radio_team" not in st.session_state:
-        st.session_state.database_radio_team = [
-            {"ID Radio": "RADIO 01", "Utilizzatore": "Piro (Team Manager)", "Canale Principale": "CH 1 - Master", "Codice Colore / ID": "01", "VOX / PTT": "No (PTT Manuale)", "Note Hardware / Test": "Cuffia monitor muretto ad alto isolamento"},
-            {"ID Radio": "RADIO 02", "Utilizzatore": "Kevin Liguori", "Canale Principale": "CH 2 - Selettivo", "Codice Colore / ID": "02", "VOX / PTT": "Sì (VOX Livello 3)", "Note Hardware / Test": "Microfono a osso + auricolare nel casco"},
-            {"ID Radio": "RADIO 03", "Utilizzatore": "Bruno Colombo", "Canale Principale": "CH 3 - Selettivo", "Codice Colore / ID": "03", "VOX / PTT": "Sì (VOX Livello 3)", "Note Hardware / Test": "Kit casco standard"},
-            {"ID Radio": "RADIO 04", "Utilizzatore": "Daniele Rossi", "Canale Principale": "CH 4 - Selettivo", "Codice Colore / ID": "04", "VOX / PTT": "Sì (VOX Livello 2)", "Note Hardware / Test": "Kit casco standard"},
+    st.subheader("📻 Configurazione Radio Team")
+    
+    # Dati base
+    if "tabella_radio_goats" not in st.session_state:
+        st.session_state.tabella_radio_goats = [
+            {"Dispositivo": "Radio TM", "Assegnatario": "Kevin", "Canale": "CH 1", "Frequenza": "446.00625"},
+            {"Dispositivo": "Radio P1", "Assegnatario": "Bruno", "Canale": "CH 2", "Frequenza": "446.01875"},
+            {"Dispositivo": "Radio P2", "Assegnatario": "Daniele", "Canale": "CH 3", "Frequenza": "446.03125"}
         ]
-
-    # 3. RENDERING DELLA TABELLA INTERATTIVA STYLE STRATEGIA
-    df_radio = pd.DataFrame(st.session_state.database_radio_team)
     
-    tabella_radio_aggiornata = st.data_editor(
-        df_radio,
-        num_rows="dynamic",
-        use_container_width=True,
-        column_config={
-            "ID Radio": st.column_config.TextColumn("ID Radio", help="Es. RADIO 01", required=True),
-            "Utilizzatore": st.column_config.SelectboxColumn(
-                "Assegnato A", 
-                options=["Piro (Team Manager)", "Kevin Liguori", "Bruno Colombo", "Daniele Rossi", "Muretto Secondario", "Riserva Box"]
-            ),
-            "Canale Principale": st.column_config.SelectboxColumn(
-                "Canale Standard dPMR", 
-                options=["CH 1 - Master", "CH 2 - Selettivo", "CH 3 - Selettivo", "CH 4 - Selettivo", "CH 5 - Box/Emergenza"]
-            ),
-            "Codice Colore / ID": st.column_config.TextColumn("Color Code / Slot ID", help="Es. CC 1 / ID 12"),
-            "VOX / PTT": st.column_config.SelectboxColumn(
-                "Modalità Attivazione", 
-                options=["No (PTT Manuale)", "Sì (VOX Livello 1)", "Sì (VOX Livello 2)", "Sì (VOX Livello 3)"]
-            ),
-            "Note Hardware / Test": st.column_config.TextColumn("Note Modifiche / Risultati Test")
-        },
-        hide_index=True,
-        key="editor_radio_goats_def",
-        on_change=salva_modifiche_radio
+    # Mostra la tabella modificabile
+    st.session_state.tabella_radio_goats = st.data_editor(
+        st.session_state.tabella_radio_goats, 
+        use_container_width=True
     )
-    
-    st.session_state.database_radio_team = tabella_radio_aggiornata.to_dict(orient="records")
 
 
 # ==========================================
