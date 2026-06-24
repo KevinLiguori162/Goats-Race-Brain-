@@ -437,133 +437,68 @@ for i, nome in enumerate(nomi_pagine):
             st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
             st.write("---")
             
-            # 1. GESTIONE LINK UFFICIALE MODIFICABILE
             link_regolamento_default = "https://irkpromotion.com/wp-content/uploads/ITA-RD1-_-R-ONE-Championship-2026-v1.0-1.pdf"
-            
-            url_regolamento = st.text_input(
-                "🔗 Link al PDF Regolamento Ufficiale (Modificabile):", 
-                value=link_regolamento_default,
-                placeholder="Incolla qui il link del regolamento..."
-            )
-            
-            # Pulsante rapido per aprire il PDF originale
+            url_regolamento = st.text_input("🔗 Link al PDF Regolamento Ufficiale (Modificabile):", value=link_regolamento_default, placeholder="Incolla qui il link del regolamento...")
             st.link_button("📥 Apri PDF Regolamento Completo", url=url_regolamento)
             st.write("<br>", unsafe_allow_html=True)
             
-            # Creiamo due tab per non affollare lo schermo
             tab_regole, tab_penalita = st.tabs(["🏁 Info Voci Regolamento", "⚠️ Tabella Penalità Rapida"])
             
-            # --- TAB 1: REGOLE DI GARA ---
             with tab_regole:
                 st.subheader("📊 Regolamento Sintetizzato")
-                
                 dati_regolamento = {
-                    "Parametro Gara": [
-                        "Kart Utilizzati", "Potenza Motore", "Peso Minimo Pilota", 
-                        "Finestra Tempo Pit", "Tempo Pit Totale Obbligatorio", 
-                        "Permanenza MIN in Pista (Pilota)", "Apertura / Chiusura Pit Lane",
-                        "Utilizzo MIN / MAX Singolo Kart", "Numero MIN / MAX Change Option"
-                    ],
-                    "Valore / Limite": [
-                        "TB KART R-ONE SPORT HP 390 C.C.", "18 CV", "85 KG",
-                        "Da 60 a 330 Secondi", "40 Minuti (2400 Secondi)", 
-                        "10 Minuti", "Apre a 10 min dallo START / Chiude a 10 min dalla FINE",
-                        "MIN: 10 Minuti / MAX: 4 Ore", "Minimo: 2 / Massimo: 6"
-                    ]
+                    "Parametro Gara": ["Kart Utilizzati", "Potenza Motore", "Peso Minimo Pilota", "Finestra Tempo Pit", "Tempo Pit Totale Obbligatorio", "Permanenza MIN in Pista (Pilota)", "Apertura / Chiusura Pit Lane", "Utilizzo MIN / MAX Singolo Kart", "Numero MIN / MAX Change Option"],
+                    "Valore / Limite": ["TB KART R-ONE SPORT HP 390 C.C.", "18 CV", "85 KG", "Da 60 a 330 Secondi", "40 Minuti (2400 Secondi)", "10 Minuti", "Apre a 10 min dallo START / Chiude a 10 min dalla FINE", "MIN: 10 Minuti / MAX: 4 Ore", "Minimo: 2 / Massimo: 6"]
                 }
                 st.table(pd.DataFrame(dati_regolamento))
                 st.caption("Nota: La procedura di partenza è LANCIATA ed il rifornimento è LIBERO.")
                 
-            # --- TAB 2: TABELLA PENALITÀ ---
-          with tab_penalita:
-            st.subheader("🛑 Prontuario Sanzioni e Violazioni")
-            
-            dati_penalita = {
-                "Infrazione Commessa": [
-                    "Mancato rispetto TEMPO MINIMO di Pit (< 60s)",
-                    "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)",
-                    "Mancato rispetto TEMPO TOTALE di Pit (40 min)",
-                    "Mancato rispetto PERMANENZA MINIMA Pista (10 min)",
-                    "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)",
-                    "Sottopeso al controllo (Target 85 KG)",
-                    "Mancato Cambio Pilota al Pit",
-                    "Mancato rispetto numero MIN turni di guida",
-                    "Ingresso ai Box Pericoloso / Cambio Corsia Pit",
-                    "Guida Pericolosa in pista",
-                    "Rientro a Pit Lane Chiusa",
-                    "Taglio di Pista / Senso di marcia errato"
-                ],
-                "Sanzione Applicata": [
-                    "10 Secondi + Tempo Mancante",
-                    "10 Secondi + Tempo Eccedente",
-                    "30 Secondi + Tempo Mancante",
-                    "30 Secondi",
-                    "10 Secondi per ogni minuto eccedente",
-                    "10 Secondi per ogni KG mancante",
-                    "2 Giri di penalità",
-                    "5 Giri di penalità",
-                    "10 Secondi",
-                    "30 Secondi",
-                    "30 Secondi",
-                    "SQUALIFICA IMMEDIATA"
-                ]
-            }
-            st.table(pd.DataFrame(dati_penalita))
-            st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
+            with tab_penalita:
+                st.subheader("🛑 Prontuario Sanzioni e Violazioni")
+                dati_penalita = {
+                    "Infrazione Commessa": ["Mancato rispetto TEMPO MINIMO di Pit (< 60s)", "Mancato rispetto TEMPO MASSIMO di Pit (> 330s)", "Mancato rispetto TEMPO TOTALE di Pit (40 min)", "Mancato rispetto PERMANENZA MINIMA Pista (10 min)", "Mancato rispetto UTILIZZO MASSIMO KART (> 4 Ore)", "Sottopeso al controllo (Target 85 KG)", "Mancato Cambio Pilota al Pit", "Mancato rispetto numero MIN turni di guida", "Ingresso ai Box Pericoloso / Cambio Corsia Pit", "Guida Pericolosa in pista", "Rientro a Pit Lane Chiusa", "Taglio di Pista / Senso di marcia errato"],
+                    "Sanzione Applicata": ["10 Secondi + Tempo Mancante", "10 Secondi + Tempo Eccedente", "30 Secondi + Tempo Mancante", "30 Secondi", "10 Secondi per ogni minuto eccedente", "10 Secondi per ogni KG mancante", "2 Giri di penalità", "5 Giri di penalità", "10 Secondi", "30 Secondi", "30 Secondi", "SQUALIFICA IMMEDIATA"]
+                }
+                st.table(pd.DataFrame(dati_penalita))
+                st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
 
         elif nome == "📚 Archivio Storico":
             st.title("📚 Archivio Storico Gare")
-            
             if "archivio_gare" not in st.session_state:
                 st.session_state.archivio_gare = [
                     {"Gara": "IRK ROne 2026 - Round 2 Franciacorta", "Cartella": "round_2_franciacorta", "Data": "25 Aprile 2026", "Testo_Default": "..."},
                     {"Gara": "IRK ROne 2026 - Round 3 Pista Winner", "Cartella": "round_3_pista_winner", "Data": "16 Maggio 2026", "Testo_Default": "..."}
                 ]
-            
             elenco_gare = [g["Gara"] for g in st.session_state.archivio_gare]
             gara_selezionata = st.selectbox("Seleziona una gara:", elenco_gare)
             dati_gara = next(g for g in st.session_state.archivio_gare if g["Gara"] == gara_selezionata)
-            
             percorso_cartella_gara = os.path.join(BASE_DIR, dati_gara["Cartella"])
             percorso_txt_file = os.path.join(percorso_cartella_gara, "analisi_muretto.txt")
-            
             tab_consultazione, tab_caricamento = st.tabs(["📚 Consulta Archivio", "📥 Carica / Modifica"])
             
             with tab_consultazione:
                 if os.path.exists(percorso_txt_file):
-                    with open(percorso_txt_file, "r", encoding="utf-8") as f: 
-                        testo_analisi = f.read()
+                    with open(percorso_txt_file, "r", encoding="utf-8") as f: testo_analisi = f.read()
                 else:
                     testo_analisi = dati_gara["Testo_Default"]
-                
                 st.markdown(f"""<div style="background-color: #1f2833; padding: 20px; border-radius: 8px;">{testo_analisi}</div>""", unsafe_allow_html=True)
-                
                 st.subheader("📄 PDF Allegati")
                 if os.path.exists(percorso_cartella_gara):
                     for file in os.listdir(percorso_cartella_gara):
-                        if file.endswith(".pdf"):
-                            st.write(f"📄 {file}")
+                        if file.endswith(".pdf"): st.write(f"📄 {file}")
             
             with tab_caricamento:
-                # Recupero testo per il caricamento
+                testo_attuale = ""
                 if os.path.exists(percorso_txt_file):
-                    with open(percorso_txt_file, "r", encoding="utf-8") as f: 
-                        testo_attuale = f.read()
-                else:
-                    testo_attuale = dati_gara["Testo_Default"]
-                    
+                    with open(percorso_txt_file, "r", encoding="utf-8") as f: testo_attuale = f.read()
                 analisi_muretto = st.text_area("📝 Modifica Analisi:", value=testo_attuale, height=300)
                 file_caricati = st.file_uploader("Aggiungi PDF:", accept_multiple_files=True)
-                
                 if st.button("💾 Salva Dati"):
-                    if not os.path.exists(percorso_cartella_gara): 
-                        os.makedirs(percorso_cartella_gara)
-                    with open(percorso_txt_file, "w", encoding="utf-8") as f: 
-                        f.write(analisi_muretto)
+                    if not os.path.exists(percorso_cartella_gara): os.makedirs(percorso_cartella_gara)
+                    with open(percorso_txt_file, "w", encoding="utf-8") as f: f.write(analisi_muretto)
                     if file_caricati:
                         for f in file_caricati:
-                            with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: 
-                                dest.write(f.getbuffer())
+                            with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: dest.write(f.getbuffer())
                     st.success("Tutto salvato correttamente!")
             
        elif nome == "🛠️ Configurazione GRB":
