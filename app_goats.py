@@ -149,7 +149,7 @@ if dati_miei:
     col1.metric("Posizione", dati_miei['pos'])
     col2.metric("Ultimo Tempo", dati_miei['ultimo_giro'])
 else:
-    st.warning("GOATS RT RED non trovato nel Live Timing."))
+    st.warning("GOATS RT RED non trovato nel Live Timing.")
             
             # Costanti
             LIMITE_GARA_SEC = 8 * 3600
