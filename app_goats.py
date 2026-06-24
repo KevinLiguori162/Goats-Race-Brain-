@@ -692,7 +692,6 @@ for i, nome in enumerate(nomi_pagine):
                 }
                 st.table(pd.DataFrame(dati_penalita))
                 st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
-
 # ==========================================
 # PAGINA 6: RADIO (VERSIONE PULITA SENZA ERRORI DI SPAZIO)
 # ==========================================
