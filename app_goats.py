@@ -379,7 +379,7 @@ for i, nome in enumerate(nomi_pagine):
     st.table(pd.DataFrame(riepilogo_piloti))
     
             # [Inserisci qui il codice della Strategia]
-elif "Live Timing" in nome:
+        elif "Live Timing" in nome:
 st.title("📡 Live Timing Totale Sincronizzato")
 link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
 url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
