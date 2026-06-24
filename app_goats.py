@@ -377,12 +377,13 @@ for i, nome in enumerate(nomi_pagine):
         minuti_guida = sum([x.get("Durata Pista (Min)", 0) for x in st.session_state.tabella_gara_stint if x.get("Pilota") == p])
         riepilogo_piloti.append({"Pilota": p, "Tempo di Guida Accumulato": f"{minuti_guida} Minuti", "Stato Turno Obbligatorio": "✅ ASSOLTO" if minuti_guida >= 10 else "❌ DA EFFETTUARE"})
     st.table(pd.DataFrame(riepilogo_piloti))
+    
             # [Inserisci qui il codice della Strategia]
-        elif "Live Timing" in nome:
-            st.title("📡 Live Timing Totale Sincronizzato")
-            link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
-            url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
-            st.markdown(f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>', unsafe_allow_html=True)
+elif "Live Timing" in nome:
+st.title("📡 Live Timing Totale Sincronizzato")
+link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
+url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
+st.markdown(f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>', unsafe_allow_html=True)
 
         elif nome == "🛠️ Kart's Performance":
             st.title("🛠️ Gestione e Performance Kart")
