@@ -432,8 +432,8 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
 # ==========================================
-        elif "Live Timing" in nome:
-            st.title("📡 Live Timing Totale Sincronizzato")
+    elif "Live Timing" in nome:
+        st.title("📡 Live Timing Totale Sincronizzato")
     st.write("Monitoraggio globale della classifica integrato. In caso di blocchi, usa il tasto di backup in fondo.")
     st.write("---")
     
