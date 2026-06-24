@@ -188,7 +188,7 @@ for i, nome in enumerate(nomi_pagine):
                     st.warning("PIT LANE ATTIVA")
 
         elif nome == "📊 Valutazione Kart Live":
-                st.subheader("📊 Valutazione Performance Kart")
+            st.subheader("📊 Valutazione Performance Kart")
 
             dati_valutazione = []
             
