@@ -281,7 +281,7 @@ for i, nome in enumerate(nomi_pagine):
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
         elif nome == "📊 Strategia":
-            st.subheader("📋 Strategia Endurance")
+            st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.write("Sincronizzazione muretto e calcolatore predittivo basato sui Tempi di Pit cumulativi.")
     st.write("---")
@@ -432,17 +432,6 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
 # ==========================================
-# --- LOGICA DI NAVIGAZIONE ---
-for i, nome in enumerate(nomi_pagine):
-    with tab_list[i]:
-        
-        if nome == "🏎️ Dashboard Gara":
-            st.subheader("🏎️ Dashboard Gara")
-            # ... (Tutto il codice della dashboard) ...
-
-        elif nome == "📊 Valutazione Kart Live":
-            st.subheader("📊 Valutazione Performance Kart")
-            # ... (Tutto il codice della valutazione) ...
 
         elif "Live Timing" in nome:
             st.title("📡 Live Timing Totale Sincronizzato")
@@ -612,10 +601,10 @@ for i, nome in enumerate(nomi_pagine):
         # ==========================================
 # NUOVA PAGINA: REGOLAMENTO (RIASSUNTO RAPIDO CORSA)
 # ==========================================
-            elif "Regolamento" in nome:
-                st.title("📋 Regolamento IRK Championship")
-                st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
-                st.write("---")
+         elif "Regolamento" in nome:
+            st.title("📋 Regolamento IRK Championship")
+            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
+            st.write("---")
                 
                 # 1. GESTIONE LINK UFFICIALE MODIFICABILE
                 link_regolamento_default = "https://irkpromotion.com/wp-content/uploads/ITA-RD1-_-R-ONE-Championship-2026-v1.0-1.pdf"
@@ -716,7 +705,8 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # NUOVA PAGINA: ARCHIVIO GARE & DEBRIEFING AI
 # ==========================================
-        elif "Archivio" in nome:
+        elif nome == "📊 Archivio Gare":
+            st.subheader("📊 Archivio Gare")
     import os
     st.title("🗄️ Archivio Gare & Debriefing AI")
     st.write("---")
@@ -764,6 +754,7 @@ for i, nome in enumerate(nomi_pagine):
             st.success("Tutto salvato correttamente!")
 
         elif nome == "🛠️ Configurazione GRB":
+            st.subheader("⚙️ Configurazione GRB")
     import json
     import os
 
