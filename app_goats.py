@@ -102,61 +102,7 @@ st.sidebar.image("https://img.icons8.com/nolan/64/filled-treadmill.png", width=5
 st.sidebar.title("GRT Control Panel")
 
 # --- DEFINIZIONE PAGINE ---
-nomi_pagine = [
-    "🏎️ Dashboard Gara", "📊 Valutazione Kart Live", "📊 Strategia", 
-    "📡 Live Timing", "🛠️ Kart's Performance", "📜 Regolamento", 
-    "📻 Radio", "📊 Archivio Gare", "🛠️ Configurazione GRB"
-]
-
-# --- NAVIGAZIONE A TABS ---
-tab_list = st.tabs(nomi_pagine)
-
-# --- RENDERING DINAMICO ---
-for i, nome in enumerate(nomi_pagine):
-    with tab_list[i]:
-        # DA QUI IN POI: Tutto deve essere indentato dentro il 'with'
-        
-        # --- LOGICA PAGINE ---
-        if nome == "🏎️ Dashboard Gara":
-            st.subheader("🏎️ Dashboard Gara")
-            # TUTTO il codice della dashboard DEVE stare qui dentro
-            
-        elif nome == "📊 Valutazione Kart Live":
-            st.subheader("📊 Valutazione Kart Live")
-            
-        elif nome == "📊 Strategia":
-            st.subheader("📊 Strategia")
-            
-        elif nome == "📡 Live Timing":
-            st.subheader("📡 Live Timing")
-            
-        elif nome == "🛠️ Kart's Performance":
-            st.subheader("🛠️ Kart's Performance")
-            
-        elif nome == "📜 Regolamento":
-            st.subheader("📜 Regolamento")
-            
-        elif nome == "📻 Radio":
-            st.subheader("📻 Radio")
-            
-        elif nome == "📊 Archivio Gare":
-            st.subheader("📊 Archivio Gare")
-            
-        elif nome == "🛠️ Configurazione GRB":
-            st.subheader("⚙️ Configurazione GRB")
-            # TUTTO il codice della configurazione DEVE stare qui dentro
-        
-        # ATTENZIONE: Se hai codice qui sotto, fuori dagli if/elif, 
-        # questo verrà stampato in TUTTE le tab. CONTROLLA!
-def formatta_tempo(secondi):
-    ore = int(secondi // 3600)
-    minuti = int((secondi % 3600) // 60)
-    secs = int(secondi % 60)
-    if ore > 0:
-        return f"{ore:01d}:{minuti:02d}:{secs:02d}"
-    else:
-        return f"{minuti:02d}:{secs:02d}"
-
+# --- 1. DEFINIZIONE FUNZIONI (FUORI DAI CICLI) ---
 @st.fragment(run_every=5.0)
 def aggiorna_dati_scraper():
     dati_live = ottieni_dati_aggiornati()
@@ -168,17 +114,20 @@ def render_active_dashboard():
     st.write("--- Dati grezzi ricevuti ---")
     st.write(st.session_state.database_rivali_v2)
 
-# ==========================================
-# 2. LOGICA DI NAVIGAZIONE UNIFICATA
-# ==========================================
+# --- 2. DEFINIZIONE PAGINE ---
+nomi_pagine = [
+    "🏎️ Dashboard Gara", "📊 Valutazione Kart Live", "📊 Strategia", 
+    "📡 Live Timing", "🛠️ Kart's Performance", "📜 Regolamento", 
+    "📻 Radio", "📊 Archivio Gare", "🛠️ Configurazione GRB"
+]
+tab_list = st.tabs(nomi_pagine)
 
+# --- 3. CICLO DI NAVIGAZIONE UNICO ---
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         
         if nome == "🏎️ Dashboard Gara":
             st.subheader("🏎️ Dashboard Gara")
-            
-            # --- CONFIGURAZIONE COSTANTI ---
             LIMITE_GARA_SEC = 8 * 3600
             LIMITE_KART_SEC = 4 * 3600
 
@@ -238,9 +187,9 @@ for i, nome in enumerate(nomi_pagine):
                 if st.session_state.get("radar_is_pit_lane"):
                     st.warning("PIT LANE ATTIVA")
 
-        elif nome == "📊 Valutazione Kart Live":
-            st.subheader("📊 Valutazione Performance Kart")
-            # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
+            elif nome == "📊 Valutazione Kart Live":
+                st.subheader("📊 Valutazione Performance Kart")
+
             dati_valutazione = []
             
             if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
@@ -277,12 +226,12 @@ for i, nome in enumerate(nomi_pagine):
                     st.info("In attesa di dati (minimo 3 giri)...")
             else:
                 st.info("Nessun dato ancora ricevuto da YouCrono.")
-# ==========================================
-# PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
-# ==========================================
+            # [Inserisci qui il codice della tua Dashboard]
+
+
         elif nome == "📊 Strategia":
+            st.title("📋 Strategia Endurance")
             st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
-    st.title("📋 Strategia Endurance - YouCrono Live Sync & Previsioni")
     st.write("Sincronizzazione muretto e calcolatore predittivo basato sui Tempi di Pit cumulativi.")
     st.write("---")
     
@@ -428,23 +377,17 @@ for i, nome in enumerate(nomi_pagine):
         minuti_guida = sum([x.get("Durata Pista (Min)", 0) for x in st.session_state.tabella_gara_stint if x.get("Pilota") == p])
         riepilogo_piloti.append({"Pilota": p, "Tempo di Guida Accumulato": f"{minuti_guida} Minuti", "Stato Turno Obbligatorio": "✅ ASSOLTO" if minuti_guida >= 10 else "❌ DA EFFETTUARE"})
     st.table(pd.DataFrame(riepilogo_piloti))
+            # [Inserisci qui il codice della Strategia]
 
-# ==========================================
-# PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
-# ==========================================
         elif "Live Timing" in nome:
             st.title("📡 Live Timing Totale Sincronizzato")
-        link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
-        url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
-        st.markdown(f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>', unsafe_allow_html=True)
+            link_predefinito = "https://youcrono.com/Pagina/6449/LiveTbkart"
+            url_live_timing = st.text_input("🔗 URL Live Timing Attivo:", value=link_predefinito)
+            st.markdown(f'<iframe src="{url_live_timing}" width="100%" height="700" style="border:none; background-color: #0b0c10; border-radius: 8px;" allowfullscreen></iframe>', unsafe_allow_html=True)
 
-        # Se hai altre pagine, continua qui con altri elif...
-# ==========================================
-# PAGINA 4: KART'S PERFORMANCE (COLLEGAMENTO CORRETTO ELIF)
-# ==========================================
         elif nome == "🛠️ Kart's Performance":
             st.title("🛠️ Gestione e Performance Kart")
-    st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'estrazione del sabato.")
+st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'estrazione del sabato.")
     st.write("---")
 
     tab_estrazione, tab_archivio = st.tabs(["🏁 Sincronizzazione Sabato Mattina", "📂 Archivio Continuo Telai"])
@@ -588,13 +531,17 @@ for i, nome in enumerate(nomi_pagine):
             on_change=salva_database_continuo_def
         )
         st.session_state.database_continuo_telai = tabella_continuo.to_dict(orient="records")
+            # [Inserisci qui il codice di Kart's Performance]
 
-        # ==========================================
-# NUOVA PAGINA: REGOLAMENTO (RIASSUNTO RAPIDO CORSA)
-# ==========================================
+
         elif "Regolamento" in nome:
             st.title("📋 Regolamento IRK Championship")
-            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
+            st.write("Consultazione rapida delle regole di ingaggio.")
+            # [Inserisci qui il codice del Regolamento]
+
+        elif nome == "📻 Radio":
+            st.subheader("📻 Radio")
+st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
             st.write("---")
                 
                 # 1. GESTIONE LINK UFFICIALE MODIFICABILE
@@ -672,33 +619,10 @@ for i, nome in enumerate(nomi_pagine):
                     }
                     st.table(pd.DataFrame(dati_penalita))
                     st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia dei 40 minuti totali!")
-# ==========================================
-# PAGINA 6: RADIO (VERSIONE PULITA SENZA ERRORI DI SPAZIO)
-# ==========================================
-        elif nome == "📻 Radio":
-            st.subheader("📻 Configurazione Radio Team")
-    
-    # Dati base
-    if "tabella_radio_goats" not in st.session_state:
-        st.session_state.tabella_radio_goats = [
-            {"Dispositivo": "Radio TM", "Assegnatario": "Kevin", "Canale": "CH 1", "Frequenza": "446.00625"},
-            {"Dispositivo": "Radio P1", "Assegnatario": "Bruno", "Canale": "CH 2", "Frequenza": "446.01875"},
-            {"Dispositivo": "Radio P2", "Assegnatario": "Daniele", "Canale": "CH 3", "Frequenza": "446.03125"}
-        ]
-    
-    # Mostra la tabella modificabile
-    st.session_state.tabella_radio_goats = st.data_editor(
-        st.session_state.tabella_radio_goats, 
-        use_container_width=True
-    )
-
-
-# ==========================================
-# NUOVA PAGINA: ARCHIVIO GARE & DEBRIEFING AI
-# ==========================================
+        
         elif nome == "📊 Archivio Gare":
             st.subheader("📊 Archivio Gare")
-    import os
+import os
     st.title("🗄️ Archivio Gare & Debriefing AI")
     st.write("---")
 
@@ -743,7 +667,7 @@ for i, nome in enumerate(nomi_pagine):
                 for f in file_caricati:
                     with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: dest.write(f.getbuffer())
             st.success("Tutto salvato correttamente!")
-
+            
         elif nome == "🛠️ Configurazione GRB":
             st.subheader("⚙️ Configurazione GRB")
     import json
