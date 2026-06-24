@@ -259,6 +259,7 @@ for i, nome in enumerate(nomi_pagine):
                     st.info("Raccolta dati in corso... (attendo almeno 3 giri per kart)")
             else:
                 st.info("Nessun dato ancora ricevuto da YouCrono.")
+
         elif nome == "📊 Strategia":
             st.title("📊 Strategia Endurance - GRT")
 
@@ -283,7 +284,6 @@ for i, nome in enumerate(nomi_pagine):
 
             # --- 3. CALCOLO TEMPO MEDIO STINT ---
             st.subheader("⏱️ Monitoraggio Stint")
-            # Logica calcolo medio (se hai dati storici o in session_state)
             if "stint_tempi" in st.session_state and st.session_state.stint_tempi:
                 media = sum(st.session_state.stint_tempi) / len(st.session_state.stint_tempi)
                 st.write(f"Tempo medio stint: **{media:.2f} minuti**")
