@@ -87,6 +87,21 @@ def inizializza_stato():
         if key not in st.session_state:
             st.session_state[key] = value
 
+def get_dati_mio_team(dati_live):
+    # Cerca il tuo team nel JSON di YouCrono
+    for record in dati_live:
+        if record['team'] == MIO_TEAM:
+            return record
+    return None
+
+def tempo_in_secondi(tempo_str):
+    try:
+        # Se il tempo è "01:05.123", lo split(':') funziona
+        minuti, secondi = tempo_str.split(':')
+        return float(minuti) * 60 + float(secondi)
+    except:
+        return 0
+
 inizializza_stato()
 
 # --- 4. LOGIN ---
@@ -127,7 +142,14 @@ tab_list = st.tabs(nomi_pagine)
 for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         if nome == "🏎️ Dashboard Gara":
-            st.subheader("🏎️ Dashboard Gara")
+            st.subheader("🏎️ Stato GOATS RT RED")
+dati_miei = get_dati_mio_team(st.session_state.database_rivali_v2)
+if dati_miei:
+    col1, col2 = st.columns(2)
+    col1.metric("Posizione", dati_miei['pos'])
+    col2.metric("Ultimo Tempo", dati_miei['ultimo_giro'])
+else:
+    st.warning("GOATS RT RED non trovato nel Live Timing."))
             
             # Costanti
             LIMITE_GARA_SEC = 8 * 3600
@@ -197,47 +219,46 @@ for i, nome in enumerate(nomi_pagine):
                 if st.session_state.get("radar_is_pit_lane"):
                     st.warning("PIT LANE ATTIVA")
 
-        elif nome == "📊 Valutazione Kart Live":
-            st.subheader("📊 Valutazione Performance Kart")
-
-            dati_valutazione = []
-            
-            if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
-                for team, tempi in st.session_state.storico_tempi.items():
-                    if len(tempi) >= 3: 
-                        # Calcolo indici sicuri
-                        ultimi_20 = tempi[-20:]
-                        media_mobile = sum(ultimi_20) / len(ultimi_20)
-                        best_lap_mobile = min(ultimi_20)
-                        
-                        dati_valutazione.append({
-                            "Team": team, 
-                            "Media (20g)": round(media_mobile, 3),
-                            "Best Lap (20g)": round(best_lap_mobile, 3)
-                        })
+       elif nome == "📊 Valutazione Kart Live":
+    st.subheader("📊 Valutazione Performance Kart")
+    
+    if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
+        dati_valutazione = []
+        
+        for kart, tempi in st.session_state.storico_tempi.items():
+            if len(tempi) >= 3: 
+                ultimi_20 = tempi[-20:]
+                media_mobile = sum(ultimi_20) / len(ultimi_20)
+                best_lap_mobile = min(ultimi_20)
                 
-                if dati_valutazione:
-                    df_val = pd.DataFrame(dati_valutazione)
-                    media_globale = df_val["Media (20g)"].mean()
-                    
-                    # Logica valutativa
-                    def get_emoji(tempo):
-                        if tempo < (media_globale - 0.4): return "🚀"
-                        elif tempo > (media_globale + 0.3): return "💩"
-                        else: return "🏎️"
-                    
-                    df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
-                    
-                    st.dataframe(
-                        df_val.sort_values("Media (20g)"), 
-                        use_container_width=True, 
-                        hide_index=True
-                    )
-                else:
-                    st.info("In attesa di dati (minimo 3 giri per team)...")
-            else:
-                st.info("Nessun dato ancora ricevuto da YouCrono.")
-
+                dati_valutazione.append({
+                    "Kart": kart, # Modificato da Team a Kart
+                    "Media (20g)": round(media_mobile, 3),
+                    "Best Lap (20g)": round(best_lap_mobile, 3)
+                })
+        
+        if dati_valutazione:
+            df_val = pd.DataFrame(dati_valutazione)
+            media_globale = df_val["Media (20g)"].mean()
+            
+            # Logica valutativa migliorata
+            def get_emoji(tempo):
+                if tempo < (media_globale - 0.4): return "🚀 Top"
+                elif tempo > (media_globale + 0.3): return "💩 Lento"
+                else: return "🏎️ Standard"
+            
+            df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
+            
+            # Ordinamento e visualizzazione
+            st.dataframe(
+                df_val.sort_values("Media (20g)"), 
+                use_container_width=True, 
+                hide_index=True
+            )
+        else:
+            st.info("Raccolta dati in corso... (attendo almeno 3 giri per kart)")
+    else:
+        st.info("Nessun dato ancora ricevuto da YouCrono.")
         elif nome == "📊 Strategia":
             st.title("📊 Strategia Endurance - GRT")
 
