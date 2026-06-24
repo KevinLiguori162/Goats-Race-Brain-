@@ -239,43 +239,44 @@ for i, nome in enumerate(nomi_pagine):
                     st.warning("PIT LANE ATTIVA")
 
 elif nome == "📊 Valutazione Kart Live":
-    st.subheader("📊 Valutazione Performance Kart")
-    # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
-    dati_valutazione = []
-    
-    if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
-        for team, tempi in st.session_state.storico_tempi.items():
-            if len(tempi) >= 3: 
-                media_mobile = sum(tempi[-20:]) / len(tempi[-20:])
-                best_lap_mobile = min(tempi[-20:])
-                
-                dati_valutazione.append({
-                    "Team": team, 
-                    "Media (20g)": round(media_mobile, 3),
-                    "Best Lap (20g)": round(best_lap_mobile, 3)
-                })
-        
-        if dati_valutazione:
-            df_val = pd.DataFrame(dati_valutazione)
-            media_globale = df_val["Media (20g)"].mean()
+            st.subheader("📊 Valutazione Performance Kart")
+            # Logica semplice: prendiamo solo i dati che arrivano dallo scraper
+            dati_valutazione = []
             
-            def get_emoji(tempo):
-                if tempo < (media_globale - 0.4): return "🚀"
-                elif tempo > (media_globale + 0.3): return "💩"
-                else: return "🏎️"
+            if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
+                for team, tempi in st.session_state.storico_tempi.items():
+                    if len(tempi) >= 3: 
+                        media_mobile = sum(tempi[-20:]) / len(tempi[-20:])
+                        best_lap_mobile = min(tempi[-20:])
+                        
+                        dati_valutazione.append({
+                            "Team": team, 
+                            "Media (20g)": round(media_mobile, 3),
+                            "Best Lap (20g)": round(best_lap_mobile, 3)
+                        })
                 
-            df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
-            
-            # Mostriamo la tabella pulita
-            st.dataframe(
-                df_val.sort_values("Media (20g)"), 
-                use_container_width=True, 
-                hide_index=True
-            )
-        else:
-            st.info("In attesa di dati (minimo 3 giri)...")
-    else:
-        st.info("Nessun dato ancora ricevuto da YouCrono.")
+                if dati_valutazione:
+                    df_val = pd.DataFrame(dati_valutazione)
+                    media_globale = df_val["Media (20g)"].mean()
+                    
+                    # Definisco la logica dell'emoji esternamente o qui in modo sicuro
+                    def get_emoji(tempo):
+                        if tempo < (media_globale - 0.4): return "🚀"
+                        elif tempo > (media_globale + 0.3): return "💩"
+                        else: return "🏎️"
+                    
+                    df_val["Valutazione"] = df_val["Media (20g)"].apply(get_emoji)
+                    
+                    # Mostriamo la tabella pulita
+                    st.dataframe(
+                        df_val.sort_values("Media (20g)"), 
+                        use_container_width=True, 
+                        hide_index=True
+                    )
+                else:
+                    st.info("In attesa di dati (minimo 3 giri)...")
+            else:
+                st.info("Nessun dato ancora ricevuto da YouCrono.")
 # ==========================================
 # PAGINA 2: STRATEGIA (VERSIONE DEFINITIVA)
 # ==========================================
