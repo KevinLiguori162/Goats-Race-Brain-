@@ -432,8 +432,8 @@ for i, nome in enumerate(nomi_pagine):
 # ==========================================
 # PAGINA 3: LIVE TIMING TOTALE (INTEGRATO + BACKUP ANTIBLOCCO)
 # ==========================================
-elif "Live Timing" in nome:
-    st.title("📡 Live Timing Totale Sincronizzato")
+        elif "Live Timing" in nome:
+            st.title("📡 Live Timing Totale Sincronizzato")
     st.write("Monitoraggio globale della classifica integrato. In caso di blocchi, usa il tasto di backup in fondo.")
     st.write("---")
     
@@ -464,8 +464,8 @@ elif "Live Timing" in nome:
 # ==========================================
 # PAGINA 4: KART'S PERFORMANCE (COLLEGAMENTO CORRETTO ELIF)
 # ==========================================
-elif nome == "🛠️ Kart's Performance":
-    st.title("🛠️ Gestione e Performance Kart")
+        elif nome == "🛠️ Kart's Performance":
+            st.title("🛠️ Gestione e Performance Kart")
     st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'estrazione del sabato.")
     st.write("---")
 
@@ -614,8 +614,8 @@ elif nome == "🛠️ Kart's Performance":
         # ==========================================
 # NUOVA PAGINA: REGOLAMENTO (RIASSUNTO RAPIDO CORSA)
 # ==========================================
-elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
-    st.title("📋 Regolamento IRK Championship")
+        elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
+            st.title("📋 Regolamento IRK Championship")
     st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali per il muretto box.")
     st.write("---")
     
@@ -698,8 +698,8 @@ elif "Regolamento" in nome:  # <--- Cambiato: ora intercetta solo "Regolamento"
 # ==========================================
 # PAGINA 6: RADIO (VERSIONE PULITA SENZA ERRORI DI SPAZIO)
 # ==========================================
-elif nome == "📻 Radio":
-    st.subheader("📻 Configurazione Radio Team")
+        elif nome == "📻 Radio":
+            st.subheader("📻 Configurazione Radio Team")
     
     # Dati base
     if "tabella_radio_goats" not in st.session_state:
@@ -719,7 +719,7 @@ elif nome == "📻 Radio":
 # ==========================================
 # NUOVA PAGINA: ARCHIVIO GARE & DEBRIEFING AI
 # ==========================================
-elif "Archivio" in nome:
+        elif "Archivio" in nome:
     import os
     st.title("🗄️ Archivio Gare & Debriefing AI")
     st.write("---")
@@ -766,7 +766,7 @@ elif "Archivio" in nome:
                     with open(os.path.join(percorso_cartella_gara, f.name), "wb") as dest: dest.write(f.getbuffer())
             st.success("Tutto salvato correttamente!")
 
-elif nome == "🛠️ Configurazione GRB":
+        elif nome == "🛠️ Configurazione GRB":
     import json
     import os
 
