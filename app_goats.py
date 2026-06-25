@@ -9,11 +9,14 @@ from streamlit_autorefresh import st_autorefresh
 
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(layout="wide")
+st.set_page_config(page_title="Dashboard GRT", layout="wide", initial_sidebar_state="collapsed")
 st_autorefresh(interval=1000, key="datarefresh")
 
 st.markdown("""
     <style>
     .stApp { background-color: #0b0c10; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    <style>
+        [data-testid="stSidebar"] {display: none;}
     
     /* Box Container */
     .racing-box, .kart-box { 
