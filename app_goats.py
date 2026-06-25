@@ -190,6 +190,10 @@ for i, nome in enumerate(nomi_pagine):
     with tab_list[i]:
         if nome == "🏎️ Dashboard Gara":
             st.subheader("🏎️ Stato GOATS RT RED")
+            # ... (il tuo codice esistente per i dati del tuo team)
+            
+            # AGGIUNGI QUESTA RIGA QUI SOTTO:
+            visualizza_live_timing_integrato()
             dati_miei = get_dati_mio_team(st.session_state.database_rivali_v2)
             if dati_miei:
                 col1, col2 = st.columns(2)
