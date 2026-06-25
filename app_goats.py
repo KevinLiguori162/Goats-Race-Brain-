@@ -242,14 +242,6 @@ for i, nome in enumerate(nomi_pagine):
                     st.session_state.conferma_cambio_kart = True
                     st.rerun()
 
-            # --- LIVE TIMING ---
-            st.markdown("#### 📡 Live Timing")
-            dati_rivali = st.session_state.get("database_rivali_v2", [])
-            if dati_rivali:
-                tabella = [{"POS": r['pos'], "TEAM": r['team'], "GIRO": r['ultimo_giro']} for r in dati_rivali]
-                st.dataframe(pd.DataFrame(tabella), use_container_width=True)
-            else:
-                st.info("Nessun dato live disponibile.")
 
             # --- GESTIONE PILOTI E RADAR ---
             col_sx, col_dx = st.columns([2, 1])
