@@ -219,7 +219,7 @@ for i, nome in enumerate(nomi_pagine):
                     st.warning("PIT LANE ATTIVA")
 
 
-		elif nome == "📊 Valutazione Kart Live":
+        elif nome == "📊 Valutazione Kart Live":
             st.subheader("📊 Valutazione Performance Kart")
             
             if 'storico_tempi' in st.session_state and st.session_state.storico_tempi:
@@ -491,7 +491,7 @@ for i, nome in enumerate(nomi_pagine):
             if not st.session_state.get("master_autenticato", False):
                 master_pssw = st.text_input("Inserisci Chiave Master:", type="password")
                 if st.button("Sblocca Parametri"):
-                    if master_pssw == PASSWORD_MASTER:
+                    if master_pssw == "12345":
                         st.session_state.master_autenticato = True
                         st.rerun()
             else:
