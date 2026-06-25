@@ -101,6 +101,34 @@ def tempo_in_secondi(tempo_str):
         return float(minuti) * 60 + float(secondi)
     except:
         return 0
+    
+    # --- LOGICA DI POPOLAMENTO AUTOMATICO DATI ---
+def aggiorna_storico_tempi():
+    dati_live = st.session_state.database_rivali_v2
+    for record in dati_live:
+        kart = record.get('kart')
+        tempo_str = record.get('ultimo_giro', "00:00.000")
+        tempo_sec = tempo_in_secondi(tempo_str)
+        
+        # Ignora dati non validi
+        if tempo_sec == 0: continue
+        
+        # Inizializza la lista per il kart se non esiste
+        if kart not in st.session_state.storico_tempi:
+            st.session_state.storico_tempi[kart] = []
+            
+        # Aggiungi solo se il tempo è nuovo (evita duplicati continui)
+        if not st.session_state.storico_tempi[kart] or st.session_state.storico_tempi[kart][-1] != tempo_sec:
+            st.session_state.storico_tempi[kart].append(tempo_sec)
+
+# Chiamiamo la funzione subito dopo aver ottenuto i dati dallo scraper
+# Dentro la funzione 'aggiorna_dati_scraper' (che hai già definito):
+@st.fragment(run_every=5.0)
+def aggiorna_dati_scraper():
+    dati_live = ottieni_dati_aggiornati()
+    if dati_live:
+        st.session_state.database_rivali_v2 = dati_live
+        aggiorna_storico_tempi() # <--- AGGIUNGI QUESTA RIGA
 
 inizializza_stato()
 
