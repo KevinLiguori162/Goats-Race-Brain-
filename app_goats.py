@@ -61,18 +61,29 @@ def carica_dati():
     return []
 
 def ottieni_dati_aggiornati():
+    # Aggiungiamo un header per far credere al server di essere un browser
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
     try:
-        response = requests.get(API_URL, timeout=10) # Aumentato timeout
+        # Usiamo l'header nella chiamata
+        response = requests.get(API_URL, headers=headers, timeout=10)
+        
         if response.status_code == 200:
             data = response.json()
-            # ... resto del codice ...
+            if isinstance(data, list):
+                dati_puliti = [{"pos": r.get("Position", "-"), "team": r.get("TeamName", "N/D"), "ultimo_giro": r.get("LastLapTime", "00:00.000"), "kart": r.get("KartNumber", "0")} for r in data]
+                salva_dati(dati_puliti)
+                return dati_puliti
         else:
-            st.error(f"Errore Server: {response.status_code}") # Vedi se ti dà errore 403 o 404
+            # Se ricevi un errore (es. 403), lo vediamo subito in dashboard
+            st.error(f"Errore connessione YouCrono: Codice {response.status_code}")
             return carica_dati()
+            
     except Exception as e:
-        st.error(f"Errore di connessione: {e}") # Qui vedrai esattamente il problema
+        # Se c'è un errore di rete (timeout o DNS), lo vediamo qui
+        st.error(f"Errore di connessione: {e}")
         return carica_dati()
-
 # --- 3. INIZIALIZZAZIONE STATI ---
 def inizializza_stato():
     defaults = {
