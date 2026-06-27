@@ -6,6 +6,7 @@ import json
 import os
 from streamlit_autorefresh import st_autorefresh
 
+requests.packages.urllib3.disable_warnings()
 
 # --- 1. CONFIGURAZIONE PAGINA ---
 st.set_page_config(layout="wide")
@@ -61,43 +62,20 @@ def carica_dati():
     return []
 
 def ottieni_dati_aggiornati():
-    # Aggiungiamo header più completi per simulare una visita reale dalla pagina web
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        'Referer': 'https://youcrono.com/',
-        'Accept': 'application/json, text/javascript, */*; q=0.01'
-    }
+    url = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
     try:
-        # Timeout a 10 secondi per gestire la latenza della rete in pista
-        response = requests.get(API_URL, headers=headers, timeout=10)
+        # Usiamo verify=False per superare eventuali blocchi di certificati
+        response = requests.get(url, timeout=10, verify=False)
+        st.write(f"Stato risposta: {response.status_code}") # TI DIRÀ SUBITO SE È 200, 403, 404
         
         if response.status_code == 200:
             data = response.json()
-            if isinstance(data, list):
-                # Pulizia dati: estraiamo solo ciò che serve alla dashboard
-                dati_puliti = [
-                    {
-                        "pos": r.get("Position", "-"), 
-                        "team": r.get("TeamName", "N/D"), 
-                        "ultimo_giro": r.get("LastLapTime", "00:00.000"), 
-                        "kart": str(r.get("KartNumber", "0"))
-                    } 
-                    for r in data
-                ]
-                salva_dati(dati_puliti)
-                return dati_puliti
-            else:
-                return carica_dati()
-        else:
-            # Mostra l'errore specifico (es. 403) per capire cosa blocca la connessione
-            st.error(f"Errore connessione YouCrono: Codice {response.status_code}")
-            return carica_dati()
-            
-    except Exception as e:
-        # Se siamo offline o il server non risponde, carichiamo il backup
-        st.warning(f"Errore di connessione (tentativo ripristino backup): {e}")
+            st.write(f"Dati ricevuti: {len(data)} record") # TI DIRÀ SE IL JSON È VUOTO
+            return data
         return carica_dati()
-# --- 3. INIZIALIZZAZIONE STATI ---
+    except Exception as e:
+        st.error(f"ERRORE CRITICO: {e}")
+        return carica_dati()
 def inizializza_stato():
     defaults = {
         "autenticato": False,
