@@ -61,7 +61,6 @@ def carica_dati():
     return []
 
 def ottieni_dati_aggiornati():
-    def ottieni_dati_aggiornati():
     try:
         response = requests.get(API_URL, timeout=10) # Aumentato timeout
         if response.status_code == 200:
