@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 # --- 2. FUNZIONI (Logica e Dati) ---
 MIO_TEAM = "GOATS RT RED"
-API_URL = "https://youcrono.com/Pagina/6449/LiveTbkart"
+API_URL = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
 BACKUP_FILE = "gara_backup.json"
 
 def salva_dati(dati):
