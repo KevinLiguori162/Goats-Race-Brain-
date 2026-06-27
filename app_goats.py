@@ -364,47 +364,4 @@ else:
         
 
 
-        elif nome == "📻 Radio":
-            st.subheader("📻 Radio")
-            st.write("Consultazione rapida delle regole di ingaggio.")
-            # In futuro qui caricheremo il PDF delle regole di ingaggio
-
-        elif "Regolamento" in nome:
-            st.title("📋 Regolamento IRK Championship")
-            st.write("Consultazione rapida delle regole di ingaggio e delle penalità ufficiali.")
-            st.write("---")
-            link_regolamento_default = "https://irkpromotion.com/wp-content/uploads/ITA-RD1-_-R-ONE-Championship-2026-v1.0-1.pdf"
-            url_regolamento = st.text_input("🔗 Link al PDF Regolamento Ufficiale:", value=link_regolamento_default)
-            st.link_button("📥 Apri PDF Regolamento Completo", url=url_regolamento)
-            tab_regole, tab_penalita = st.tabs(["🏁 Info Voci Regolamento", "⚠️ Tabella Penalità Rapida"])
-            
-            with tab_regole:
-                st.subheader("📊 Regolamento Sintetizzato")
-                st.caption("Nota: La procedura di partenza è LANCIATA ed il rifornimento è LIBERO.")
-                
-            with tab_penalita:
-                st.subheader("🛑 Prontuario Sanzioni e Violazioni")
-                st.error("⚠️ Attenzione al muretto: Cambi corsia e pesature errate possono compromettere la strategia!")
-
-        elif nome == "📚 Archivio Storico":
-            st.title("📚 Archivio Storico Gare")
-            if "archivio_gare" not in st.session_state:
-                st.session_state.archivio_gare = []
-            
-            elenco_gare = [g["Gara"] for g in st.session_state.archivio_gare]
-            gara_selezionata = st.selectbox("Seleziona una gara:", elenco_gare if elenco_gare else ["Nessuna gara"])
-            
-            st.write("Gestione database storico attiva.")
-
-        elif nome == "🛠️ Configurazione GRB":
-            st.subheader("⚙️ Configurazione GRB")
-            st.title("🛠️ Pannello di Controllo Master GRB")
-            # --- Autenticazione Master ---
-            if not st.session_state.get("master_autenticato", False):
-                master_pssw = st.text_input("Inserisci Chiave Master:", type="password")
-                if st.button("Sblocca Parametri"):
-                    if master_pssw == "12345":
-                        st.session_state.master_autenticato = True
-                        st.rerun()
-            else:
-                st.success("🔓 Modalità Amministratore Attiva.")
+        
