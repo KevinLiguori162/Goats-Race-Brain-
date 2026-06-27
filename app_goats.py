@@ -61,28 +61,41 @@ def carica_dati():
     return []
 
 def ottieni_dati_aggiornati():
-    # Aggiungiamo un header per far credere al server di essere un browser
+    # Aggiungiamo header più completi per simulare una visita reale dalla pagina web
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Referer': 'https://youcrono.com/',
+        'Accept': 'application/json, text/javascript, */*; q=0.01'
     }
     try:
-        # Usiamo l'header nella chiamata
+        # Timeout a 10 secondi per gestire la latenza della rete in pista
         response = requests.get(API_URL, headers=headers, timeout=10)
         
         if response.status_code == 200:
             data = response.json()
             if isinstance(data, list):
-                dati_puliti = [{"pos": r.get("Position", "-"), "team": r.get("TeamName", "N/D"), "ultimo_giro": r.get("LastLapTime", "00:00.000"), "kart": r.get("KartNumber", "0")} for r in data]
+                # Pulizia dati: estraiamo solo ciò che serve alla dashboard
+                dati_puliti = [
+                    {
+                        "pos": r.get("Position", "-"), 
+                        "team": r.get("TeamName", "N/D"), 
+                        "ultimo_giro": r.get("LastLapTime", "00:00.000"), 
+                        "kart": str(r.get("KartNumber", "0"))
+                    } 
+                    for r in data
+                ]
                 salva_dati(dati_puliti)
                 return dati_puliti
+            else:
+                return carica_dati()
         else:
-            # Se ricevi un errore (es. 403), lo vediamo subito in dashboard
+            # Mostra l'errore specifico (es. 403) per capire cosa blocca la connessione
             st.error(f"Errore connessione YouCrono: Codice {response.status_code}")
             return carica_dati()
             
     except Exception as e:
-        # Se c'è un errore di rete (timeout o DNS), lo vediamo qui
-        st.error(f"Errore di connessione: {e}")
+        # Se siamo offline o il server non risponde, carichiamo il backup
+        st.warning(f"Errore di connessione (tentativo ripristino backup): {e}")
         return carica_dati()
 # --- 3. INIZIALIZZAZIONE STATI ---
 def inizializza_stato():
