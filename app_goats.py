@@ -61,17 +61,18 @@ def carica_dati():
     return []
 
 def ottieni_dati_aggiornati():
+    def ottieni_dati_aggiornati():
     try:
-        response = requests.get(API_URL, timeout=5)
+        response = requests.get(API_URL, timeout=10) # Aumentato timeout
         if response.status_code == 200:
             data = response.json()
-            if isinstance(data, list):
-                dati_puliti = [{"pos": r.get("Position", "-"), "team": r.get("TeamName", "N/D"), "ultimo_giro": r.get("LastLapTime", "00:00.000"), "kart": r.get("KartNumber", "0")} for r in data]
-                salva_dati(dati_puliti)
-                return dati_puliti
+            # ... resto del codice ...
+        else:
+            st.error(f"Errore Server: {response.status_code}") # Vedi se ti dà errore 403 o 404
+            return carica_dati()
     except Exception as e:
-        st.error(f"Errore: {e}")
-    return carica_dati()
+        st.error(f"Errore di connessione: {e}") # Qui vedrai esattamente il problema
+        return carica_dati()
 
 # --- 3. INIZIALIZZAZIONE STATI ---
 def inizializza_stato():
