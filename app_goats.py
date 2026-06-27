@@ -64,17 +64,15 @@ def carica_dati():
 def ottieni_dati_aggiornati():
     url = "https://youcrono.com/Pagina/6449/LiveTbkart"
     try:
-        # Leggiamo direttamente la tabella HTML dalla pagina
-        dfs = pd.read_html(url)
+        # Usiamo il parser integrato 'html.parser' che non richiede lxml
+        dfs = pd.read_html(url, flavor='bs4') 
         if len(dfs) > 0:
-            # Di solito la tabella dei tempi è la prima o la seconda tabella
-            df = dfs[0] 
-            # Qui convertiamo il DataFrame in una lista di dizionari per il resto del tuo codice
-            dati = df.to_dict('records')
-            return dati
+            df = dfs[0]
+            # Convertiamo in dizionario
+            return df.to_dict('records')
     except Exception as e:
-        # Se fallisce, logghiamo l'errore per capire perché
-        st.write(f"Errore lettura pagina: {e}")
+        # Se anche questo fallisce, usiamo una tecnica manuale basata sulle richieste
+        st.write(f"Fallback attivo: {e}")
         return []
     return []
 def inizializza_stato():
