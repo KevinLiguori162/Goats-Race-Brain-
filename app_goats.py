@@ -62,20 +62,21 @@ def carica_dati():
     return []
 
 def ottieni_dati_aggiornati():
-    url = "https://youcrono.com/api/LiveTiming/GetLiveTiming?idPagina=6449"
+    url = "https://youcrono.com/Pagina/6449/LiveTbkart"
     try:
-        # Usiamo verify=False per superare eventuali blocchi di certificati
-        response = requests.get(url, timeout=10, verify=False)
-        st.write(f"Stato risposta: {response.status_code}") # TI DIRÀ SUBITO SE È 200, 403, 404
-        
-        if response.status_code == 200:
-            data = response.json()
-            st.write(f"Dati ricevuti: {len(data)} record") # TI DIRÀ SE IL JSON È VUOTO
-            return data
-        return carica_dati()
+        # Leggiamo direttamente la tabella HTML dalla pagina
+        dfs = pd.read_html(url)
+        if len(dfs) > 0:
+            # Di solito la tabella dei tempi è la prima o la seconda tabella
+            df = dfs[0] 
+            # Qui convertiamo il DataFrame in una lista di dizionari per il resto del tuo codice
+            dati = df.to_dict('records')
+            return dati
     except Exception as e:
-        st.error(f"ERRORE CRITICO: {e}")
-        return carica_dati()
+        # Se fallisce, logghiamo l'errore per capire perché
+        st.write(f"Errore lettura pagina: {e}")
+        return []
+    return []
 def inizializza_stato():
     defaults = {
         "autenticato": False,
@@ -351,6 +352,15 @@ for i, nome in enumerate(nomi_pagine):
                         st.rerun()
             else:
                 st.warning("Configura i piloti nel pannello 'Configurazione GRB'.")
+
+        st.subheader("⏱️ Live Timing Ufficiale")
+# Debug: vediamo cosa succede
+dati_test = ottieni_dati_aggiornati()
+st.write(f"DEBUG: Ho ricevuto {len(dati_test)} dati.")
+if len(dati_test) > 0:
+    st.write(dati_test[0]) # Mostra il primo record per vedere se è vivo
+else:
+    st.error("Dati ricevuti: 0. Il server YouCrono non risponde.")
         elif nome == "🛠️ Kart's Performance":
             st.title("🛠️ Gestione e Performance Kart")
             st.write("Area tecnica per il tracciamento dei telai e la sincronizzazione dell'estrazione del sabato.")
